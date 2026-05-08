@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+:root {
+  --background: #111111;
+  --foreground: #F8F8F8;
+  --black: #111111;
+  --white: #F8F8F8;
+  --grey: #7A7A7A;
+  --gold: #C2A15F;
+  --gold-light: #D4AF37;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-black: var(--black);
+  --color-white: var(--white);
+  --color-grey: var(--grey);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter);
+}
+
+@keyframes slow-drift {
+  0% { background-position: 0 0; }
+  100% { background-position: 60px 60px; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(-12deg); }
+  50% { transform: translateY(-15px) rotate(-12deg); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-150%); }
+  100% { transform: translateX(300%); }
+}
+
+/* Custom Animation Classes */
+.animate-slow-drift {
+  animation: slow-drift 10s linear infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s linear infinite;
+}
