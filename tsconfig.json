@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "src/app/components/categoriescards.jsx", "src/app/components/feature-article.jsx"  ],
+, "src/app/components/categoriescards.tsx", "src/app/components/feature-article.jsx"  ],
   "exclude": ["node_modules"]
 }

@@ -1,9 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const categories = [
   {
-    href: "/founder-stories",
+    href: "/categories/founder-stories",
     title: "Founder Stories",
     desc: "Real stories of founders and brands that built something meaningful.",
     img: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80",
@@ -12,7 +14,7 @@ const categories = [
     accent: "#B8960C",
   },
   {
-    href: "/story-breakdowns",
+    href: "/categories/story-breakdowns",
     title: "Story Breakdowns",
     desc: "Analytical articles explaining why certain stories work and how to craft them.",
     img: "https://images.unsplash.com/photo-1512758017271-d7b84c2113f1?w=600&q=80",
@@ -21,7 +23,7 @@ const categories = [
     accent: "#B8960C",
   },
   {
-    href: "/writing-branding",
+    href: "/categories/writing-branding",
     title: "Writing & Branding",
     desc: "SEO articles with guides, tips, and frameworks for effective writing.",
     img: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80",
@@ -37,9 +39,19 @@ const GOLD_DIM = "#8B6914";
 export default function CategoriesCards() {
   const [active, setActive] = useState(1);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const cardRefs = useRef([]);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const handleMouseMove = (e, idx) => {
+  // Initialize AOS
+  useEffect(() => {
+    AOS.init({
+      duration: 900,
+      easing: 'ease-out-cubic',
+      once: true,
+      offset: 100,
+    });
+  }, []);
+
+  const handleMouseMove = (e: React.MouseEvent, idx: number) => {
     if (idx !== active) return;
     const card = cardRefs.current[idx];
     if (!card) return;
@@ -53,7 +65,7 @@ export default function CategoriesCards() {
 
   const handleMouseLeave = () => setTilt({ x: 0, y: 0 });
 
-  const getStyle = (idx) => {
+  const getStyle = (idx: number) => {
     const offset = idx - active;
     const isActive = offset === 0;
     const abs = Math.abs(offset);
@@ -64,8 +76,9 @@ export default function CategoriesCards() {
     const rotY = isActive ? tilt.y : offset * 18;
     const rotX = isActive ? tilt.x : 0;
     const opacity = abs > 1 ? 0.35 : 1;
+
     return {
-      position: "absolute",
+      position: "absolute" as const,
       left: "50%",
       top: "50%",
       width: 380,
@@ -81,31 +94,50 @@ export default function CategoriesCards() {
 
   return (
     <section className="bg-[#0a0a0a] min-h-[600px] py-20 font-georgia select-none overflow-hidden">
-      <h2 className="sr-only">Explore content categories</h2>
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center">
-        <h2 className="text-gold text-4xl md:text-5xl font-bold mb-4 font-serif" style={{ fontFamily: "'Playfair Display', serif" }}>
+      {/* Header Section */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center" data-aos="fade-up">
+        <h2 
+          className="text-gold text-4xl md:text-5xl font-bold mb-4 font-serif"
+          style={{ fontFamily: "'Playfair Display', serif" }}
+          data-aos="fade-up"
+          data-aos-delay="100"
+        >
           What We Do
         </h2>
-        <h3 className="text-white text-2xl md:text-3xl font-semibold mb-6 font-serif" style={{ fontFamily: "'Playfair Display', serif" }}>
+        <h3 
+          className="text-white text-2xl md:text-3xl font-semibold mb-6 font-serif"
+          style={{ fontFamily: "'Playfair Display', serif" }}
+          data-aos="fade-up"
+          data-aos-delay="200"
+        >
           The Stories Brands Don't Tell
         </h3>
-        <p className="text-grey text-lg leading-relaxed max-w-3xl mx-auto" >
+        <p 
+          className="text-grey text-lg leading-relaxed max-w-3xl mx-auto"
+          data-aos="fade-up"
+          data-aos-delay="300"
+        >
           Every brand has a public story — the funding round, the viral moment, the perfect origin myth. Brand Untold goes deeper. We explore the decisions made under pressure, the pivots nobody announced, and the human psychology behind why certain brands connect and others don't.
         </p>
       </div>
 
-    
-
-      <div className="perspective-[1100px] perspective-center h-[450px] relative w-full max-w-[1400px] mx-auto">
+      {/* Carousel Container */}
+      <div 
+        className="perspective-[1100px] perspective-center h-[450px] relative w-full max-w-[1400px] mx-auto"
+        data-aos="fade-up"
+        data-aos-delay="400"
+      >
         {categories.map((cat, idx) => (
           <div
             key={cat.title}
-            ref={el => cardRefs.current[idx] = el}
+            ref={el => { cardRefs.current[idx] = el; }}
             style={getStyle(idx)}
             onClick={() => idx !== active && setActive(idx)}
-            onMouseMove={e => handleMouseMove(e, idx)}
+            onMouseMove={(e) => handleMouseMove(e, idx)}
             onMouseLeave={handleMouseLeave}
+            data-aos={idx === active ? "zoom-in" : "fade-up"}
+            data-aos-delay={idx * 150}
+            data-aos-duration="800"
           >
             <div className={`w-[400px] h-[420px] rounded-2xl overflow-hidden border-2 bg-[#111] transition-all duration-300 ${
               idx === active 
@@ -120,7 +152,7 @@ export default function CategoriesCards() {
                     idx === active ? 'brightness-[0.85]' : 'brightness-[0.5] grayscale-[0.4]'
                   }`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent 40% to-[#111]"/>
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-[#111]" />
                 <span className={`absolute top-3 right-3 text-[11px] font-bold tracking-widest uppercase px-2.5 py-1 rounded transition-all duration-300 ${
                   idx === active 
                     ? `bg-[${GOLD}] text-[#111]` 
@@ -160,7 +192,12 @@ export default function CategoriesCards() {
         ))}
       </div>
 
-      <div className="flex justify-center gap-2.5 mt-6">
+      {/* Navigation Dots */}
+      <div 
+        className="flex justify-center gap-2.5 mt-6"
+        data-aos="fade-up"
+        data-aos-delay="700"
+      >
         {categories.map((_, idx) => (
           <button
             key={idx}
@@ -175,7 +212,12 @@ export default function CategoriesCards() {
         ))}
       </div>
 
-      <div className="flex justify-center gap-4 mt-4">
+      {/* Navigation Arrows */}
+      <div 
+        className="flex justify-center gap-4 mt-4"
+        data-aos="fade-up"
+        data-aos-delay="800"
+      >
         <button
           onClick={() => setActive(a => Math.max(0, a - 1))}
           disabled={active === 0}
@@ -202,5 +244,5 @@ export default function CategoriesCards() {
         </button>
       </div>
     </section>
-  ); 
+  );
 }

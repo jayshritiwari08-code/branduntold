@@ -1,0 +1,107 @@
+{
+  "founder-stories": {
+    "title": "Founder Stories",
+    "description": "Real stories of founders and brands that built something meaningful through vision, persistence, and authentic storytelling.",
+    "tagline": "THE BUILDERS BEHIND THE BRANDS",
+    "articles": [
+      {
+        "title": "How Airbnb Used Storytelling to Build Trust",
+        "excerpt": "A deep dive into how Airbnb transformed from a struggling startup to a household name through the power of authentic storytelling.",
+        "date": "March 15, 2026",
+        "slug": "airbnb-storytelling-trust",
+        "image": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80"
+      },
+      {
+        "title": "The Origin Story of Patagonia",
+        "excerpt": "From a small climbing equipment company to a global brand built on environmental activism and authentic values.",
+        "date": "March 10, 2026",
+        "slug": "patagonia-origin-story",
+        "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80"
+      },
+      {
+        "title": "Sara Blakely's Journey with Spanx",
+        "excerpt": "How a frustrated salesperson built a billion-dollar shapewear empire with $5,000 and relentless determination.",
+        "date": "March 5, 2026",
+        "slug": "sara-blakely-spanx-journey",
+        "image": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80"
+      },
+      {
+        "title": "Warby Parker's Vision for Affordable Eyewear",
+        "excerpt": "The story of four friends who disrupted an industry by combining social good with smart business.",
+        "date": "February 28, 2026",
+        "slug": "warby-parker-affordable-eyewear",
+        "image": "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=800&q=80"
+      }
+    ]
+  },
+  "story-breakdowns": {
+    "title": "Story Breakdowns",
+    "description": "Analytical articles explaining why certain stories work and how to craft compelling narratives for your brand.",
+    "tagline": "THE ANATOMY OF GREAT STORIES",
+    "articles": [
+      {
+        "title": "The Hero's Journey in Modern Branding",
+        "excerpt": "Understanding how ancient narrative structures apply to contemporary brand storytelling strategies.",
+        "date": "March 12, 2026",
+        "slug": "heros-journey-modern-branding",
+        "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80"
+      },
+      {
+        "title": "Why Emotional Connection Beats Features",
+        "excerpt": "The psychology behind why customers buy based on feelings rather than logical product comparisons.",
+        "date": "March 8, 2026",
+        "slug": "emotional-connection-vs-features",
+        "image": "https://images.unsplash.com/photo-1512758017271-d7b84c2113f1?w=800&q=80"
+      },
+      {
+        "title": "The Art of the Brand Origin Story",
+        "excerpt": "How to craft an origin narrative that resonates with audiences and builds lasting brand loyalty.",
+        "date": "March 1, 2026",
+        "slug": "art-brand-origin-story",
+        "image": "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80"
+      },
+      {
+        "title": "Storytelling Frameworks That Actually Work",
+        "excerpt": "Practical frameworks and structures you can use to tell your brand story effectively.",
+        "date": "February 25, 2026",
+        "slug": "storytelling-frameworks-work",
+        "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+      }
+    ]
+  },
+  "writing-branding": {
+    "title": "Writing & Branding",
+    "description": "SEO articles with guides, tips, and frameworks for effective writing and brand building.",
+    "tagline": "CRAFT YOUR BRAND VOICE",
+    "articles": [
+      {
+        "title": "How to Find Your Brand's Unique Voice",
+        "excerpt": "A guide to discovering and articulating what makes your brand's communication distinctive.",
+        "date": "March 14, 2026",
+        "slug": "find-brand-unique-voice",
+        "image": "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80"
+      },
+      {
+        "title": "Writing for SEO Without Losing Your Soul",
+        "excerpt": "Balancing search engine optimization with authentic, engaging content that humans actually want to read.",
+        "date": "March 9, 2026",
+        "slug": "writing-seo-without-soul",
+        "image": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80"
+      },
+      {
+        "title": "The Complete Guide to Brand Messaging",
+        "excerpt": "Everything you need to know about crafting clear, consistent brand messaging across all channels.",
+        "date": "March 3, 2026",
+        "slug": "complete-guide-brand-messaging",
+        "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80"
+      },
+      {
+        "title": "Content Strategy for Founders",
+        "excerpt": "How busy founders can build an effective content strategy without it becoming a full-time job.",
+        "date": "February 27, 2026",
+        "slug": "content-strategy-founders",
+        "image": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80"
+      }
+    ]
+  }
+}

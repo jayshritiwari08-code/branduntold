@@ -1,12 +1,14 @@
 "use client";
+
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const articles = [
   {
     title: "How Airbnb Used Storytelling to Build Trust",
-    description:
-      "A deep dive into how Airbnb transformed from a struggling startup to a household name through the power of authentic storytelling.",
+    description: "A deep dive into how Airbnb transformed from a struggling startup to a household name through the power of authentic storytelling.",
     href: "#",
     tag: "Brand Strategy",
     image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80",
@@ -14,8 +16,7 @@ const articles = [
   },
   {
     title: "The Hero's Journey in Modern Branding",
-    description:
-      "Understanding how ancient narrative structures apply to contemporary brand storytelling strategies.",
+    description: "Understanding how ancient narrative structures apply to contemporary brand storytelling strategies.",
     href: "#",
     tag: "Narrative",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
@@ -23,8 +24,7 @@ const articles = [
   },
   {
     title: "Nike's Emotional Empire: Selling a Feeling",
-    description:
-      "How Nike stopped selling shoes and started selling identity — and why that shift changed advertising forever.",
+    description: "How Nike stopped selling shoes and started selling identity — and why that shift changed advertising forever.",
     href: "#",
     tag: "Case Study",
     image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80",
@@ -32,8 +32,7 @@ const articles = [
   },
   {
     title: "Patagonia: The Brand That Dares You Not to Buy",
-    description:
-      "Exploring how radical brand honesty built one of the most fiercely loyal communities in consumer culture.",
+    description: "Exploring how radical brand honesty built one of the most fiercely loyal communities in consumer culture.",
     href: "#",
     tag: "Values & Vision",
     image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
@@ -83,6 +82,9 @@ function Card3D({ article, index }) {
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      data-aos="fade-up"
+      data-aos-delay={index * 120}
+      data-aos-duration="800"
       style={{
         transition: "transform 0.12s ease-out",
         transformStyle: "preserve-3d",
@@ -90,7 +92,6 @@ function Card3D({ article, index }) {
         position: "relative",
         borderRadius: "4px",
         cursor: "pointer",
-        gridRow: isLarge ? "span 1" : "auto",
       }}
     >
       {/* Glow */}
@@ -138,7 +139,6 @@ function Card3D({ article, index }) {
               transition: "transform 0.15s ease-out",
             }}
           />
-          {/* Image overlay gradient */}
           <div
             style={{
               position: "absolute",
@@ -146,7 +146,6 @@ function Card3D({ article, index }) {
               background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.55) 100%)",
             }}
           />
-          {/* Tag over image */}
           <div style={{ position: "absolute", top: "14px", left: "14px", zIndex: 2 }}>
             <span
               style={{
@@ -164,7 +163,6 @@ function Card3D({ article, index }) {
               {article.tag}
             </span>
           </div>
-          {/* Read time */}
           <div style={{ position: "absolute", bottom: "14px", right: "14px", zIndex: 2 }}>
             <span
               style={{
@@ -217,7 +215,6 @@ function Card3D({ article, index }) {
             {article.description}
           </p>
 
-          {/* Footer */}
           <div
             style={{
               display: "flex",
@@ -254,7 +251,6 @@ function Card3D({ article, index }) {
             >
               Read More <span style={{ fontSize: "1rem" }}>→</span>
             </Link>
-            {/* Gold accent line */}
             <div
               style={{
                 height: "1px",
@@ -270,22 +266,29 @@ function Card3D({ article, index }) {
 }
 
 export default function FeaturedArticles() {
+  useEffect(() => {
+    AOS.init({
+      duration: 900,
+      easing: 'ease-out-cubic',
+      once: true,
+      offset: 80,
+    });
+  }, []);
+
   return (
     <section
-      className="py-20 "
+      className="py-20"
       style={{
         backgroundColor: '#111111',
         backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='152' height='152' viewBox='0 0 152 152'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='temple' fill='%23333333' fill-opacity='0.1'%3E%3Cpath d='M152 150v2H0v-2h28v-8H8v-20H0v-2h8V80h42v20h20v42H30v8h90v-8H80v-42h20V80h42v40h8V30h-8v40h-42V50H80V8h40V0h2v8h20v20h8V0h2v150zm-2 0v-28h-8v20h-20v8h28zM82 30v18h18V30H82zm20 18h20v20h18V30h-20V10H82v18h20v20zm0 2v18h18V50h-18zm20-22h18V10h-18v18zm-54 92v-18H50v18h18zm-20-18H28V82H10v38h20v20h38v-18H48v-20zm0-2V82H30v18h18zm-20 22H10v18h18v-18zm54 0v18h38v-20h20V82h-18v20h-20v20H82zm18-20H82v18h18v-18zm2-2h18V82h-18v18zm20 40v-18h18v18h-18zM30 0h-2v8H8v20H0v2h8v40h42V50h20V8H30V0zm20 48h18V30H50v18zm18-20H48v20H28v20H10V30h20V10h38v18zM30 50h18v18H30V50zm-2-40H10v18h18V10z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
       }}
     >
-      {/* Google Fonts */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap');
-      `}</style>
-
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+        <div 
+          style={{ textAlign: "center", marginBottom: "3.5rem" }}
+          data-aos="fade-up"
+        >
           <p
             style={{
               fontFamily: "'DM Sans', sans-serif",
@@ -295,6 +298,8 @@ export default function FeaturedArticles() {
               color: "#D4AF37",
               marginBottom: "0.75rem",
             }}
+            data-aos="fade-up"
+            data-aos-delay="100"
           >
             Latest Reads
           </p>
@@ -306,12 +311,14 @@ export default function FeaturedArticles() {
               color: "#ffffff",
               letterSpacing: "-0.02em",
             }}
+            data-aos="fade-up"
+            data-aos-delay="200"
           >
             Featured <span style={{ color: "#D4AF37" }}>Articles</span>
           </h2>
         </div>
 
-        {/* Grid: 2 cols */}
+        {/* Grid */}
         <div
           style={{
             display: "grid",

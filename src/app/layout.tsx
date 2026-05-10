@@ -19,6 +19,13 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "The Story Behind | Storytelling Platform",
   description: "A clean, minimal, content-focused platform for high-quality articles and stories about founders, brands, and storytelling.",
+  
+  // ✅ Recommended way - Use string path
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
