@@ -13,9 +13,9 @@ export default function Footer() {
               <Image
                 src="/logo.png"
                 alt="BRAND UNTOLD"
-                width={50}
-                height={50}
-                className="h-24 w-auto"
+                width={96}
+                height={96}
+                style={{ height: 'auto', width: 'auto' }}
               />
             
             </div>

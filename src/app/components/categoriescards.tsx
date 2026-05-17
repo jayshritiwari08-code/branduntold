@@ -1,7 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import AOS from 'aos';
-import 'aos/dist/aos.css';
 
 const categories = [
   {
@@ -11,7 +9,6 @@ const categories = [
     img: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80",
     tag: "Stories",
     icon: "ti-user-circle",
-    accent: "#B8960C",
   },
   {
     href: "/categories/story-breakdowns",
@@ -20,7 +17,6 @@ const categories = [
     img: "https://images.unsplash.com/photo-1512758017271-d7b84c2113f1?w=600&q=80",
     tag: "Analysis",
     icon: "ti-chart-dots",
-    accent: "#B8960C",
   },
   {
     href: "/categories/writing-branding",
@@ -29,27 +25,42 @@ const categories = [
     img: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80",
     tag: "Guides",
     icon: "ti-pencil",
-    accent: "#B8960C",
   },
 ];
 
+const N = categories.length;
 const GOLD = "#C9A84C";
-const GOLD_DIM = "#8B6914";
+
+function mod(n: number, m: number) {
+  return ((n % m) + m) % m;
+}
 
 export default function CategoriesCards() {
   const [active, setActive] = useState(1);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const autoTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Initialize AOS
-  useEffect(() => {
-    AOS.init({
-      duration: 900,
-      easing: 'ease-out-cubic',
-      once: true,
-      offset: 100,
-    });
+  const goTo = useCallback((idx: number) => {
+    setActive(mod(idx, N));
+    setTilt({ x: 0, y: 0 });
   }, []);
+
+  const startAuto = useCallback(() => {
+    if (autoTimer.current) clearInterval(autoTimer.current);
+    autoTimer.current = setInterval(() => {
+      setActive((prev) => mod(prev + 1, N));
+    }, 2200);
+  }, []);
+
+  const stopAuto = useCallback(() => {
+    if (autoTimer.current) clearInterval(autoTimer.current);
+  }, []);
+
+  useEffect(() => {
+    startAuto();
+    return () => stopAuto();
+  }, [startAuto, stopAuto]);
 
   const handleMouseMove = (e: React.MouseEvent, idx: number) => {
     if (idx !== active) return;
@@ -60,187 +71,219 @@ export default function CategoriesCards() {
     const cy = rect.top + rect.height / 2;
     const dx = (e.clientX - cx) / (rect.width / 2);
     const dy = (e.clientY - cy) / (rect.height / 2);
-    setTilt({ x: dy * -10, y: dx * 10 });
+    setTilt({ x: dy * -8, y: dx * 8 });
   };
 
   const handleMouseLeave = () => setTilt({ x: 0, y: 0 });
 
-  const getStyle = (idx: number) => {
-    const offset = idx - active;
+  const getStyle = (idx: number): React.CSSProperties => {
+    const offset = mod(idx - active + Math.floor(N / 2), N) - Math.floor(N / 2);
     const isActive = offset === 0;
     const abs = Math.abs(offset);
-    const zIndex = 10 - abs;
-    const scale = isActive ? 1 : 0.88 - abs * 0.04;
-    const tx = offset * 340;
-    const tz = isActive ? 40 : -60 - abs * 30;
-    const rotY = isActive ? tilt.y : offset * 18;
+    const scale = isActive ? 1 : 0.86 - abs * 0.04;
+    const tx = offset * 310;
+    const tz = isActive ? 40 : -70 - abs * 30;
+    const rotY = isActive ? tilt.y : offset * 20;
     const rotX = isActive ? tilt.x : 0;
-    const opacity = abs > 1 ? 0.35 : 1;
+    const opacity = abs > 1 ? 0.25 : 1;
 
     return {
-      position: "absolute" as const,
+      position: "absolute",
       left: "50%",
       top: "50%",
-      width: 380,
+      width: 340,
       transform: `translate(-50%, -50%) translateX(${tx}px) translateZ(${tz}px) scale(${scale}) rotateY(${rotY}deg) rotateX(${rotX}deg)`,
-      zIndex,
+      zIndex: 10 - abs,
       opacity,
-      transition: isActive
-        ? "transform 0.08s ease-out, opacity 0.3s"
-        : "transform 0.4s cubic-bezier(.22,.68,0,.99), opacity 0.3s",
+      transition: "transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s",
       cursor: isActive ? "default" : "pointer",
     };
   };
 
+  const prevIdx = mod(active - 1, N);
+  const nextIdx = mod(active + 1, N);
+
   return (
-    <section className="bg-[#0a0a0a] min-h-[600px] py-20 font-georgia select-none overflow-hidden">
-      {/* Header Section */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center" data-aos="fade-up">
-        <h2 
-          className="text-gold text-4xl md:text-5xl font-bold mb-4 font-serif"
-          style={{ fontFamily: "'Playfair Display', serif" }}
-          data-aos="fade-up"
-          data-aos-delay="100"
+    <section
+      className="bg-[#0a0a0a] min-h-[600px] py-16 select-none overflow-hidden"
+     
+      style={{ fontFamily: "var(--font-playfair)" }}
+      onMouseEnter={stopAuto}
+      onMouseLeave={startAuto}
+    >
+      {/* Header */}
+      <div className="max-w-2xl mx-auto px-4 mb-12 text-center">
+        <h2
+          className="text-4xl md:text-5xl font-bold mb-3"
+          style={{ color: GOLD, fontFamily: "var(--font-playfair)" }}
         >
           What We Do
         </h2>
-        <h3 
-          className="text-white text-2xl md:text-3xl font-semibold mb-6 font-serif"
-          style={{ fontFamily: "'Playfair Display', serif" }}
-          data-aos="fade-up"
-          data-aos-delay="200"
+        <h3
+          className="text-white text-2xl md:text-3xl font-semibold mb-5"
+          style={{ fontFamily: "var(--font-playfair)" }}
         >
           The Stories Brands Don't Tell
         </h3>
-        <p 
-          className="text-grey text-lg leading-relaxed max-w-3xl mx-auto"
-          data-aos="fade-up"
-          data-aos-delay="300"
-        >
-          Every brand has a public story — the funding round, the viral moment, the perfect origin myth. Brand Untold goes deeper. We explore the decisions made under pressure, the pivots nobody announced, and the human psychology behind why certain brands connect and others don't.
+        <p className="text-[#888] text-base leading-relaxed font-sans">
+          Every brand has a public story — the funding round, the viral moment, the perfect origin
+          myth. Brand Untold goes deeper. We explore the decisions made under pressure, the pivots
+          nobody announced, and the human psychology behind why certain brands connect and others
+          don't.
         </p>
       </div>
 
-      {/* Carousel Container */}
-      <div 
-        className="perspective-[1100px] perspective-center h-[450px] relative w-full max-w-[1400px] mx-auto"
-        data-aos="fade-up"
-        data-aos-delay="400"
+      {/* Carousel Stage */}
+      <div
+        className="relative h-[420px] w-full max-w-[1400px] mx-auto"
+        style={{ perspective: "1100px", perspectiveOrigin: "center" }}
       >
-        {categories.map((cat, idx) => (
-          <div
-            key={cat.title}
-            ref={el => { cardRefs.current[idx] = el; }}
-            style={getStyle(idx)}
-            onClick={() => idx !== active && setActive(idx)}
-            onMouseMove={(e) => handleMouseMove(e, idx)}
-            onMouseLeave={handleMouseLeave}
-            data-aos={idx === active ? "zoom-in" : "fade-up"}
-            data-aos-delay={idx * 150}
-            data-aos-duration="800"
-          >
-            <div className={`w-[400px] h-[420px] rounded-2xl overflow-hidden border-2 bg-[#111] transition-all duration-300 ${
-              idx === active 
-                ? `border-[#C9A84C] shadow-[0_0_0_1px_#C9A84C_44,0_32px_64px_#00000099]` 
-                : 'border-[#2a2a2a] shadow-[0_8px_32px_#00000066]'
-            }`}>
-              <div className="relative h-[220px] overflow-hidden">
-                <img
-                  src={cat.img}
-                  alt={cat.title}
-                  className={`w-full h-full object-cover block transition-all duration-400 ${
-                    idx === active ? 'brightness-[0.85]' : 'brightness-[0.5] grayscale-[0.4]'
-                  }`}
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-[#111]" />
-                <span className={`absolute top-3 right-3 text-[11px] font-bold tracking-widest uppercase px-2.5 py-1 rounded transition-all duration-300 ${
-                  idx === active 
-                    ? `bg-[${GOLD}] text-[#111]` 
-                    : 'bg-[#222] text-[#888]'
-                }`}>
-                  {cat.tag}
-                </span>
-              </div>
+       
 
-              <div className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <i className={`ti ${cat.icon} text-lg transition-colors duration-300 ${
-                    idx === active ? `text-[${GOLD}]` : 'text-[#555]'
-                  }`} aria-hidden="true"/>
-                  <h3 className={`m-0 text-lg font-bold font-serif transition-colors duration-300 ${
-                    idx === active ? `text-[${GOLD}]` : 'text-[#666]'
-                  }`}>
-                    {cat.title}
-                  </h3>
-                </div>
-                <p className={`m-0 text-sm leading-relaxed font-sans transition-colors duration-300 ${
-                  idx === active ? 'text-[#bbb]' : 'text-[#444]'
-                }`}>
-                  {cat.desc}
-                </p>
-                {idx === active && (
-                  <a
-                    href={cat.href}
-                    className="inline-flex items-center gap-1.5 mt-4 text-gold text-sm font-semibold tracking-wide no-underline hover:text-white transition-colors"
+        {/* Cards */}
+        {categories.map((cat, idx) => {
+          const isActive = idx === active;
+          return (
+            <div
+              key={cat.title}
+              ref={(el) => { cardRefs.current[idx] = el; }}
+              style={getStyle(idx)}
+              onClick={() => idx !== active && goTo(idx)}
+              onMouseMove={(e) => handleMouseMove(e, idx)}
+              onMouseLeave={handleMouseLeave}
+            >
+              <div
+                className="rounded-2xl overflow-hidden transition-all duration-700 ease-out"
+                style={{
+                  width: 340,
+                  height: 400,
+                  background: "#111",
+                  border: `2px solid ${isActive ? GOLD : "#2a2a2a"}`,
+                  boxShadow: isActive
+                    ? `0 0 0 1px rgba(201,168,76,0.2), 0 28px 56px rgba(0,0,0,0.6)`
+                    : "0 8px 32px rgba(0,0,0,0.4)",
+                }}
+              >
+                {/* Image */}
+                <div className="relative h-[190px] overflow-hidden">
+                  <img
+                    src={cat.img}
+                    alt={cat.title}
+                    className="w-full h-full object-cover block transition-all duration-700 ease-in-out"
+                    style={{
+                      filter: isActive
+                        ? "brightness(0.85)"
+                        : "brightness(0.45) grayscale(0.4)",
+                    }}
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: "linear-gradient(to bottom, transparent 50%, #111 100%)",
+                    }}
+                  />
+                  <span
+                    className="absolute top-2.5 right-2.5 text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded transition-all duration-300"
+                    style={
+                      isActive
+                        ? { background: GOLD, color: "#111" }
+                        : { background: "#222", color: "#555" }
+                    }
                   >
-                    Explore <i className="ti ti-arrow-right text-base" aria-hidden="true"/>
-                  </a>
-                )}
+                    {cat.tag}
+                  </span>
+                </div>
+
+                {/* Body */}
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <i
+                      className={`ti ${cat.icon} text-lg transition-colors duration-300`}
+                      style={{ color: isActive ? GOLD : "#444" }}
+                      aria-hidden="true"
+                    />
+                    <h3
+                      className="m-0 text-[17px] font-bold transition-colors duration-300"
+                      style={{
+                        fontFamily: "var(--font-playfair)",
+                        color: isActive ? GOLD : "#555",
+                      }}
+                    >
+                      {cat.title}
+                    </h3>
+                  </div>
+                  <p
+                    className="m-0 text-sm leading-relaxed font-sans transition-colors duration-300"
+                    style={{ color: isActive ? "#bbb" : "#3a3a3a" }}
+                  >
+                    {cat.desc}
+                  </p>
+                  {isActive && (
+                    <a
+                      href={cat.href}
+                      className="inline-flex items-center gap-1.5 mt-3 text-sm font-semibold tracking-wide no-underline transition-colors hover:text-white"
+                      style={{ color: GOLD, fontFamily: "sans-serif" }}
+                    >
+                      Explore{" "}
+                      <i className="ti ti-arrow-right text-base" aria-hidden="true" />
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Navigation Dots */}
-      <div 
-        className="flex justify-center gap-2.5 mt-6"
-        data-aos="fade-up"
-        data-aos-delay="700"
-      >
+      {/* Dots */}
+      <div className="flex justify-center gap-2 mt-5">
         {categories.map((_, idx) => (
           <button
             key={idx}
-            onClick={() => setActive(idx)}
+            onClick={() => goTo(idx)}
             aria-label={`Go to ${categories[idx].title}`}
-            className={`h-2 rounded-none border-none p-0 cursor-pointer transition-all duration-300 ${
-              idx === active 
-                ? `w-7 bg-[#C9A84C]` 
-                : 'w-2 bg-[#333]'
-            }`}
+            className="h-[7px] border-none p-0 rounded cursor-pointer transition-all duration-300"
+            style={{
+              width: idx === active ? 28 : 7,
+              background: idx === active ? GOLD : "#333",
+            }}
           />
         ))}
       </div>
 
-      {/* Navigation Arrows */}
-      <div 
-        className="flex justify-center gap-4 mt-4"
-        data-aos="fade-up"
-        data-aos-delay="800"
-      >
+      {/* Arrows — always enabled, wrap around */}
+      <div className="flex justify-center gap-3 mt-3">
         <button
-          onClick={() => setActive(a => Math.max(0, a - 1))}
-          disabled={active === 0}
-          className={`bg-transparent border rounded-md px-3.5 py-1.5 text-lg transition-all duration-200 ${
-            active === 0 
-              ? 'border-[#2a2a2a] text-[#333] cursor-default' 
-              : `border-[${GOLD_DIM}] text-[${GOLD}] cursor-pointer hover:bg-[${GOLD}] hover:text-[#111]`
-          }`}
+          onClick={() => { goTo(active - 1); startAuto(); }}
           aria-label="Previous"
+          className="flex items-center bg-transparent rounded-lg px-3 py-1.5 transition-all duration-200"
+          style={{ border: `1px solid #554010`, color: GOLD }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background = GOLD;
+            (e.currentTarget as HTMLButtonElement).style.color = "#111";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+            (e.currentTarget as HTMLButtonElement).style.color = GOLD;
+          }}
         >
-          <ChevronLeft />
+          <ChevronLeft size={20} />
         </button>
         <button
-          onClick={() => setActive(a => Math.min(categories.length - 1, a + 1))}
-          disabled={active === categories.length - 1}
-          className={`bg-transparent border rounded-md px-3.5 py-1.5 text-lg transition-all duration-200 ${
-            active === categories.length - 1 
-              ? 'border-[#2a2a2a] text-[#333] cursor-default' 
-              : `border-[${GOLD_DIM}] text-[${GOLD}] cursor-pointer hover:bg-[${GOLD}] hover:text-[#111]`
-          }`}
+          onClick={() => { goTo(active + 1); startAuto(); }}
           aria-label="Next"
+          className="flex items-center bg-transparent rounded-lg px-3 py-1.5 transition-all duration-200"
+          style={{ border: `1px solid #554010`, color: GOLD }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background = GOLD;
+            (e.currentTarget as HTMLButtonElement).style.color = "#111";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+            (e.currentTarget as HTMLButtonElement).style.color = GOLD;
+          }}
         >
-          <ChevronRight />
+          <ChevronRight size={20} />
         </button>
       </div>
     </section>

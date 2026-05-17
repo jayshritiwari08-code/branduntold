@@ -18,7 +18,9 @@ export default function Header() {
               alt="BRAND UNTOLD"
               height={80}
               width={80}
-              className="h-20 w-auto"
+              loading="eager"
+              priority
+              style={{ height: 'auto', width: 'auto' }}
             />
           
           </Link>

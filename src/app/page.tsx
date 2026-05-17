@@ -42,33 +42,34 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   href="/founder-stories"
-                  className="px-8 py-3 bg-gold text-black font-medium hover:bg-white transition-all duration-300 text-center group relative overflow-hidden"
+                  className="px-8 py-3 bg-gradient-to-r from-gold via-yellow-200 to-[#8f6d1d] text-black font-bold hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 text-center rounded-lg group relative overflow-hidden"
                   data-aos="fade-up"
                   data-aos-delay="300"
                 >
                   <span className="relative z-10">Read The Stories →</span>
+                  <div className="absolute inset-0 w-1/2 h-full bg-white/40 skew-x-[-25deg] -translate-x-[150%] group-hover:translate-x-[250%] transition-transform duration-1000 ease-in-out pointer-events-none"></div>
                 </Link>
                 <Link
                   href="/work-with-me"
-                  className="px-8 py-3 bg-gold text-black font-medium hover:bg-white transition-all duration-300 text-center"
+                  className="px-8 py-3 bg-gradient-to-r from-gold via-yellow-200 to-[#8f6d1d] text-black rounded-lg font-bold hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 text-center group relative overflow-hidden"
                   data-aos="fade-up"
                   data-aos-delay="500"
                 >
-                  Work With Me
+                  <span className="relative z-10">Work With Me</span>
+                  <div className="absolute inset-0 w-1/2 h-full bg-white/40 skew-x-[-25deg] -translate-x-[150%] group-hover:translate-x-[250%] transition-transform duration-1000 ease-in-out pointer-events-none"></div>
                 </Link>
               </div>
             </div>
 
             <div className="relative hidden md:block flex justify-center" data-aos="fade-left" data-aos-duration="1100">
               <div className="relative">
-                <div className="absolute inset-0 border border-gold/30 rounded-[50%] animate-spin-slow"
-                  style={{ width: '520px', height: '590px', margin: '-15px' }}></div>
+              
 
-                <div className="relative bg-gray-900 border border-gray-800 overflow-hidden mx-auto"
+                <div className="relative bg-gray-900  overflow-hidden mx-auto"
                   style={{ width: '520px', height: '590px', borderRadius: '50%' }}>
                   <Image
                     src={heroImage}
-                    alt="Hero Image"
+                    alt="Hero Image"  
                     width={520}
                     height={590}
                     className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
@@ -163,11 +164,12 @@ export default function Home() {
 
                   <a
                     href="/work-with-me"
-                    className="inline-flex items-center px-8 py-4 bg-gold text-black font-semibold hover:bg-white transition-all duration-300 rounded-2xl text-lg"
+                    className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-gold via-yellow-200 to-gold text-black font-bold hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 rounded-2xl text-lg group relative overflow-hidden"
                     data-aos="fade-up"
                     data-aos-delay="800"
                   >
-                    Let’s Tell Yours
+                    <span className="relative z-10">Let’s Tell Yours</span>
+                    <div className="absolute inset-0 w-1/2 h-full bg-white/40 skew-x-[-25deg] -translate-x-[150%] group-hover:translate-x-[250%] transition-transform duration-1000 ease-in-out pointer-events-none"></div>
                   </a>
                 </div>
               </div>
