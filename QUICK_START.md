@@ -1,14 +1,8 @@
-# 🚀 Quick Start Checklist
+# 🚀 Quick Start
 
-Follow these steps to get your admin panel running:
+Follow these steps to get your blog running:
 
-## ✅ Step 1: Setup Environment
-- [ ] Copy `.env.local.example` to `.env.local`
-- [ ] Generate NEXTAUTH_SECRET: `openssl rand -base64 32`
-- [ ] Update `.env.local` with your values
-- [ ] MongoDB URL is already set: `mongodb+srv://harshit:Harshit%40123@userinfo.lmbsytd.mongodb.net/jayshree_blogs`
-
-## ✅ Step 2: Install Dependencies
+## ✅ Step 1: Install Dependencies
 ```bash
 npm install
 ```
