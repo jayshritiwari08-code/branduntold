@@ -35,15 +35,15 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div data-aos="fade-right" data-aos-duration="1000">
               <p className="font-sans text-gold text-lg mb-4 tracking-wide">
-                {heroLoading ? 'Loading...' : heroData?.tagline || 'Beyond12 the Brand'}
+                {heroLoading ? 'Loading...' : heroData?.tagline || 'Beyond the Brand'}
               </p>
               <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                 {heroLoading ? 'Loading...' : heroData?.heading || 'The Story Behind Every Brand'}
               </h1>
-              <div className="font-sans text-lg text-grey max-w-xl mb-8 leading-relaxed prose prose-lg prose-invert">
+              <div className="font-sans text-lg text-grey max-w-xl mb-8 leading-relaxed">
                 {heroLoading ? 'Loading content...' : heroData?.description ? (
-                  <div dangerouslySetInnerHTML={{ __html: heroData.description }} className="[&>p]:mb-4 last:[&>p]:mb-0" />
-                ) : 'Exploring the narratives that shape brands, founders, and the art of storytelling itself.'}
+                  <div dangerouslySetInnerHTML={{ __html: heroData.description }} />
+                ) : 'Exploring the narratives that shape brands, founders, and the art of storytelling itself. Discover authentic stories that connect and inspire.'}
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
@@ -69,17 +69,20 @@ export default function Home() {
 
             <div className="relative hidden md:block flex justify-center" data-aos="fade-left" data-aos-duration="1100">
               <div className="relative">
-                <div className="relative bg-gray-900 overflow-hidden mx-auto"
+              
+
+                <div className="relative bg-gray-900  overflow-hidden mx-auto"
                   style={{ width: '520px', height: '590px', borderRadius: '50%' }}>
                   <Image
                     src={heroData?.image || heroImage}
-                    alt={heroData?.heading || 'Hero Image'}
+                    alt={heroData?.heading || 'Hero Image'}  
                     width={520}
                     height={590}
                     className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
                     priority
                   />
                 </div>
+
                 <div className="absolute inset-0 rounded-[50%] border border-gold/20 animate-pulse-slow pointer-events-none"
                   style={{ width: '520px', height: '590px' }}></div>
               </div>
@@ -93,7 +96,7 @@ export default function Home() {
         <CategoriesCards />
       </div>
 
-      {/* Featured Articles */}
+      {/* Featured Articles - Cards appear one by one left to right */}
       <div data-aos="fade-up">
         <FeaturedArticles />
       </div>
@@ -104,71 +107,63 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
-            {/* Image */}
+            
             <div className="relative group" data-aos="fade-right">
               <div className="aspect-[3.5/4] rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative">
-                {aboutLoading ? (
-                  <div className="w-full h-full bg-gray-800 animate-pulse" />
-                ) : (
-                  <Image
-                    src={aboutData?.image || '/about1.jpg'}
-                    alt={aboutData?.heading || 'Brand Untold - Storytelling'}
-                    width={800}
-                    height={900}
-                    className="w-full h-full object-fill transition-transform duration-700 group-hover:scale-105"
-                  />
-                )}
+                <Image
+                  src={aboutData?.image || '/about1.jpg'}
+                  alt={aboutData?.heading || 'Brand Untold - Storytelling'}
+                  width={800}
+                  height={900}
+                  className="w-full h-full object-fill transition-transform duration-700 group-hover:scale-105"
+                />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer"></div>
               </div>
-
-              <div className="absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow"
-                data-aos="zoom-in" data-aos-delay="400"></div>
+              
+              <div className="absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow" 
+                   data-aos="zoom-in" data-aos-delay="400"></div>
               <div className="absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float"
-                data-aos="zoom-in" data-aos-delay="600"></div>
+                   data-aos="zoom-in" data-aos-delay="600"></div>
             </div>
 
-            {/* Text Content */}
             <div className="space-y-10" data-aos="fade-left">
-
-              {/* short_description — heading + intro paragraphs */}
               <div data-aos="fade-up" data-aos-delay="200">
-                {aboutLoading ? (
-                  <div className="space-y-3">
-                    <div className="h-8 bg-gray-800 rounded animate-pulse w-3/4" />
-                    <div className="h-4 bg-gray-800 rounded animate-pulse" />
-                    <div className="h-4 bg-gray-800 rounded animate-pulse w-5/6" />
-                  </div>
-                ) : (
-                  aboutData?.short_description ? (
-                    <div
-                      className="prose prose-lg prose-invert prose-headings:font-serif prose-headings:text-gold prose-p:text-gray-300 prose-p:leading-relaxed prose-h2:text-4xl prose-h3:text-3xl"
-                      dangerouslySetInnerHTML={{ __html: aboutData.short_description }}
-                    />
+                <h2 className="font-serif text-4xl md:text-5xl font-bold text-gold mb-6 leading-tight">
+                  About Brand Untold
+                </h2>
+                <div className="font-sans text-lg md:text-xl text-gray-300 leading-relaxed">
+                  {aboutLoading ? (
+                    <p>Loading content...</p>
+                  ) : aboutData?.short_description ? (
+                    <div dangerouslySetInnerHTML={{ __html: aboutData.short_description }} />
                   ) : (
-                    <div className="prose prose-lg prose-invert prose-headings:font-serif prose-headings:text-gold prose-p:text-gray-300 prose-p:leading-relaxed prose-h2:text-4xl prose-h3:text-3xl">
-                      {/* <h2>About Brand Untold</h2> */}
-                      <p>Brand Untold is a one-person editorial platform built on a simple belief that the most useful business stories aren't about outcomes, they're about thinking. Exploring the narratives that shape brands, founders, and the art of storytelling itself.</p>
-                    </div>
-                  )
-                )}
+                    <p>Brand Untold is a one-person editorial platform built on a simple belief that the most useful business stories aren't about outcomes, they're about thinking...</p>
+                  )}
+                </div>
               </div>
 
-              <div className="w-20 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent"
-                data-aos="fade-up" data-aos-delay="400"></div>
+              <div className="w-20 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent" 
+                   data-aos="fade-up" data-aos-delay="400"></div>
 
-         
+              <div data-aos="fade-up" data-aos-delay="500">
+                <h3 className="font-serif text-3xl font-semibold text-white mb-4">
+                  Ready to tell the Story that Matters?
+                </h3>
+                <p className="font-sans text-lg text-gray-400 mb-8">
+                  Not just what worked but what it took...
+                </p>
+              </div>
 
-              {/* CTA Buttons */}
               <div className="pt-6 border-t border-gold/20" data-aos="fade-up" data-aos-delay="600">
-                <h4 className="font-serif text-2xl text-gold mb-3 mt-4">
+                <h4 className="font-serif text-2xl text-gold mb-3">
                   Is There a Story Only You Can Tell?
                 </h4>
                 <p className="text-gray-300 mb-8">
                   If you're building something real...
                 </p>
-                <div className="flex flex-wrap gap-4 mt-6">
-                  <Link
+
+                <div className="flex flex-wrap gap-4">
+                  <a
                     href="/about"
                     className="inline-flex items-center px-8 py-4 border-2 border-gold text-gold hover:bg-gold hover:text-black font-medium transition-all duration-300 rounded-2xl group text-lg"
                     data-aos="fade-up"
@@ -176,9 +171,9 @@ export default function Home() {
                   >
                     Read My Story
                     <span className="ml-3 group-hover:translate-x-1 transition-transform">→</span>
-                  </Link>
+                  </a>
 
-                  <Link
+                  <a
                     href="/work-with-me"
                     className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-gold via-yellow-200 to-gold text-black font-bold hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 rounded-2xl text-lg group relative overflow-hidden"
                     data-aos="fade-up"
@@ -186,10 +181,9 @@ export default function Home() {
                   >
                     <span className="relative z-10">Let's Tell Yours</span>
                     <div className="absolute inset-0 w-1/2 h-full bg-white/40 skew-x-[-25deg] -translate-x-[150%] group-hover:translate-x-[250%] transition-transform duration-1000 ease-in-out pointer-events-none"></div>
-                  </Link>
+                  </a>
                 </div>
               </div>
-
             </div>
           </div>
         </div>

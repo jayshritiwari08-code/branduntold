@@ -4,8 +4,13 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { useHeadingBySection, useServicesData } from '../hooks';
 
 export default function WorkWithMe() {
+  const { data: contactUsHeading, loading: contactUsHeadingLoading } = useHeadingBySection('Contact Us');
+  const { data: contactFormHeading, loading: contactFormHeadingLoading } = useHeadingBySection('contact form');
+  const { data: servicesData, loading: servicesDataLoading } = useServicesData();
+
   useEffect(() => {
     AOS.init({
       duration: 800,
@@ -54,12 +59,12 @@ export default function WorkWithMe() {
 
             {/* Banner Content */}
             <div className="text-center" data-aos="fade-up">
-              <p className="font-sans tracking-[3px] text-gold text-sm mb-4">LET'S CREATE SOMETHING MEANINGFUL</p>
+              <p className="font-sans tracking-[3px] text-gold text-sm mb-4">{contactUsHeadingLoading ? 'Loading...' : contactUsHeading?.tagline || 'LET\'S CREATE SOMETHING MEANINGFUL'}</p>
               <h1 className="font-serif text-5xl md:text-7xl font-bold text-white leading-tight mb-6">
                 Work With <span className="text-gold">Me</span>
               </h1>
               <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
-                Let's craft your brand's story together and connect with your audience on a human level.
+                {contactUsHeadingLoading ? 'Loading...' : contactUsHeading?.subheading || 'Let\'s craft your brand\'s story together and connect with your audience on a human level.'}
               </p>
               <div className="w-32 h-px bg-gold mx-auto mt-8" />
             </div>
@@ -68,53 +73,69 @@ export default function WorkWithMe() {
 
         {/* Main Content */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-          <section className="mb-20" data-aos="fade-up" data-aos-delay="100">
-            <p className="font-sans text-lg text-gray-300 leading-relaxed text-center">
-              I help founders and visionary brands tell stories that matter.
-              Through deep narrative work, authentic content, and strategic storytelling,
-              I help you connect with your audience on a human level.
-            </p>
+          <section className="mb-20 prose prose-lg prose-invert text-center max-w-none" data-aos="fade-up" data-aos-delay="100">
+            <div className="font-sans text-lg text-gray-300 leading-relaxed">
+              {servicesDataLoading ? 'Loading...' : servicesData?.description ? (
+                <div dangerouslySetInnerHTML={{ __html: servicesData.description }} className="[&>p]:mb-4 last:[&>p]:mb-0" />
+              ) : 'I help founders and visionary brands tell stories that matter. Through deep narrative work, authentic content, and strategic storytelling, I help you connect with your audience on a human level.'}
+            </div>
           </section>
 
           {/* Services Section */}
           <section className="mb-20" data-aos="fade-up" data-aos-delay="200">
-            <h2 className="font-serif text-3xl text-gold mb-10 text-center">Services</h2>
+            <h2 className="font-serif text-3xl text-gold mb-10 text-center">{servicesDataLoading ? 'Loading...' : servicesData?.heading || 'Services'}</h2>
 
             <div className="grid md:grid-cols-3 gap-6">
               {/* Service Cards */}
-              {[
-                {
-                  title: "Brand Story Writing",
-                  desc: "Uncover and craft your brand's authentic narrative — from origin story to vision, values, and emotional core."
-                },
-                {
-                  title: "Website Content",
-                  desc: "High-converting, story-driven website copy that feels human and performs. SEO-friendly yet deeply authentic."
-                },
-                {
-                  title: "Founder Narratives",
-                  desc: "Transform your personal journey into a compelling story that builds trust, authority, and emotional connection."
-                }
-              ].map((service, index) => (
-                <div
-                  key={index}
-                  className="group p-8 rounded-3xl transition-all duration-500 hover:-translate-y-1"
-                  data-aos="fade-up"
-                  data-aos-delay={300 + index * 100}
-                  style={{
-                    background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)",
-                    border: "1px solid rgba(212,175,55,0.12)",
-                    boxShadow: "0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)"
-                  }}
-                >
-                  <h3 className="font-serif text-2xl text-white mb-4 group-hover:text-gold transition-colors">
-                    {service.title}
-                  </h3>
-                  <p className="text-grey leading-relaxed">
-                    {service.desc}
-                  </p>
-                </div>
-              ))}
+              {servicesDataLoading ? (
+                <div className="col-span-3 text-center text-gray-400">Loading services...</div>
+              ) : servicesData && servicesData.card_heading && servicesData.card_heading.length > 0 ? (
+                servicesData.card_heading.map((title, index) => (
+                  <div
+                    key={index}
+                    className="group p-8 rounded-3xl transition-all duration-500 hover:-translate-y-1"
+                    data-aos="fade-up"
+                    data-aos-delay={300 + index * 100}
+                    style={{
+                      background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)",
+                      border: "1px solid rgba(212,175,55,0.12)",
+                      boxShadow: "0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)"
+                    }}
+                  >
+                    <h3 className="font-serif text-2xl text-white mb-4 group-hover:text-gold transition-colors">
+                      {title}
+                    </h3>
+                    <p className="text-grey leading-relaxed">
+                      {servicesData.cards_description && servicesData.cards_description[index] ? servicesData.cards_description[index] : 'Service description'}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                [
+                  { title: "Brand Story Writing", desc: "Uncover and craft your brand's authentic narrative" },
+                  { title: "Website Content", desc: "High-converting, story-driven website copy" },
+                  { title: "Founder Narratives", desc: "Transform your personal journey into a compelling story" }
+                ].map((service, index) => (
+                  <div
+                    key={index}
+                    className="group p-8 rounded-3xl transition-all duration-500 hover:-translate-y-1"
+                    data-aos="fade-up"
+                    data-aos-delay={300 + index * 100}
+                    style={{
+                      background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)",
+                      border: "1px solid rgba(212,175,55,0.12)",
+                      boxShadow: "0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)"
+                    }}
+                  >
+                    <h3 className="font-serif text-2xl text-white mb-4 group-hover:text-gold transition-colors">
+                      {service.title}
+                    </h3>
+                    <p className="text-grey leading-relaxed">
+                      {service.desc}
+                    </p>
+                  </div>
+                ))
+              )}
             </div>
           </section>
 

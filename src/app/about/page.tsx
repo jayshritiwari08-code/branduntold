@@ -5,8 +5,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { useAboutUsData, useHeadingBySection } from '../hooks';
 
 export default function About() {
+  const { data: aboutData, loading: aboutLoading } = useAboutUsData();
+  const { data: aboutUsHeading, loading: aboutUsHeadingLoading } = useHeadingBySection('About Us');
+  const { data: philosophyHeading, loading: philosophyHeadingLoading } = useHeadingBySection('About Cards');
+  const { data: ctaHeading, loading: ctaHeadingLoading } = useHeadingBySection('CTA');
+
   useEffect(() => {
     AOS.init({
       duration: 900,
@@ -47,12 +53,12 @@ export default function About() {
             </nav>
 
             <div className="text-center" data-aos="fade-up">
-              <p className="font-sans tracking-[3px] text-gold text-sm mb-4">THE STORY BEHIND THE WORDS</p>
+              <p className="font-sans tracking-[3px] text-gold text-sm mb-4">{aboutUsHeadingLoading ? 'Loading...' : aboutUsHeading?.tagline || 'THE STORY BEHIND THE WORDS'}</p>
               <h1 className="font-serif text-5xl md:text-7xl font-bold text-white leading-tight mb-6">
                 About <span className="text-gold">Brand Untold</span>
               </h1>
               <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
-                Uncovering the real stories behind brands and the craft of authentic storytelling
+                {aboutUsHeadingLoading ? 'Loading...' : aboutUsHeading?.subheading || 'Uncovering the real stories behind brands and the craft of authentic storytelling'}
               </p>
               <div className="w-32 h-px bg-gold mx-auto mt-8" data-aos="fade-up" data-aos-delay="400" />
             </div>
@@ -67,8 +73,8 @@ export default function About() {
             <div className="relative group" data-aos="fade-right" data-aos-duration="1000">
               <div className="aspect-[4/5] rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative">
                 <Image
-                  src="/about1.jpg"
-                  alt="Jayshree - Storyteller"
+                  src={aboutData?.image || '/about1.jpg'}
+                  alt={aboutData?.heading || 'Jayshree - Storyteller'}
                   width={600}
                   height={750}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -85,29 +91,39 @@ export default function About() {
             <div className="space-y-8" data-aos="fade-left" data-aos-duration="1000">
               <section data-aos="fade-up" data-aos-delay="200">
                 <h2 className="font-serif text-3xl md:text-4xl font-bold text-gold mb-6 leading-tight">
-                  Hello, I'm Jayshree
+                  {aboutData?.heading || 'Hello, I\'m Jayshree'}
                 </h2>
-                <p className="font-sans text-lg text-gray-300 leading-relaxed mb-4">
-                  I'm a storyteller, writer, and brand strategist who believes that every great brand has a story worth telling. Through years of working with founders and businesses, I've discovered that the most powerful marketing isn't about features or benefits—it's about connection.
-                </p>
-                <p className="font-sans text-lg text-gray-300 leading-relaxed">
-                  This platform is my way of sharing what I've learned about the art of storytelling, brand building, and creating content that truly resonates with people.
-                </p>
+                <div className="font-sans text-lg text-gray-300 leading-relaxed mb-4 prose prose-lg prose-invert max-w-none">
+                  {aboutLoading ? (
+                    <p>Loading...</p>
+                  ) : aboutData?.description1 ? (
+                    <div dangerouslySetInnerHTML={{ __html: aboutData.description1 }} className="[&>p]:mb-4 last:[&>p]:mb-0" />
+                  ) : (
+                    <>
+                      <p>I'm a , writer, and brand strategist who believes that every great brand has a story worth telling. Through years of working with founders and businesses, I've discovered that the most powerful marketing isn't about features or benefits—it's about connection.</p>
+                      <p>This platform is my way of sharing what I've learned about the art of storytelling, brand building, and creating content that truly resonates with people.</p>
+                    </>
+                  )}
+                </div>
               </section>
 
               <div className="w-20 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent" 
                    data-aos="fade-up" data-aos-delay="400" />
 
               <section data-aos="fade-up" data-aos-delay="500">
-                <h3 className="font-serif text-2xl font-semibold text-white mb-4">
-                  Why This Platform Exists
-                </h3>
-                <p className="font-sans text-lg text-gray-400 leading-relaxed mb-4">
-                  I started "BRAND UNTOLD" because I noticed something missing in the world of marketing advice—authenticity. Too many resources focus on tactics and hacks without addressing the fundamental truth: people connect with stories, not sales pitches.
-                </p>
-                <p className="font-sans text-lg text-gray-400 leading-relaxed">
-                  Here, I explore real founder stories, break down what makes narratives work, and share practical frameworks for writing and branding that you can actually apply to your own work.
-                </p>
+                <div className="font-sans text-lg text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
+                  {aboutLoading ? (
+                    <p>Loading...</p>
+                  ) : aboutData?.description2 ? (
+                    <div dangerouslySetInnerHTML={{ __html: aboutData.description2 }} className="[&>p]:mb-4 last:[&>p]:mb-0" />
+                  ) : (
+                    <>
+                      <h3 className="font-serif text-2xl font-semibold text-white mb-4">Why This Platform Exists</h3>
+                      <p className="mb-4">I started "BRAND UNTOLD" because I noticed something missing in the world of marketing advice—authenticity. Too many resources focus on tactics and hacks without addressing the fundamental truth: people connect with stories, not sales pitches.</p>
+                      <p>Here, I explore real founder stories, break down what makes narratives work, and share practical frameworks for writing and branding that you can actually apply to your own work.</p>
+                    </>
+                  )}
+                </div>
               </section>
             </div>
           </div>
@@ -122,10 +138,10 @@ export default function About() {
               }}
             >
               <h2 className="font-serif text-3xl md:text-4xl font-bold text-gold mb-8 text-center" data-aos="fade-up">
-                My Writing Philosophy
+                {philosophyHeadingLoading ? 'Loading...' : philosophyHeading?.heading || 'My Writing Philosophy'}
               </h2>
               <p className="font-sans text-lg text-gray-300 leading-relaxed mb-12 text-center max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
-                I believe in clarity over complexity. In a world of noise, the clearest voice wins. My approach to writing and storytelling is grounded in three principles:
+                {philosophyHeadingLoading ? 'Loading...' : philosophyHeading?.subheading || 'I believe in clarity over complexity. In a world of noise, the clearest voice wins. My approach to writing and storytelling is grounded in three principles:'}
               </p>
 
               <div className="grid md:grid-cols-3 gap-8">
@@ -158,10 +174,10 @@ export default function About() {
           {/* CTA Section */}
           <section className="text-center py-12" data-aos="zoom-in" data-aos-delay="300">
             <h2 className="font-serif text-4xl md:text-5xl font-bold text-gold mb-6">
-              Let's Connect
+              {ctaHeadingLoading ? 'Loading...' : ctaHeading?.heading || 'Let\'s Connect21'}
             </h2>
             <p className="font-sans text-lg text-gray-300 leading-relaxed mb-10 max-w-2xl mx-auto">
-              Whether you're looking to craft your brand story, need help with content strategy, or just want to chat about storytelling, I'd love to hear from you.
+              {ctaHeadingLoading ? 'Loading...' : ctaHeading?.subheading || 'Whether you\'re looking to craft your brand story, need help with content strategy, or just want to chat about storytelling, I\'d love to hear from you.'}
             </p>
             <Link
               href="/work-with-me"
