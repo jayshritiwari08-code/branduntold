@@ -45,6 +45,8 @@ export default function Home() {
                   <div dangerouslySetInnerHTML={{ __html: heroData.description }} className="[&>p]:mb-4 last:[&>p]:mb-0" />
                 ) : 'Exploring the narratives that shape brands, founders, and the art of storytelling itself.'}
               </div>
+              <div className="w-20 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent mb-10"
+                data-aos="fade-up" data-aos-delay="400"></div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   href="/founder-stories"
@@ -99,101 +101,113 @@ export default function Home() {
       </div>
 
       {/* About Preview */}
-      <section className="relative py-24 bg-black overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift"></div>
+<section className="relative py-24 bg-black overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift"></div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-            {/* Image */}
-            <div className="relative group" data-aos="fade-right">
-              <div className="aspect-[3.5/4] rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative">
-                {aboutLoading ? (
-                  <div className="w-full h-full bg-gray-800 animate-pulse" />
-                ) : (
-                  <Image
-                    src={aboutData?.image || '/about1.jpg'}
-                    alt={aboutData?.heading || 'Brand Untold - Storytelling'}
-                    width={800}
-                    height={900}
-                    className="w-full h-full object-fill transition-transform duration-700 group-hover:scale-105"
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer"></div>
-              </div>
+      {/* Image Side */}
+      <div className="relative group" data-aos="fade-right">
+        <div className="aspect-[3.5/4] rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative">
+          {aboutLoading ? (
+            <div className="w-full h-full bg-gray-800 animate-pulse" />
+          ) : (
+            <Image
+              src={aboutData?.image || '/about1.jpg'}
+              alt={aboutData?.heading || 'Brand Untold'}
+              width={800}
+              height={900}
+              className="w-full h-full object-fill transition-transform duration-700 group-hover:scale-105"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer"></div>
+        </div>
 
-              <div className="absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow"
-                data-aos="zoom-in" data-aos-delay="400"></div>
-              <div className="absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float"
-                data-aos="zoom-in" data-aos-delay="600"></div>
-            </div>
+        <div className="absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow" data-aos="zoom-in" data-aos-delay="400"></div>
+        <div className="absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float" data-aos="zoom-in" data-aos-delay="600"></div>
+      </div>
 
-            {/* Text Content */}
-            <div className="space-y-10" data-aos="fade-left">
+      {/* Text Content */}
+      <div className="space-y-10" data-aos="fade-left">
 
-              {/* short_description — heading + intro paragraphs */}
-              <div data-aos="fade-up" data-aos-delay="200">
-                {aboutLoading ? (
-                  <div className="space-y-3">
-                    <div className="h-8 bg-gray-800 rounded animate-pulse w-3/4" />
-                    <div className="h-4 bg-gray-800 rounded animate-pulse" />
-                    <div className="h-4 bg-gray-800 rounded animate-pulse w-5/6" />
-                  </div>
-                ) : (
-                  aboutData?.short_description ? (
-                    <div
-                      className="prose prose-lg prose-invert prose-headings:font-serif prose-headings:text-gold prose-p:text-gray-300 prose-p:leading-relaxed prose-h2:text-4xl prose-h3:text-3xl"
-                      dangerouslySetInnerHTML={{ __html: aboutData.short_description }}
-                    />
-                  ) : (
-                    <div className="prose prose-lg prose-invert prose-headings:font-serif prose-headings:text-gold prose-p:text-gray-300 prose-p:leading-relaxed prose-h2:text-4xl prose-h3:text-3xl">
-                      {/* <h2>About Brand Untold</h2> */}
-                      <p>Brand Untold is a one-person editorial platform built on a simple belief that the most useful business stories aren't about outcomes, they're about thinking. Exploring the narratives that shape brands, founders, and the art of storytelling itself.</p>
-                    </div>
-                  )
-                )}
-              </div>
+        {/* Tiptap Editor Content - Improved Typography */}
+   {/* Tiptap Editor Content - Fixed Typography */}
+<div data-aos="fade-up" data-aos-delay="200">
+  {aboutLoading ? (
+    <div className="space-y-3"> {/* skeleton */} </div>
+  ) : (
+    aboutData?.short_description ? (
+      <div
+        className="prose prose-lg prose-invert max-w-none 
+          prose-headings:font-serif
+          
+          /* h2 styling */
+          prose-h2:font-playfair-display prose-h2:text-gold prose-h2:text-4xl 
+          prose-h2:tracking-tighter prose-h2:mb-6 prose-h2:leading-tight
+          
+          /* Force style even if <strong> is inside h2 */
+          prose-h2 strong:text-gold prose-h2 strong:font-bold
 
-              <div className="w-20 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent"
-                data-aos="fade-up" data-aos-delay="400"></div>
+          /* h4 styling */
+          prose-h4:text-gray-100 prose-h4:text-xl prose-h4:font-medium 
+          prose-h4:mb-5 prose-h4:leading-snug
 
-         
+          /* Paragraphs */
+          prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6
 
-              {/* CTA Buttons */}
-              <div className="pt-6 border-t border-gold/20" data-aos="fade-up" data-aos-delay="600">
-                <h4 className="font-serif text-2xl text-gold mb-3 mt-4">
-                  Is There a Story Only You Can Tell?
-                </h4>
-                <p className="text-gray-300 mb-8">
-                  If you're building something real...
-                </p>
-                <div className="flex flex-wrap gap-4 mt-6">
-                  <Link
-                    href="/about"
-                    className="inline-flex items-center px-8 py-4 border-2 border-gold text-gold hover:bg-gold hover:text-black font-medium transition-all duration-300 rounded-2xl group text-lg"
-                    data-aos="fade-up"
-                    data-aos-delay="700"
-                  >
-                    Read My Story
-                    <span className="ml-3 group-hover:translate-x-1 transition-transform">→</span>
-                  </Link>
+          /* Strong tags anywhere */
+          prose-strong:text-gold prose-strong:font-semibold
+        "
+        dangerouslySetInnerHTML={{ __html: aboutData.short_description }}
+      />
+    ) : null
+  )}
+</div>
 
-                  <Link
-                    href="/work-with-me"
-                    className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-gold via-yellow-200 to-gold text-black font-bold hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 rounded-2xl text-lg group relative overflow-hidden"
-                    data-aos="fade-up"
-                    data-aos-delay="800"
-                  >
-                    <span className="relative z-10">Let's Tell Yours</span>
-                    <div className="absolute inset-0 w-1/2 h-full bg-white/40 skew-x-[-25deg] -translate-x-[150%] group-hover:translate-x-[250%] transition-transform duration-1000 ease-in-out pointer-events-none"></div>
-                  </Link>
-                </div>
-              </div>
+        {/* Divider after Tiptap Content */}
+        <div className="w-20 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent my-8"
+          data-aos="fade-up" data-aos-delay="400"></div>
 
-            </div>
+        {/* Hardcoded Sections with same style */}
+        <div data-aos="fade-up" data-aos-delay="500">
+          <h4 className="font-serif text-2xl text-gold mb-3">
+            Is There a Story Only You Can Tell?
+          </h4>
+        </div>
+
+        {/* Last h4 + Divider */}
+        <div data-aos="fade-up" data-aos-delay="700">
+          <h4 className="font-serif text-2xl text-gold mb-3">
+            Ready to Share Your Story?
+          </h4>
+        </div>
+
+        {/* Buttons with Border Above */}
+        <div className="pt-8 border-t border-gold/30" data-aos="fade-up" data-aos-delay="800">
+          <div className="flex flex-wrap gap-4">
+            <Link
+              href="/about"
+              className="inline-flex items-center px-8 py-4 border-2 border-gold text-gold hover:bg-gold hover:text-black font-medium transition-all duration-300 rounded-2xl group text-base md:text-lg"
+            >
+              Read My Story
+              <span className="ml-3 group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
+
+            <Link
+              href="/work-with-me"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-gold via-yellow-200 to-gold text-black font-bold hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 rounded-2xl text-base md:text-lg group relative overflow-hidden"
+            >
+              <span className="relative z-10">Let's Tell Yours</span>
+              <div className="absolute inset-0 w-1/2 h-full bg-white/40 skew-x-[-25deg] -translate-x-[150%] group-hover:translate-x-[250%] transition-transform duration-1000 ease-in-out pointer-events-none"></div>
+            </Link>
           </div>
         </div>
-      </section>
+
+      </div>
+    </div>
+  </div>
+</section>
     </div>
   );
 }

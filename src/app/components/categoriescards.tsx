@@ -1,34 +1,10 @@
+"use client";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useHeadingBySection } from "../hooks";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-const categories = [
-  {
-    href: "/categories/founder-stories",
-    title: "Founder Stories",
-    desc: "Real stories of founders and brands that built something meaningful.",
-    img: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80",
-    tag: "Stories",
-    icon: "ti-user-circle",
-  },
-  {
-    href: "/categories/story-breakdowns",
-    title: "Story Breakdowns",
-    desc: "Analytical articles explaining why certain stories work and how to craft them.",
-    img: "https://images.unsplash.com/photo-1512758017271-d7b84c2113f1?w=600&q=80",
-    tag: "Analysis",
-    icon: "ti-chart-dots",
-  },
-  {
-    href: "/categories/writing-branding",
-    title: "Writing & Branding",
-    desc: "SEO articles with guides, tips, and frameworks for effective writing.",
-    img: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80",
-    tag: "Guides",
-    icon: "ti-pencil",
-  },
-];
-
-const N = categories.length;
 const GOLD = "#C9A84C";
 
 function mod(n: number, m: number) {
@@ -36,22 +12,61 @@ function mod(n: number, m: number) {
 }
 
 export default function CategoriesCards() {
-  const [active, setActive] = useState(1);
+  const router = useRouter();
+  const { data: headerData, loading: headerLoading } = useHeadingBySection('category');
+  const [categories, setCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [active, setActive] = useState(0);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const autoTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const goTo = useCallback((idx: number) => {
-    setActive(mod(idx, N));
-    setTilt({ x: 0, y: 0 });
+  const N = categories.length;
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('/api/data/category');
+        const json = await res.json();
+        console.log("Fetched categories:", json);
+        if (json.success && json.data) {
+          const mapped = json.data.map((item: any) => ({
+            href: `/category/${item.heading.trim().toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')}`,
+            title: item.heading.trim(),
+            desc: item.subheading,
+            img: item.image,
+            tag: item.tagline,
+            icon: item.heading.toLowerCase().includes("founder") ? "ti-user-circle" : 
+                  item.heading.toLowerCase().includes("breakdown") ? "ti-chart-dots" : 
+                  item.heading.toLowerCase().includes("writing") ? "ti-pencil" : "ti-article",
+          }));
+          setCategories(mapped);
+          if (mapped.length > 0) {
+            setActive(Math.floor(mapped.length / 2));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategories();
   }, []);
 
+  const goTo = useCallback((idx: number) => {
+    if (N === 0) return;
+    setActive(mod(idx, N));
+    setTilt({ x: 0, y: 0 });
+  }, [N]);
+
   const startAuto = useCallback(() => {
+    if (N === 0) return;
     if (autoTimer.current) clearInterval(autoTimer.current);
     autoTimer.current = setInterval(() => {
       setActive((prev) => mod(prev + 1, N));
     }, 2200);
-  }, []);
+  }, [N]);
 
   const stopAuto = useCallback(() => {
     if (autoTimer.current) clearInterval(autoTimer.current);
@@ -77,6 +92,7 @@ export default function CategoriesCards() {
   const handleMouseLeave = () => setTilt({ x: 0, y: 0 });
 
   const getStyle = (idx: number): React.CSSProperties => {
+    if (N === 0) return {};
     const offset = mod(idx - active + Math.floor(N / 2), N) - Math.floor(N / 2);
     const isActive = offset === 0;
     const abs = Math.abs(offset);
@@ -96,12 +112,24 @@ export default function CategoriesCards() {
       zIndex: 10 - abs,
       opacity,
       transition: "transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s",
-      cursor: isActive ? "default" : "pointer",
+      cursor: "pointer",
     };
   };
 
-  const prevIdx = mod(active - 1, N);
-  const nextIdx = mod(active + 1, N);
+  if (loading || headerLoading) {
+    return (
+      <div className="bg-[#0a0a0a] min-h-[600px] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gold font-serif text-xl">Loading Stories...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (N === 0) return null;
+
+  const heading = Array.isArray(headerData) ? headerData[0] : headerData;
 
   return (
     <section
@@ -116,21 +144,24 @@ export default function CategoriesCards() {
         <h2
           className="text-4xl md:text-5xl font-bold mb-3"
           style={{ color: GOLD, fontFamily: "var(--font-playfair)" }}
+          data-aos="fade-up"
         >
-          What We Do
+          {heading?.tagline?.trim() || "What We Do"}
         </h2>
         <h3
           className="text-white text-2xl md:text-3xl font-semibold mb-5"
           style={{ fontFamily: "var(--font-playfair)" }}
+          data-aos="fade-up"
+          data-aos-delay="100"
         >
-          The Stories Brands Don't Tell
+          {heading?.heading?.trim() || "The Stories Brands Don't Tell"}
         </h3>
-        <p className="text-[#888] text-base leading-relaxed font-sans">
-          Every brand has a public story — the funding round, the viral moment, the perfect origin
-          myth. Brand Untold goes deeper. We explore the decisions made under pressure, the pivots
-          nobody announced, and the human psychology behind why certain brands connect and others
-          don't.
+        <p className="text-[#888] text-base leading-relaxed font-sans" data-aos="fade-up" data-aos-delay="200">
+          {heading?.subheading?.trim() || "Every brand has a public story. Brand Untold goes deeper to explore the decisions and psychology behind them."}
         </p>
+        
+        <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent mx-auto mt-8" 
+             data-aos="fade-up" data-aos-delay="300" />
       </div>
 
       {/* Carousel Stage */}
@@ -148,7 +179,13 @@ export default function CategoriesCards() {
               key={cat.title}
               ref={(el) => { cardRefs.current[idx] = el; }}
               style={getStyle(idx)}
-              onClick={() => idx !== active && goTo(idx)}
+              onClick={() => {
+                if (idx !== active) {
+                  goTo(idx);
+                } else {
+                  router.push(cat.href);
+                }
+              }}
               onMouseMove={(e) => handleMouseMove(e, idx)}
               onMouseLeave={handleMouseLeave}
             >
@@ -218,15 +255,20 @@ export default function CategoriesCards() {
                   >
                     {cat.desc}
                   </p>
+                  
+                  {/* Separator and Link */}
                   {isActive && (
-                    <a
-                      href={cat.href}
-                      className="inline-flex items-center gap-1.5 mt-3 text-sm font-semibold tracking-wide no-underline transition-colors hover:text-white"
-                      style={{ color: GOLD, fontFamily: "sans-serif" }}
-                    >
-                      Explore{" "}
-                      <i className="ti ti-arrow-right text-base" aria-hidden="true" />
-                    </a>
+                    <div className="mt-4 pt-5 border-t border-gold/20" data-aos="fade-up" data-aos-delay="100">
+                      <div className="w-16 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent mb-4" />
+                      <Link
+                        href={cat.href}
+                        className="inline-flex items-center gap-1.5 text-sm font-semibold tracking-wide no-underline transition-colors hover:text-white group"
+                        style={{ color: GOLD, fontFamily: "sans-serif" }}
+                      >
+                        Explore{" "}
+                        <i className="ti ti-arrow-right text-base group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                      </Link>
+                    </div>
                   )}
                 </div>
               </div>

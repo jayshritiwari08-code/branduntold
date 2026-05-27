@@ -20,10 +20,30 @@ export default function WorkWithMe() {
     });
   }, []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add your form submission logic here (e.g., send to API)
-    alert('Thank you! Your message has been received.'); // placeholder
+    const formData = new FormData(e.currentTarget);
+    const payload = Object.fromEntries(formData.entries());
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
+    try {
+      const response = await fetch(`${baseUrl}/api/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        alert('Thank you! Your message has been received.');
+        e.currentTarget.reset();
+      } else {
+        alert('Something went wrong. Please try again later.');
+      }
+    } catch (error) {
+      alert('Failed to send message. Please check your connection.');
+    }
   };
 
   return (
@@ -167,6 +187,7 @@ export default function WorkWithMe() {
                   <input
                     type="text"
                     id="name"
+                    name="name"
                     required
                     className="w-full px-5 py-4 bg-black border border-gray-700 rounded-2xl text-white placeholder:text-gray-500 focus:outline-none focus:border-gold transition-colors"
                     placeholder="Alex Rivera"
@@ -177,6 +198,7 @@ export default function WorkWithMe() {
                   <input
                     type="email"
                     id="email"
+                    name="email"
                     required
                     className="w-full px-5 py-4 bg-black border border-gray-700 rounded-2xl text-white placeholder:text-gray-500 focus:outline-none focus:border-gold transition-colors"
                     placeholder="you@yourbrand.com"
@@ -188,6 +210,7 @@ export default function WorkWithMe() {
                 <label htmlFor="service" className="block text-sm font-medium text-white mb-2">Interested Service</label>
                 <select
                   id="service"
+                  name="service"
                   required
                   className="w-full px-5 py-4 bg-black border border-gray-700 rounded-2xl text-white focus:outline-none focus:border-gold transition-colors"
                 >
@@ -203,6 +226,7 @@ export default function WorkWithMe() {
                 <textarea
                   id="message"
                   rows={6}
+                  name="message"
                   required
                   className="w-full px-5 py-4 bg-black border border-gray-700 rounded-3xl text-white placeholder:text-gray-500 focus:outline-none focus:border-gold transition-colors resize-y"
                   placeholder="What are your goals? What stage is your brand in? Any specific challenges you're facing?"

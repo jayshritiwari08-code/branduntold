@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
       {
         source: '/api/data/:path*',
         destination: 'http://localhost:3001/api/data/:path*',
-      },
+      }, 
       {
         source: '/uploads/:path*',
         destination: 'http://localhost:3001/uploads/:path*',

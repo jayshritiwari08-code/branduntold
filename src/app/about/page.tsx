@@ -60,7 +60,7 @@ export default function About() {
               <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
                 {aboutUsHeadingLoading ? 'Loading...' : aboutUsHeading?.subheading || 'Uncovering the real stories behind brands and the craft of authentic storytelling'}
               </p>
-              <div className="w-32 h-px bg-gold mx-auto mt-8" data-aos="fade-up" data-aos-delay="400" />
+              <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-10" data-aos="fade-up" data-aos-delay="400" />
             </div>
           </div>
         </section>
@@ -179,6 +179,10 @@ export default function About() {
             <p className="font-sans text-lg text-gray-300 leading-relaxed mb-10 max-w-2xl mx-auto">
               {ctaHeadingLoading ? 'Loading...' : ctaHeading?.subheading || 'Whether you\'re looking to craft your brand story, need help with content strategy, or just want to chat about storytelling, I\'d love to hear from you.'}
             </p>
+
+            {/* Border / Separator above the button */}
+            <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent mx-auto mb-10" data-aos="fade-up" />
+
             <Link
               href="/work-with-me"
               className="inline-flex items-center px-10 py-5 bg-gold text-black font-semibold text-lg hover:bg-white transition-all duration-300 rounded-2xl group hover:scale-105 active:scale-95"

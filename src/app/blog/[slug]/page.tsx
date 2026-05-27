@@ -1,27 +1,27 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import categoriesData from '@/data/categories.json';
 import RecentArticlesSlider from './RecentArticlesSlider';
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  // Find the article across all categories
-  let article = null;
-  let category = null;
-  let categorySlug = '';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
-  for (const [catSlug, catData] of Object.entries(categoriesData)) {
-    const foundArticle = catData.articles.find(a => a.slug === slug);
-    if (foundArticle) {
-      article = foundArticle;
-      category = catData;
-      categorySlug = catSlug;
-      break;
-    }
-  }
+  // ✅ Fetch article by slug directly, and categories in parallel
+  const [artRes, catRes] = await Promise.all([
+    fetch(`${baseUrl}/api/data/articles?slug=${slug}`, { cache: 'no-store' }),
+    fetch(`${baseUrl}/api/data/category`, { cache: 'no-store' })
+  ]);
 
-  if (!article || !category) {
+  const artJson = await artRes.json();
+  const catJson = await catRes.json();
+
+  // API returns single article or array — handle both shapes
+  const article = artJson.success
+    ? (Array.isArray(artJson.data) ? artJson.data[0] : artJson.data)
+    : null;
+
+  if (!article) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <h1 className="text-2xl text-white">Article not found</h1>
@@ -29,8 +29,19 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     );
   }
 
-  // Get recent articles (excluding current)
-  const recentArticles = category.articles.slice(0, 3).filter(a => a.slug !== slug);
+  const category = catJson.success
+    ? catJson.data.find((c: any) => c.tagline === article.tagline)
+    : null;
+  const categorySlug = category
+    ? category.heading.trim().toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')
+    : '';
+
+  // Fetch recent articles from same category (still needs full list)
+  const recentRes = await fetch(`${baseUrl}/api/data/articles`, { cache: 'no-store' });
+  const recentJson = await recentRes.json();
+  const recentArticles = recentJson.success
+    ? recentJson.data.filter((a: any) => a.tagline === article.tagline && a.id !== article.id).slice(0, 3)
+    : [];
 
   return (
     <div
@@ -41,7 +52,6 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         backgroundRepeat: 'repeat',
       }}
     >
-      {/* Subtle overlay to maintain readability */}
       <div className="absolute inset-0 bg-black/70"></div>
 
       <div className="relative">
@@ -51,18 +61,15 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
           <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift"></div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-            {/* Breadcrumbs */}
             <nav className="mb-8">
               <ol className="flex items-center space-x-2 text-sm">
                 <li>
-                  <Link href="/" className="text-grey hover:text-gold transition-colors">
-                    Home
-                  </Link>
+                  <Link href="/" className="text-grey hover:text-gold transition-colors">Home</Link>
                 </li>
                 <li className="text-gold">/</li>
                 <li>
-                  <Link href={`/categories/${categorySlug}`} className="text-grey hover:text-gold transition-colors">
-                    {category.title}
+                  <Link href={`/articles/${categorySlug}`} className="text-grey hover:text-gold transition-colors">
+                    {category?.heading || 'Category'}
                   </Link>
                 </li>
                 <li className="text-gold">/</li>
@@ -70,25 +77,27 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
               </ol>
             </nav>
 
-            {/* Banner Content */}
             <div className="text-center mb-8">
-              <p className="font-sans tracking-[3px] text-gold text-sm mb-4">{category.tagline}</p>
+              <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">{article.tagline}</p>
               <h1 className="font-serif text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
                 {article.title}
               </h1>
               <div className="flex items-center justify-center gap-4 text-sm text-grey">
-                <span>By Jayshree</span>
+                <span>By {article.author || 'Jayshree'}</span>
                 <span>•</span>
-                <span>{article.date}</span>
+                <span>
+                  {new Date(article.date || article.created_at).toLocaleDateString('en-US', {
+                    month: 'long', day: 'numeric', year: 'numeric'
+                  })}
+                </span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Main Content with Sidebar */}
+        {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Left Column - Main Content */}
             <div className="lg:col-span-2">
               {/* Featured Image */}
               <div className="aspect-video mb-12 rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative">
@@ -102,87 +111,179 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer"></div>
               </div>
 
-              {/* Content Body */}
-              <article className="rounded-3xl p-8 md:p-12"
+              {/* ✅ TipTap Content Body */}
+              <article
+                className="rounded-3xl p-8 md:p-12"
                 style={{
                   background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)",
                   border: "1px solid rgba(212,175,55,0.12)",
                   boxShadow: "0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)"
                 }}
               >
-                <p className="font-sans text-lg text-gray-300 leading-relaxed mb-6">
-                  In 2008, Airbnb was struggling. The founders had maxed out their credit cards, were living on cereal, and had only made $200 in their first few months. But they didn't give up. Instead, they did something that would transform their business forever—they told a story.
-                </p>
+                {/* TipTap Typography Styles */}
+                <style>{`
+                  .tiptap-content {
+                    color: #d1d5db;
+                    font-family: Georgia, 'Times New Roman', serif;
+                    font-size: 1.125rem;
+                    line-height: 1.85;
+                  }
+                  .tiptap-content p {
+                    margin-bottom: 1.5rem;
+                    color: #d1d5db;
+                    font-size: 1.05rem;
+                    line-height: 1.9;
+                  }
+                  .tiptap-content h1 {
+                    font-family: Georgia, serif;
+                    font-size: 2.25rem;
+                    font-weight: 700;
+                    color: #c2a15f;
+                    margin-top: 2.5rem;
+                    margin-bottom: 1rem;
+                    line-height: 1.25;
+                    border-bottom: 1px solid rgba(212,175,55,0.2);
+                    padding-bottom: 0.5rem;
+                  }
+                  .tiptap-content h2 {
+                    font-family: Georgia, serif;
+                    font-size: 1.75rem;
+                    font-weight: 700;
+                    color: #c2a15f;
+                    margin-top: 2.25rem;
+                    margin-bottom: 0.875rem;
+                    line-height: 1.3;
+                  }
+                  .tiptap-content h3 {
+                    font-family: Georgia, serif;
+                    font-size: 1.375rem;
+                    font-weight: 600;
+                    color: #d6b20f;
+                    margin-top: 2rem;
+                    margin-bottom: 0.75rem;
+                    line-height: 1.4;
+                  }
+                  .tiptap-content h4 {
+                    font-family: Georgia, serif;
+                    font-size: 1.15rem;
+                    font-weight: 600;
+                    color: #e4c84a;
+                    margin-top: 1.75rem;
+                    margin-bottom: 0.5rem;
+                  }
+                  .tiptap-content strong {
+                    color: #dfbe45;
+                    font-weight: 700;
+                  }
+                  .tiptap-content em {
+                    color: #b0b8c4;
+                    font-style: italic;
+                  }
+                  .tiptap-content ul {
+                    list-style-type: disc;
+                    padding-left: 1.75rem;
+                    margin-bottom: 1.5rem;
+                    space-y: 0.5rem;
+                  }
+                  .tiptap-content ol {
+                    list-style-type: decimal;
+                    padding-left: 1.75rem;
+                    margin-bottom: 1.5rem;
+                  }
+                  .tiptap-content li {
+                    margin-bottom: 0.6rem;
+                    color: #d1d5db;
+                    line-height: 1.75;
+                  }
+                  .tiptap-content li p {
+                    margin-bottom: 0.25rem;
+                  }
+                  .tiptap-content blockquote {
+                    border-left: 3px solid #d4af37;
+                    padding: 0.75rem 1.5rem;
+                    margin: 2rem 0;
+                    background: rgba(212,175,55,0.05);
+                    border-radius: 0 0.5rem 0.5rem 0;
+                    color: #b8bcc4;
+                    font-style: italic;
+                    font-size: 1.1rem;
+                  }
+                  .tiptap-content a {
+                    color: #c2a15f;
+                    text-decoration: underline;
+                    text-underline-offset: 3px;
+                    transition: color 0.2s;
+                  }
+                  .tiptap-content a:hover {
+                    color: #f0d060;
+                  }
+                  .tiptap-content code {
+                    background: rgba(212,175,55,0.08);
+                    color: #c2a15f;
+                    padding: 0.15rem 0.45rem;
+                    border-radius: 0.25rem;
+                    font-family: 'Courier New', monospace;
+                    font-size: 0.9em;
+                    border: 1px solid rgba(212,175,55,0.15);
+                  }
+                  .tiptap-content pre {
+                    background: rgba(0,0,0,0.5);
+                    border: 1px solid rgba(212,175,55,0.15);
+                    border-radius: 0.75rem;
+                    padding: 1.25rem 1.5rem;
+                    overflow-x: auto;
+                    margin: 1.5rem 0;
+                  }
+                  .tiptap-content pre code {
+                    background: none;
+                    border: none;
+                    padding: 0;
+                    color: #d1d5db;
+                    font-size: 0.9rem;
+                  }
+                  .tiptap-content hr {
+                    border: none;
+                    border-top: 1px solid rgba(212,175,55,0.2);
+                    margin: 2.5rem 0;
+                  }
+                  .tiptap-content img {
+                    border-radius: 0.75rem;
+                    max-width: 100%;
+                    margin: 1.5rem 0;
+                  }
+                  .tiptap-content table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 1.5rem 0;
+                  }
+                  .tiptap-content th {
+                    background: rgba(212,175,55,0.1);
+                    color: #c2a15f;
+                    font-weight: 600;
+                    padding: 0.75rem 1rem;
+                    text-align: left;
+                    border: 1px solid rgba(212,175,55,0.2);
+                  }
+                  .tiptap-content td {
+                    padding: 0.75rem 1rem;
+                    border: 1px solid rgba(255,255,255,0.07);
+                    color: #d1d5db;
+                  }
+                  .tiptap-content tr:nth-child(even) td {
+                    background: rgba(255,255,255,0.02);
+                  }
+                `}</style>
 
-                <p className="font-sans text-lg text-gray-300 leading-relaxed mb-6">
-                  This isn't just a tale of startup success. It's a masterclass in how authentic storytelling can build trust, create emotional connections, and turn a struggling idea into a global phenomenon.
-                </p>
-
-                <h2 className="font-serif text-3xl font-semibold text-gold mt-12 mb-6">
-                  The Problem: No One Trusted Strangers
-                </h2>
-
-                <p className="font-sans text-lg text-gray-300 leading-relaxed mb-6">
-                  The fundamental challenge Airbnb faced was simple but daunting: why would anyone stay in a stranger's home? The concept violated basic human instincts about safety and trust. Traditional marketing couldn't overcome this barrier.
-                </p>
-
-                <p className="font-sans text-lg text-gray-300 leading-relaxed mb-6">
-                  The founders realized they needed to change the narrative. Instead of focusing on the features of their platform, they needed to focus on the human stories behind every listing.
-                </p>
-
-                <h2 className="font-serif text-3xl font-semibold text-gold mt-12 mb-6">
-                  The Solution: Tell the Hosts' Stories
-                </h2>
-
-                <p className="font-sans text-lg text-gray-300 leading-relaxed mb-6">
-                  Airbnb began investing heavily in professional photography and storytelling. They didn't just show rooms—they showed the people who lived there. They shared the hosts' passions, their neighborhoods, and what made their spaces unique.
-                </p>
-
-                <p className="font-sans text-lg text-gray-300 leading-relaxed mb-6">
-                  Each listing became a story. A musician's apartment in Brooklyn wasn't just a place to sleep—it was an invitation to experience New York through a local artist's eyes. A family home in Kyoto wasn't just accommodation—it was a chance to live like a local in ancient Japan.
-                </p>
-
-                <h3 className="font-serif text-2xl font-semibold text-gold mt-10 mb-4">
-                  The Impact of Authentic Storytelling
-                </h3>
-
-                <p className="font-sans text-lg text-gray-300 leading-relaxed mb-6">
-                  The results were dramatic. Bookings increased, trust was established, and Airbnb began its journey from struggling startup to a company valued at over $100 billion. The key insight was that people weren't just buying accommodation—they were buying experiences and connections.
-                </p>
-
-                <h2 className="font-serif text-3xl font-semibold text-gold mt-12 mb-6">
-                  Key Lessons for Your Brand
-                </h2>
-
-                <p className="font-sans text-lg text-gray-300 leading-relaxed mb-6">
-                  Airbnb's success offers several important lessons for anyone building a brand:
-                </p>
-
-                <ul className="font-sans text-lg text-gray-300 leading-relaxed list-disc list-inside space-y-3 mb-6">
-                  <li><strong>Trust is built through stories, not features:</strong> Technical specifications and feature lists don't create emotional connections. Stories do.</li>
-                  <li><strong>Show the human side:</strong> People connect with people, not faceless corporations. Put the humans behind your brand front and center.</li>
-                  <li><strong>Invest in quality presentation:</strong> Professional photography and well-crafted narratives signal that you care about the experience you're offering.</li>
-                  <li><strong>Focus on the experience, not just the product:</strong> What will people feel, learn, or discover when they engage with your brand? That's your real story.</li>
-                </ul>
-
-                <h2 className="font-serif text-3xl font-semibold text-gold mt-12 mb-6">
-                  Conclusion
-                </h2>
-
-                <p className="font-sans text-lg text-gray-300 leading-relaxed mb-6">
-                  Airbnb didn't succeed because they had a better booking system or more features than competitors. They succeeded because they understood that in the sharing economy, trust is the currency—and storytelling is how you earn it.
-                </p>
-
-                <p className="font-sans text-lg text-gray-300 leading-relaxed">
-                  Your brand, no matter what industry you're in, can apply these same principles. Find the human stories behind what you do. Tell them authentically. Build trust through genuine connection. That's how you turn strangers into loyal customers.
-                </p>
+                <div
+                  className="tiptap-content"
+                  dangerouslySetInnerHTML={{ __html: article.long_description }}
+                />
               </article>
 
               {/* Author Bio */}
-              <div className="mt-12 p-8 rounded-3xl border border-gold/20"
-                style={{
-                  background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)"
-                }}
+              <div
+                className="mt-12 p-8 rounded-3xl border border-gold/20"
+                style={{ background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)" }}
               >
                 <div className="flex items-start gap-6">
                   <div className="w-20 h-20 rounded-full bg-gold/10 flex items-center justify-center text-gold border-2 border-gold/30">
@@ -190,23 +291,22 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                   </div>
                   <div>
                     <h3 className="font-serif text-2xl font-semibold text-gold mb-2">
-                      Written by Jayshree
+                      Written by {article.author || 'Jayshree'}
                     </h3>
                     <p className="font-sans text-gray-400 leading-relaxed">
-                      Storyteller, writer, and brand strategist helping founders craft compelling narratives that connect with audiences.
+                      {article.author_bio || 'Storyteller, writer, and brand strategist helping founders craft compelling narratives that connect with audiences.'}
                     </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right Column - Sidebar */}
+            {/* Sidebar */}
             <div className="lg:col-span-1">
-              {/* Recent Articles Sidebar with 3D Slider */}
               {recentArticles.length > 0 && (
                 <RecentArticlesSlider
                   articles={recentArticles}
-                  categoryTitle={category.title}
+                  categoryTitle={category?.heading || 'Recent'}
                   categorySlug={categorySlug}
                 />
               )}
