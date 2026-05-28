@@ -2,11 +2,36 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import logo from '../../public/logo.png';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [logoSrc, setLogoSrc] = useState('/logo.png');
+  const [loading, setLoading] = useState(true);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+
+  useEffect(() => {
+    const fetchFooterData = async () => {
+      try {
+        const res = await fetch('/api/data/footer');
+        const json = await res.json();
+        if (json.success && json.data && json.data.length > 0) {
+          const footerData = json.data[0];
+          if (footerData.footerlogo) {
+            const logo = footerData.footerlogo.startsWith('/') 
+              ? `${baseUrl}${footerData.footerlogo}` 
+              : footerData.footerlogo;
+            setLogoSrc(logo);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch footer data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFooterData();
+  }, []);
 
   return (
     <header className="bg-black border-b border-gray-800 sticky top-0 z-50">
@@ -14,7 +39,7 @@ export default function Header() {
         <div className="flex justify-between items-center h-24">
           <Link href="/" className="flex items-center gap-3">
             <Image
-              src={logo}
+              src={logoSrc}
               alt="BRAND UNTOLD"
               height={80}
               width={80}

@@ -3,15 +3,26 @@ import Link from 'next/link';
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  let catJson: any = { success: false, data: [] };
+  let artJson: any = { success: false, data: [] };
+const baseUrl = "http://localhost:3000"
+  try {
+    const [catRes, artRes] = await Promise.all([
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/data/category`, { cache: 'no-store' }),
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/data/articles`, { cache: 'no-store' }),
+    ]);
 
-  const [catRes, artRes] = await Promise.all([
-    fetch(`${baseUrl}/api/data/category`, { cache: 'no-store' }),
-    fetch(`${baseUrl}/api/data/articles`, { cache: 'no-store' }),
-  ]);
-
-  const catJson = await catRes.json();
-  const artJson = await artRes.json();
+    // Only attempt to parse JSON if the response was successful
+    if (catRes.ok) {
+      catJson = await catRes.json();
+    }
+    if (artRes.ok) {
+      artJson = await artRes.json();
+      console.log("artJson",artJson)
+    }
+  } catch (error) {
+    console.error("Failed to fetch category or articles:", error);
+  }
 
   // ── Find current category by slug ──────────────────────────────────────────
   // Slug is derived from category heading: "Brand Strategy" → "brand-strategy"
@@ -96,9 +107,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">
                 {category.tagline}
               </p>
-              <h1 className="font-serif text-5xl md:text-7xl font-bold text-white leading-tight mb-6">
-                {category.heading}
-              </h1>
+          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 leading-tight text-gold">
+  {category.heading}
+</h1>
               {category.subheading && (
                 <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
                   {category.subheading}
