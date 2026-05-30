@@ -5,7 +5,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const { slug } = await params;
   console.log('Category Slug:', slug);
   // Fetch Category and Articles data
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.app';
   
   const [catRes, artRes] = await Promise.all([
     fetch(`${baseUrl}/api/data/category`, { cache: 'no-store' }),

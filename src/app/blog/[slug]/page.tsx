@@ -5,7 +5,7 @@ import RecentArticlesSlider from './RecentArticlesSlider';
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.app';
 
   // ✅ Fetch article by slug directly, and categories in parallel
   const [artRes, catRes] = await Promise.all([
