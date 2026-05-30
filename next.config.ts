@@ -13,11 +13,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/data/:path*',
-        destination: 'http://localhost:3001/api/data/:path*',
+        destination: 'https://cms-baas.vercel.app/api/data/:path*',
       }, 
       {
         source: '/uploads/:path*',
-        destination: 'http://localhost:3001/uploads/:path*',
+        destination: 'https://cms-baas.vercel.app/uploads/:path*',
       },
     ];
   },
