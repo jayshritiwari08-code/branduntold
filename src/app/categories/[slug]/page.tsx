@@ -1,15 +1,65 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import categoriesData from '@/data/categories.json';
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const category = categoriesData[slug as keyof typeof categoriesData];
 
+  let catJson: any = { success: false, data: [] };
+  let artJson: any = { success: false, data: [] };
+const baseUrl = "http://localhost:3000"
+  try {
+    const [catRes, artRes] = await Promise.all([
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/data/category`, { cache: 'no-store' }),
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/data/articles`, { cache: 'no-store' }),
+    ]);
+
+    // Only attempt to parse JSON if the response was successful
+    if (catRes.ok) {
+      catJson = await catRes.json();
+    }
+    if (artRes.ok) {
+      artJson = await artRes.json();
+      console.log("artJson",artJson)
+    }
+  } catch (error) {
+    console.error("Failed to fetch category or articles:", error);
+  }
+
+  // ── Find current category by slug ──────────────────────────────────────────
+  // Slug is derived from category heading: "Brand Strategy" → "brand-strategy"
+  const category = catJson.success
+    ? catJson.data.find((c: any) => {
+        const cSlug = c.heading
+          .trim()
+          .toLowerCase()
+          .replace(/ & /g, '-')
+          .replace(/\s+/g, '-');
+        return cSlug === slug;
+      })
+    : null;
+
+  // ── Filter articles by category ID ─────────────────────────────────────────
+  // article.category holds the MongoDB ObjectId string (e.g. "6a0f345f18153bfec723c178")
+  // Match against category._id or category.id (whichever your API returns)
+  const categoryId = category?._id ?? category?.id ?? null;
+
+  const articles: any[] =
+    artJson.success && categoryId
+      ? artJson.data.filter((a: any) => a.category === categoryId)
+      : artJson.success && category
+      ? // Fallback: match by tagline if category ID is unavailable
+        artJson.data.filter((a: any) => a.tagline === category.tagline)
+      : [];
+
+  // ── Category not found ──────────────────────────────────────────────────────
   if (!category) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <h1 className="text-2xl text-white">Category not found</h1>
+        <div className="text-center">
+          <h1 className="text-3xl text-white font-serif mb-4">Category not found</h1>
+          <Link href="/" className="text-gold hover:text-white transition-colors font-sans text-sm tracking-widest uppercase">
+            ← Back to Home
+          </Link>
+        </div>
       </div>
     );
   }
@@ -23,18 +73,18 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         backgroundRepeat: 'repeat',
       }}
     >
-      {/* Subtle overlay to maintain readability */}
-      <div className="absolute inset-0 bg-black/70"></div>
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/70" />
 
       <div className="relative">
-        {/* Banner Section */}
+        {/* ── Banner ─────────────────────────────────────────────────────────── */}
         <section className="relative py-24 md:py-32 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift" />
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-            {/* Breadcrumbs */}
-            <nav className="mb-8">
+            {/* Breadcrumb */}
+            <nav className="mb-8" aria-label="Breadcrumb">
               <ol className="flex items-center space-x-2 text-sm">
                 <li>
                   <Link href="/" className="text-grey hover:text-gold transition-colors">
@@ -43,71 +93,133 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 </li>
                 <li className="text-gold">/</li>
                 <li>
-                  <Link href="/founder-stories" className="text-grey hover:text-gold transition-colors">
+                  <Link href="/#categories" className="text-grey hover:text-gold transition-colors">
                     Categories
                   </Link>
                 </li>
                 <li className="text-gold">/</li>
-                <li className="text-gold font-medium">{category.title}</li>
+                <li className="text-gold font-medium">{category.heading}</li>
               </ol>
             </nav>
 
-            {/* Banner Content */}
+            {/* Heading */}
             <div className="text-center">
-              <p className="font-sans tracking-[3px] text-gold text-sm mb-4">{category.tagline}</p>
-              <h1 className="font-serif text-5xl md:text-7xl font-bold text-white leading-tight mb-6">
-                {category.title}
-              </h1>
-              <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
-                {category.description}
+              <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">
+                {category.tagline}
               </p>
-              <div className="w-32 h-px bg-gold mx-auto mt-8"></div>
+          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 leading-tight text-gold">
+  {category.heading}
+</h1>
+              {category.subheading && (
+                <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
+                  {category.subheading}
+                </p>
+              )}
+              <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent mx-auto mt-10" />
             </div>
           </div>
         </section>
 
-        {/* Articles Grid */}
+        {/* ── Articles Grid ───────────────────────────────────────────────────── */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-          <div className="grid md:grid-cols-2 gap-8">
-            {category.articles.map((article) => (
-              <article
-                key={article.slug}
-                className="group rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-1"
-                style={{
-                  background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)",
-                  border: "1px solid rgba(212,175,55,0.12)",
-                  boxShadow: "0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)"
-                }}
+          {articles.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="font-sans text-grey text-lg">No articles in this category yet.</p>
+              <Link
+                href="/"
+                className="inline-block mt-6 text-gold hover:text-white font-sans text-sm tracking-widest uppercase transition-colors"
               >
-                <div className="aspect-video overflow-hidden relative">
-                  <Image
-                    src={article.image}
-                    alt={article.title}
-                    width={800}
-                    height={450}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer"></div>
-                </div>
-                <div className="p-6">
-                  <p className="font-sans text-sm text-gold mb-2">{article.date}</p>
-                  <h2 className="font-serif text-2xl font-semibold text-white mb-3 group-hover:text-gold transition-colors">
-                    {article.title}
-                  </h2>
-                  <p className="font-sans text-gray-400 mb-4 leading-relaxed">
-                    {article.excerpt}
-                  </p>
-                  <Link
-                    href={`/blog/${article.slug}`}
-                    className="inline-flex items-center font-sans text-gold hover:text-white font-medium group"
+                ← Browse all articles
+              </Link>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-8">
+              {articles.map((article: any) => {
+                // Resolve image URL (handle relative /uploads/ paths)
+                const imageUrl = article.image?.startsWith('/uploads/')
+                  ? `${baseUrl}${article.image}`
+                  : article.image || '/blog-placeholder.jpg';
+
+                const displayDate = article.date || article.created_at;
+                const formattedDate = displayDate
+                  ? new Date(displayDate).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })
+                  : null;
+
+                // Prefer slug for URL, fall back to id
+                const articleHref = `/blog/${article.slug || article.id}`;
+
+                return (
+                  <article
+                    key={article.id}
+                    className="group rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-1"
+                    style={{
+                      background: 'linear-gradient(160deg, #141414 0%, #0c0c0c 100%)',
+                      border: '1px solid rgba(212,175,55,0.12)',
+                      boxShadow:
+                        '0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)',
+                    }}
                   >
-                    Read More
-                    <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
+                    {/* Image */}
+                    <div className="aspect-video overflow-hidden relative">
+                      <img
+                        src={imageUrl}
+                        alt={article.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40" />
+                      {/* Tag badge */}
+                      {article.tagline && (
+                        <span
+                          className="absolute top-4 left-4 font-sans text-[10px] font-semibold tracking-[0.18em] uppercase"
+                          style={{
+                            background: '#D4AF37',
+                            color: '#0a0a0a',
+                            padding: '4px 10px',
+                          }}
+                        >
+                          {article.tagline}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-2">
+                        {formattedDate && (
+                          <p className="font-sans text-sm text-gold">{formattedDate}</p>
+                        )}
+                        {article.author && (
+                          <p className="font-sans text-xs text-gray-500">{article.author}</p>
+                        )}
+                      </div>
+
+                      <h2 className="font-serif text-2xl font-semibold text-white mb-3 group-hover:text-gold transition-colors leading-snug">
+                        {article.title}
+                      </h2>
+
+                      <p className="font-sans text-gray-400 mb-6 leading-relaxed line-clamp-3 text-sm">
+                        {article.description}
+                      </p>
+
+                      <div className="w-16 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent mb-6" />
+
+                      <Link
+                        href={articleHref}
+                        className="inline-flex items-center font-sans text-gold hover:text-white font-medium transition-colors group/link"
+                      >
+                        Read More
+                        <span className="ml-2 group-hover/link:translate-x-1 transition-transform">→</span>
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>

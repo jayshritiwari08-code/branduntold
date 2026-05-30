@@ -1,0 +1,141 @@
+// API utility functions for fetching dynamic content from CMS
+
+const API_BASE_URL = 'https://cms-baas.vercel.app/api/data';
+
+// TypeScript Interfaces
+export interface HeroData {
+  id: string;
+  tagline: string;
+  heading: string;
+  description: string;
+  image: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Heading {
+  id: string;
+  section: string;
+  tagline?: string;
+  heading: string;
+  subheading?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AboutData {
+  id: string;
+  heading: string;
+  description1: string;
+  description2: string;
+  short_description: string;
+  image: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Service {
+  id: string;
+  heading: string;
+  description: string;
+  card_heading: string[];
+  cards_description: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Category {
+  id: string;
+  tagline: string;
+  heading: string;
+  subheading: string;
+  image: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  error?: string;
+}
+
+// Generic fetch function with error handling
+async function fetchFromApi<T>(endpoint: string): Promise<{ data: T | null; error: string | null }> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/${endpoint}`);
+    
+    if (!response.ok) {
+      return { data: null, error: `API Error: ${response.status} ${response.statusText}` };
+    }
+    
+    const result: ApiResponse<T> = await response.json();
+    
+    if (!result.success) {
+      return { data: null, error: result.error || 'Failed to fetch data' };
+    }
+    
+    return { data: result.data, error: null };
+  } catch (error) {
+    console.error(`Error fetching from ${endpoint}:`, error);
+    return { 
+      data: null, 
+      error: error instanceof Error ? error.message : 'Failed to fetch data' 
+    };
+  }
+}
+
+// Hero Section Data
+export async function getHeroData(): Promise<{ data: HeroData | null; error: string | null }> {
+  const { data, error } = await fetchFromApi<HeroData[]>('herosec');
+  
+  if (error || !data || data.length === 0) {
+    return { data: null, error: error || 'No hero data found' };
+  }
+  
+  return { data: data[0], error: null };
+}
+
+// Get All Headings
+export async function getAllHeadings(): Promise<{ data: Heading[] | null; error: string | null }> {
+  return fetchFromApi<Heading[]>('all_headings');
+}
+
+// Get Heading by Section
+export async function getHeadingBySection(section: string): Promise<{ data: Heading | null; error: string | null }> {
+  const { data, error } = await getAllHeadings();
+  
+  if (error || !data) {
+    return { data: null, error: error || 'No headings found' };
+  }
+  
+  const heading = data.find(h => h.section.toLowerCase() === section.toLowerCase());
+  return { data: heading || null, error: !heading ? `No heading found for section: ${section}` : null };
+}
+
+// About Us Data
+export async function getAboutUsData(): Promise<{ data: AboutData | null; error: string | null }> {
+  const { data, error } = await fetchFromApi<AboutData[]>('about_us');
+  
+  if (error || !data || data.length === 0) {
+    return { data: null, error: error || 'No about data found' };
+  }
+  
+  return { data: data[0], error: null };
+}
+
+// Services Data
+export async function getServicesData(): Promise<{ data: Service | null; error: string | null }> {
+  const { data, error } = await fetchFromApi<Service[]>('service');
+  
+  if (error || !data || data.length === 0) {
+    return { data: null, error: error || 'No services data found' };
+  }
+  
+  return { data: data[0], error: null };
+}
+
+// Categories Data
+export async function getCategoriesData(): Promise<{ data: Category[] | null; error: string | null }> {
+  return fetchFromApi<Category[]>('category');
+}

@@ -1,7 +1,33 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { Mail, MapPin, Phone } from 'lucide-react';
 
 export default function Footer() {
+  const [footerData, setFooterData] = useState<any>(null);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+
+  useEffect(() => {
+    const fetchFooterData = async () => {
+      try {
+        const res = await fetch('/api/data/footer');
+        const json = await res.json();
+        if (json.success && json.data && json.data.length > 0) {
+          setFooterData(json.data[0]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch footer data:", err);
+      }
+    };
+    fetchFooterData();
+  }, []);
+
+  const logoSrc = footerData?.footerlogo
+    ? (footerData.footerlogo.startsWith('/') ? `${baseUrl}${footerData.footerlogo}` : footerData.footerlogo)
+    : '/logo.png';
+
   return (
     <footer className="bg-black  border-t border-gold mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -11,25 +37,34 @@ export default function Footer() {
           <div className="lg:col-span-5">
             <div className="flex items-center gap-3">
               <Image
-                src="/logo.png"
+                src={logoSrc}
                 alt="BRAND UNTOLD"
                 width={96}
                 height={96}
                 style={{ height: 'auto', width: 'auto' }}
               />
-            
             </div>
             
             <p className="text-grey text-[15px] leading-relaxed max-w-md">
-              A platform dedicated to uncovering the real stories behind brands and founders — 
-              the thinking, the risks, the turning points, and the craft of storytelling.
+              {footerData?.description || 'A platform dedicated to uncovering the real stories behind brands and founders — the thinking, the risks, the turning points, and the craft of storytelling.'}
             </p>
 
             <div className="mt-8 flex gap-6 text-xl">
-              {/* Add your social icons here */}
-              <a href="#" className="hover:text-gold transition-colors">𝕏</a>
-              <a href="#" className="hover:text-gold transition-colors">IG</a>
-              <a href="#" className="hover:text-gold transition-colors">LI</a>
+              {footerData?.facebook && (
+                <a href={footerData.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">
+                  <span className="font-bold text-2xl">f</span>
+                </a>
+              )}
+              {footerData?.instagram && (
+                <a href={footerData.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">
+                  <span className="font-bold text-2xl">ig</span>
+                </a>
+              )}
+              {footerData?.linkedin && (
+                <a href={footerData.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">
+                  <span className="font-bold text-2xl">in</span>
+                </a>
+              )}
             </div>
           </div>
 
@@ -38,17 +73,17 @@ export default function Footer() {
             <h4 className="font-serif text-gold text-lg mb-5">Categories</h4>
             <ul className="space-y-3 text-grey">
               <li>
-                <Link href="/founder-stories" className="hover:text-gold transition-colors">
+                <Link href="/categories/founder-stories" className="hover:text-gold transition-colors">
                   Founder Stories
                 </Link>
               </li>
               <li>
-                <Link href="/story-breakdowns" className="hover:text-gold transition-colors">
+                <Link href="/categories/story-breakdowns" className="hover:text-gold transition-colors">
                   Story Breakdowns
                 </Link>
               </li>
               <li>
-                <Link href="/writing-branding" className="hover:text-gold transition-colors">
+                <Link href="/categories/writing-branding" className="hover:text-gold transition-colors">
                   Writing & Branding
                 </Link>
               </li>
@@ -81,10 +116,18 @@ export default function Footer() {
           <div className="lg:col-span-3">
             <h4 className="font-serif text-gold text-lg mb-5">Visit Us</h4>
             
-            <div className="text-sm text-grey space-y-1 mb-6">
-              <p>123 Story Avenue</p>
-              <p>New York, NY 10001</p>
-              <p className="pt-2">hello@branduntold.com</p>
+            <div className="text-sm text-grey space-y-4">
+              <div className="flex items-center gap-3">
+                <MapPin size={18} className="text-gold" />
+                <div>
+                  <p>123 Story Avenue</p>
+                  <p>New York, NY 10001</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Mail size={18} className="text-gold" />
+                <p>hello@branduntold.com</p>
+              </div>
             </div>
 
            
