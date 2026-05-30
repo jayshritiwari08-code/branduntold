@@ -5,11 +5,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   let catJson: any = { success: false, data: [] };
   let artJson: any = { success: false, data: [] };
-const baseUrl = "http://localhost:3000"
+const baseUrl = "https://branduntold.vercel.app"
   try {
     const [catRes, artRes] = await Promise.all([
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/data/category`, { cache: 'no-store' }),
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/data/articles`, { cache: 'no-store' }),
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.app'}/api/data/category`, { cache: 'no-store' }),
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.app'}/api/data/articles`, { cache: 'no-store' }),
     ]);
 
     // Only attempt to parse JSON if the response was successful

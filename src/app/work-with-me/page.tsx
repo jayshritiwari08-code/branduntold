@@ -24,7 +24,7 @@ export default function WorkWithMe() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const payload = Object.fromEntries(formData.entries());
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.app';
 
     try {
       const response = await fetch(`${baseUrl}/api/contact`, {
