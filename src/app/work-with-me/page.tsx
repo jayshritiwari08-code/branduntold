@@ -233,7 +233,7 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
                 />
               </div>
 
-             <div class="flex justify-center">
+             <div className="flex justify-center">
                <button
                 type="submit"
                 className="px-8 w-1/2  py-3 bg-gradient-to-r from-gold via-yellow-200 to-[#8f6d1d] text-black font-bold hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 text-center rounded-lg group relative overflow-hidden"
