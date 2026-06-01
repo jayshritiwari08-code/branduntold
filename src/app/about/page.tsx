@@ -221,7 +221,7 @@ export default function About() {
 
       <div className="relative">
         {/* Banner Section */}
-        <section className="relative py-24 md:py-32 overflow-hidden">
+        <section className="relative py-12 md:py-20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(#C2A15F_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift" />
 
@@ -240,7 +240,7 @@ export default function About() {
               <p className="font-sans tracking-[3px] text-gold text-sm mb-4">
                 {aboutUsHeadingLoading ? 'Loading...' : aboutUsHeading?.tagline || 'THE STORY BEHIND THE WORDS'}
               </p>
-              <h1 className="font-serif text-5xl md:text-7xl font-bold text-white leading-tight mb-6">
+              <h1 className="font-serif text-5xl md:text-7xl font-bold text-gold leading-tight mb-6">
                 About <span className="text-gold">Brand Untold</span>
               </h1>
               <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
@@ -300,8 +300,10 @@ export default function About() {
                   )}
                 </div>
               </section>
-
-              <div className="w-20 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent" data-aos="fade-up" data-aos-delay="400" />
+ <div className="w-20 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent" data-aos="fade-up" data-aos-delay="400" />
+          </div>
+            </div>
+              {/* <div className="w-20 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent" data-aos="fade-up" data-aos-delay="400" /> */}
 
               <section data-aos="fade-up" data-aos-delay="500">
                 <div className="font-sans text-lg text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
@@ -317,8 +319,6 @@ export default function About() {
                   )}
                 </div>
               </section>
-            </div>
-          </div>
 
           {/* Philosophy Section */}
           <section className="mb-20" data-aos="fade-up">

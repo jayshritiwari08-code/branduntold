@@ -5,35 +5,66 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const { slug } = await params;
   console.log('Category Slug:', slug);
   // Fetch Category and Articles data
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.in';
   
   const [catRes, artRes] = await Promise.all([
     fetch(`${baseUrl}/api/data/category`, { cache: 'no-store' }),
-    fetch(`${baseUrl}/api/data/articles`, { cache: 'no-store' })
+    fetch(`${baseUrl}/api/data/articles?slug=${slug}`, { cache: 'no-store' })
   ]);
 
   const catJson = await catRes.json();
   const artJson = await artRes.json();
-console.log('Fetched Categories:', catJson);
-console.log('Fetched Articles:', artJson);
-  // Find current category
-  const category = catJson.success ? catJson.data.find((c: any) => {
-    const cSlug = c.heading.trim().toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-');
-    return cSlug === slug;
-  }) : null;
+  console.log('Category API Response:', catJson);
+  console.log('Articles API Response:', artJson);
 
-  // Filter articles by tagline (assuming tagline links article to category)
-  const articles = (artJson.success && category) 
-    ? artJson.data.filter((a: any) => a.tagline === category.tagline)
+  const article = artJson.success
+    ? Array.isArray(artJson.data)
+      ? artJson.data[0]
+      : artJson.data
+    : null;
+
+  const category = catJson.success
+    ? catJson.data.find((c: any) => {
+        const cSlug = (c.slug || c.heading)
+          .trim()
+          .toLowerCase()
+          .replace(/ & /g, '-')
+          .replace(/\s+/g, '-');
+
+        return (
+          cSlug === slug ||
+          c.tagline === article?.tagline ||
+          c.id === article?.category ||
+          c._id === article?.category
+        );
+      })
+    : null;
+
+  const articles = artJson.success
+    ? Array.isArray(artJson.data)
+      ? artJson.data
+      : [artJson.data]
     : [];
 
-  if (!category) {
+  const pageHeading = category?.heading || article?.title || 'Article';
+  const pageTagline = category?.tagline || article?.tagline || '';
+  const pageSubheading = category?.subheading || article?.subheading || article?.description || '';
+
+  if (!article && !category) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <h1 className="text-2xl text-white">Category not found</h1>
+        <div className="text-center px-4">
+          <h1 className="text-3xl text-white font-serif mb-4">Content not found</h1>
+          <p className="text-gray-400 mb-6">We couldn't find the requested article or category.</p>
+          <Link href="/" className="text-gold hover:text-white transition-colors font-sans text-sm tracking-widest uppercase">
+            ← Back to Home
+          </Link>
+        </div>
       </div>
     );
   }
+
+
 
   return (
     <div
@@ -69,18 +100,18 @@ console.log('Fetched Articles:', artJson);
                   </Link>
                 </li>
                 <li className="text-gold">/</li>
-                <li className="text-gold font-medium">{category.title}</li>
+                <li className="text-gold font-medium">{pageHeading}</li>
               </ol>
             </nav>
 
             {/* Banner Content */}
             <div className="text-center">
-              <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">{category.tagline}</p>
+              <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">{pageTagline}</p>
               <h1 className="font-serif text-5xl md:text-7xl font-bold text-white leading-tight mb-6">
-                {category.heading}
+                {pageHeading}
               </h1>
               <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
-                {category.subheading}
+                {pageSubheading}
               </p>
               <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent mx-auto mt-10"></div>
             </div>

@@ -1,15 +1,17 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useHeadingBySection, useServicesData } from '../hooks';
+import { MapPin } from 'lucide-react';
 
 export default function WorkWithMe() {
   const { data: contactUsHeading, loading: contactUsHeadingLoading } = useHeadingBySection('Contact Us');
   const { data: contactFormHeading, loading: contactFormHeadingLoading } = useHeadingBySection('contact form');
   const { data: servicesData, loading: servicesDataLoading } = useServicesData();
+  const [footerData, setFooterData] = useState<any>(null);
 
   useEffect(() => {
     AOS.init({
@@ -18,13 +20,27 @@ export default function WorkWithMe() {
       once: true,
       offset: 50,
     });
+
+    const fetchFooterData = async () => {
+      try {
+        const res = await fetch('/api/data/footer');
+        const json = await res.json();
+        console.log("Footer data fetched:", json);
+        if (json.success && json.data && json.data.length > 0) {
+          setFooterData(json.data[0]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch footer data:", err);
+      }
+    };
+    fetchFooterData();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const payload = Object.fromEntries(formData.entries());
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.app';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.in';
 
     try {
       const response = await fetch(`${baseUrl}/api/contact`, {
@@ -59,7 +75,7 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.
 
       <div className="relative">
         {/* Banner Section */}
-        <section className="relative py-24 md:py-32 overflow-hidden">
+        <section className="relative py-12 md:py-20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift" />
 
@@ -80,7 +96,7 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.
             {/* Banner Content */}
             <div className="text-center" data-aos="fade-up">
               <p className="font-sans tracking-[3px] text-gold text-sm mb-4">{contactUsHeadingLoading ? 'Loading...' : contactUsHeading?.tagline || 'LET\'S CREATE SOMETHING MEANINGFUL'}</p>
-              <h1 className="font-serif text-5xl md:text-7xl font-bold text-white leading-tight mb-6">
+              <h1 className="font-serif text-5xl md:text-7xl font-bold text-gold leading-tight mb-6">
                 Work With <span className="text-gold">Me</span>
               </h1>
               <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
@@ -174,8 +190,8 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.
               <h2 className="font-serif text-3xl text-gold mb-3">Let’s Tell Your Story</h2>
               <p className="text-grey">
                 Fill out the form below or email me directly at{' '}
-                <a href="mailto:hello@branduntold.com" className="text-gold hover:underline">
-                  hello@branduntold.com
+                <a href={`mailto:${footerData?.email || 'hello@branduntold.com'}`} className="text-gold hover:underline transition-colors">
+                  {footerData?.email || 'hello@branduntold.com'}
                 </a>
               </p>
             </div>
@@ -243,6 +259,58 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.
              </div>
             </form>
           </section>
+
+          {/* Map Section */}
+          {(footerData?.map || footerData?.address) && (
+            <section 
+              className="mt-20 rounded-3xl overflow-hidden group"
+              data-aos="fade-up"
+              style={{
+                background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)",
+                border: "1px solid rgba(212,175,55,0.12)",
+                boxShadow: "0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)"
+              }}
+            >
+              <div className="p-8 md:p-10 border-b border-gold/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center text-gold shrink-0">
+                    <MapPin size={24} />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-2xl text-gold mb-1">Our Studio</h3>
+                    <p className="text-grey text-sm leading-relaxed max-w-xs">
+                      {footerData.address || 'Visit us at our creative studio to discuss your brand narrative.'}
+                    </p>
+                  </div>
+                </div>
+                <a 
+                  href={footerData.map || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(footerData.address || '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-8 py-3 bg-gold/10 border border-gold/30 text-gold rounded-full hover:bg-gold hover:text-black transition-all duration-300 text-sm font-bold tracking-widest uppercase"
+                >
+                  View on Google Maps
+                </a>
+              </div>
+              
+              {/* Map Iframe with custom dark mode filter */}
+              <div className="h-[400px] w-full bg-[#0a0a0a] relative overflow-hidden">
+                {/* Generate an embeddable URL from the address if available, as short sharing links are blocked in iframes */}
+                <iframe
+                  src={footerData.address 
+                    ? `https://maps.google.com/maps?q=${encodeURIComponent(footerData.address)}&t=&z=14&ie=UTF8&iwloc=&output=embed`
+                    : footerData.map
+                  }
+                  className="w-full h-full grayscale opacity-75 invert-[0.9] contrast-[1.2] brightness-[0.9]"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  title="Studio Location"
+                />
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              </div>
+            </section>
+          )}
         </div>
       </div>
     </div>

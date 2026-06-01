@@ -1,13 +1,55 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import RecentArticlesSlider from './RecentArticlesSlider';
+import { Metadata } from 'next';
 
-export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
+interface BlogPostProps {
+  params: Promise<{ slug: string }>;
+}
+
+async function getArticleData(slug: string) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.in';
+  try {
+    const res = await fetch(`${baseUrl}/api/data/articles?slug=${encodeURIComponent(slug)}`, { cache: 'no-store' });
+    const artJson = await res.json();
+    
+    if (artJson.success) {
+      // API returns single article or array — handle both shapes
+      return Array.isArray(artJson.data) ? artJson.data[0] : artJson.data;
+    }
+  } catch (error) {
+    console.error(`Failed to fetch article data for slug ${slug}:`, error);
+  }
+  return null;
+}
+
+export async function generateMetadata({ params }: BlogPostProps): Promise<Metadata> {
   const { slug } = await params;
+  console.log("Generating metadata for slug:", slug);
+  const article = await getArticleData(slug);
+console.log("Metadata generation - article data:", article);
+  if (!article) {
+    return {
+      title: 'Article Not Found - Brand Untold',
+      description: 'The requested article could not be found.',
+    };
+  }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.app';
+  return {
+    title: article.metatitle || article.title,
+    description: article.meta_description || article.description,
+    keywords: article.meta_keyword || [],
+    // You can add more meta tags here, e.g., Open Graph, Twitter cards
+    // openGraph: {
+    //   images: [article.image],
+    // },
+  };
+}
 
-  // ✅ Fetch article by slug directly, and categories in parallel
+export default async function BlogPost({ params }: BlogPostProps) {
+  const { slug } = await params;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.in'; // Re-declare for component scope
+
   const [artRes, catRes] = await Promise.all([
     fetch(`${baseUrl}/api/data/articles?slug=${slug}`, { cache: 'no-store' }),
     fetch(`${baseUrl}/api/data/category`, { cache: 'no-store' })
@@ -15,7 +57,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
   const artJson = await artRes.json();
   const catJson = await catRes.json();
-
+  console.log("Article fetch response:", artJson);
   // API returns single article or array — handle both shapes
   const article = artJson.success
     ? (Array.isArray(artJson.data) ? artJson.data[0] : artJson.data)
@@ -56,11 +98,11 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
       <div className="relative">
         {/* Banner Section */}
-        <section className="relative py-24 md:py-32 overflow-hidden">
+        <section className="relative py-12 md:py-20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent"></div>
           <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift"></div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative">
             <nav className="mb-8">
               <ol className="flex items-center space-x-2 text-sm">
                 <li>
@@ -79,7 +121,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
             <div className="text-center mb-8">
               <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">{article.tagline}</p>
-              <h1 className="font-serif text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
+              <h1 className="font-serif text-4xl md:text-6xl font-bold text-gold leading-tight mb-6">
                 {article.title}
               </h1>
               <div className="flex items-center justify-center gap-4 text-sm text-grey">
@@ -97,8 +139,8 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
+          <div className={`grid ${recentArticles.length > 0 ? 'lg:grid-cols-3' : 'lg:grid-cols-1'} gap-8`}>
+            <div className={recentArticles.length > 0 ? 'lg:col-span-2' : 'lg:col-span-1'}>
               {/* Featured Image */}
               <div className="aspect-video mb-12 rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative">
                 <Image
@@ -124,7 +166,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 <style>{`
                   .tiptap-content {
                     color: #d1d5db;
-                    font-family: Georgia, 'Times New Roman', serif;
+                  
                     font-size: 1.125rem;
                     line-height: 1.85;
                   }
@@ -302,15 +344,15 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             </div>
 
             {/* Sidebar */}
-            <div className="lg:col-span-1">
-              {recentArticles.length > 0 && (
+            {recentArticles.length > 0 && (
+              <div className="lg:col-span-1">
                 <RecentArticlesSlider
                   articles={recentArticles}
                   categoryTitle={category?.heading || 'Recent'}
                   categorySlug={categorySlug}
                 />
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

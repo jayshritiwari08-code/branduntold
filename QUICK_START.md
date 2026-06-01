@@ -21,7 +21,7 @@ npm run dev
 ```
 
 ## ✅ Step 5: Access Admin Panel
-- Open: `https://branduntold.vercel.app/admin/login`
+- Open: `https://branduntold.in/admin/login`
 - Log in with credentials from Step 3
 - You should see the dashboard!
 
