@@ -31,7 +31,7 @@ export default function CategoriesCards() {
         console.log("Fetched categories:", json);
         if (json.success && json.data) {
           const mapped = json.data.map((item: any) => ({
-            href: `/category/${item.heading.trim().toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')}`,
+            href: `/categories/${item.heading.trim().toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')}`,
             title: item.heading.trim(),
             desc: item.subheading,
             img: item.image,
@@ -97,8 +97,8 @@ export default function CategoriesCards() {
     const isActive = offset === 0;
     const abs = Math.abs(offset);
     const scale = isActive ? 1 : 0.86 - abs * 0.04;
-    const tx = offset * 310;
-    const tz = isActive ? 40 : -70 - abs * 30;
+    const tx = offset * 360;
+    const tz = isActive ? 60 : -90 - abs * 40;
     const rotY = isActive ? tilt.y : offset * 20;
     const rotX = isActive ? tilt.x : 0;
     const opacity = abs > 1 ? 0.25 : 1;
@@ -107,7 +107,7 @@ export default function CategoriesCards() {
       position: "absolute",
       left: "50%",
       top: "50%",
-      width: 340,
+      width: 400,
       transform: `translate(-50%, -50%) translateX(${tx}px) translateZ(${tz}px) scale(${scale}) rotateY(${rotY}deg) rotateX(${rotX}deg)`,
       zIndex: 10 - abs,
       opacity,
@@ -133,14 +133,14 @@ export default function CategoriesCards() {
 
   return (
     <section
-      className="bg-[#0a0a0a] min-h-[600px] py-16 select-none overflow-hidden"
+      className="bg-[#0a0a0a] min-h-[700px] py-16 select-none overflow-hidden"
      
       style={{ fontFamily: "var(--font-playfair)" }}
       onMouseEnter={stopAuto}
       onMouseLeave={startAuto}
     >
       {/* Header */}
-      <div className="max-w-2xl mx-auto px-4 mb-12 text-center">
+      <div className="max-w-2xl mx-auto px-2.5 sm:px-4 mb-12 text-center">
         <h2
           className="text-4xl md:text-5xl font-bold mb-3"
           style={{ color: GOLD, fontFamily: "var(--font-playfair)" }}
@@ -166,7 +166,7 @@ export default function CategoriesCards() {
 
       {/* Carousel Stage */}
       <div
-        className="relative h-[420px] w-full max-w-[1400px] mx-auto"
+        className="relative h-[520px] w-full max-w-[1600px] mx-auto"
         style={{ perspective: "1100px", perspectiveOrigin: "center" }}
       >
        
@@ -192,8 +192,8 @@ export default function CategoriesCards() {
               <div
                 className="rounded-2xl overflow-hidden transition-all duration-700 ease-out"
                 style={{
-                  width: 340,
-                  height: 400,
+                  width: 400,
+                  height: 480,
                   background: "#111",
                   border: `2px solid ${isActive ? GOLD : "#2a2a2a"}`,
                   boxShadow: isActive
@@ -202,7 +202,7 @@ export default function CategoriesCards() {
                 }}
               >
                 {/* Image */}
-                <div className="relative h-[190px] overflow-hidden">
+                <div className="relative h-[220px] overflow-hidden">
                   <img
                     src={cat.img}
                     alt={cat.title}
@@ -240,7 +240,7 @@ export default function CategoriesCards() {
                       aria-hidden="true"
                     />
                     <h3
-                      className="m-0 text-[17px] font-bold transition-colors duration-300"
+                      className="m-0 text-xl font-bold transition-colors duration-300"
                       style={{
                         fontFamily: "var(--font-playfair)",
                         color: isActive ? GOLD : "#555",
@@ -250,7 +250,7 @@ export default function CategoriesCards() {
                     </h3>
                   </div>
                   <p
-                    className="m-0 text-sm leading-relaxed font-sans transition-colors duration-300"
+                    className="m-0 text-md leading-relaxed font-sans transition-colors duration-300"
                     style={{ color: isActive ? "#bbb" : "#3a3a3a" }}
                   >
                     {cat.desc}

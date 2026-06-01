@@ -1,6 +1,6 @@
 // API utility functions for fetching dynamic content from CMS
 
-const API_BASE_URL = 'https://cms-baas.vercel.app/api/data';
+const API_BASE_URL = 'https://admin.branduntold.in//api/data';
 
 // TypeScript Interfaces
 export interface HeroData {

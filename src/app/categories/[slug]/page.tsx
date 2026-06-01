@@ -1,24 +1,73 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  
+  try {
+    const res = await fetch(`${baseUrl}/api/data/category`, { cache: 'no-store' });
+    const catJson = await res.json();
+    
+    if (catJson.success) {
+      const category = catJson.data.find((c: any) => {
+        const cSlug = c.heading
+          .trim()
+          .toLowerCase()
+          .replace(/ & /g, '-')
+          .replace(/\s+/g, '-');
+        return cSlug === slug;
+      });
+
+      if (category) {
+        return {
+          title: `${category.heading} - Brand Untold`,
+          description: category.subheading || category.tagline,
+        };
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch category metadata:", error);
+  }
+
+  return {
+    title: 'Category - Brand Untold',
+    description: 'Explore our articles by category.',
+  };
+}
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-
+  console.log("slug", slug);
+  
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  console.log("baseUrl", baseUrl);
+  
   let catJson: any = { success: false, data: [] };
   let artJson: any = { success: false, data: [] };
-const baseUrl = "https://branduntold.vercel.app"
+  
   try {
     const [catRes, artRes] = await Promise.all([
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.app'}/api/data/category`, { cache: 'no-store' }),
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.vercel.app'}/api/data/articles`, { cache: 'no-store' }),
+      fetch(`${baseUrl}/api/data/category`, { cache: 'no-store' }),
+      fetch(`${baseUrl}/api/data/articles`, { cache: 'no-store' }),
     ]);
+
+    console.log("catRes status:", catRes.status);
+    console.log("artRes status:", artRes.status);
 
     // Only attempt to parse JSON if the response was successful
     if (catRes.ok) {
       catJson = await catRes.json();
+      console.log("catJson:", catJson);
+    } else {
+      console.error("Failed to fetch categories:", catRes.statusText);
     }
+    
     if (artRes.ok) {
       artJson = await artRes.json();
-      console.log("artJson",artJson)
+      console.log("artJson", artJson);
+    } else {
+      console.error("Failed to fetch articles:", artRes.statusText);
     }
   } catch (error) {
     console.error("Failed to fetch category or articles:", error);
@@ -78,11 +127,11 @@ const baseUrl = "https://branduntold.vercel.app"
 
       <div className="relative">
         {/* ── Banner ─────────────────────────────────────────────────────────── */}
-        <section className="relative py-24 md:py-32 overflow-hidden">
+        <section className="relative py-12 md:py-20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift" />
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative">
             {/* Breadcrumb */}
             <nav className="mb-8" aria-label="Breadcrumb">
               <ol className="flex items-center space-x-2 text-sm">
@@ -136,8 +185,12 @@ const baseUrl = "https://branduntold.vercel.app"
             <div className="grid md:grid-cols-2 gap-8">
               {articles.map((article: any) => {
                 // Resolve image URL (handle relative /uploads/ paths)
+                // Use admin base URL for images (localhost:3001 for dev, admin.branduntold.in for prod)
+                const adminBaseUrl = process.env.NODE_ENV === 'production' 
+                  ? 'https://admin.branduntold.in' 
+                  : 'http://localhost:3001';
                 const imageUrl = article.image?.startsWith('/uploads/')
-                  ? `${baseUrl}${article.image}`
+                  ? `${adminBaseUrl}${article.image}`
                   : article.image || '/blog-placeholder.jpg';
 
                 const displayDate = article.date || article.created_at;

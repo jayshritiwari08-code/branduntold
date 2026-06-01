@@ -228,15 +228,36 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="py-20 md:py-32 bg-black relative overflow-hidden">
+      <section className="py-10 md:py-20 bg-black relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-[radial-gradient(#C2A15F_0.8px,transparent_1px)] bg-[length:60px_60px] animate-slow-drift"></div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative">
+          <div className="lg:flex block gap-12 items-center">
+               <div className="relative lg:hidden block flex justify-center" data-aos="fade-left" data-aos-duration="1100">
+              <div className="relative">
+                <div
+                  className="relative bg-gray-900 overflow-hidden mx-auto"
+                  style={{ width: '520px', height: '590px', borderRadius: '50%' }}
+                >
+                  <Image
+                    src={heroData?.image || heroImage}
+                    alt={heroData?.heading || 'Hero Image'}
+                    width={520}
+                    height={590}
+                    className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
+                    priority
+                  />
+                </div>
+                <div
+                  className="absolute inset-0 rounded-[50%] border border-gold/20 animate-pulse-slow pointer-events-none"
+                  style={{ width: '520px', height: '590px' }}
+                ></div>
+              </div>
+            </div>
             <div data-aos="fade-right" data-aos-duration="1000">
-              <p className="font-sans text-gold text-lg mb-4 tracking-wide">
+              <p className="font-sans text-gold text-lg mb-4 mt-12 lg:mt-0 tracking-wide">
                 {heroLoading ? 'Loading...' : heroData?.tagline || 'Beyond12 the Brand'}
               </p>
               <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
@@ -244,12 +265,12 @@ export default function Home() {
               </h1>
 
               {/* Hero Tiptap Description */}
-              <div className="max-w-xl mb-8">
+              <div className="max-w-3xl mb-8">
                 {heroLoading ? (
                   <p className="text-grey text-lg">Loading content...</p>
                 ) : heroData?.description ? (
                   <div
-                    className="tiptap-content"
+                    className="tiptap-content text-justify"
                     dangerouslySetInnerHTML={{ __html: heroData.description }}
                   />
                 ) : (
@@ -287,7 +308,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative hidden md:block flex justify-center" data-aos="fade-left" data-aos-duration="1100">
+            <div className="relative hidden lg:block flex justify-center" data-aos="fade-left" data-aos-duration="1100">
               <div className="relative">
                 <div
                   className="relative bg-gray-900 overflow-hidden mx-auto"
@@ -296,9 +317,9 @@ export default function Home() {
                   <Image
                     src={heroData?.image || heroImage}
                     alt={heroData?.heading || 'Hero Image'}
-                    width={520}
-                    height={590}
-                    className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
+                      width={520}
+                      height={590}
+                    className="lg:w-full lg:h-full object-cover transition-transform duration-1000 hover:scale-105"
                     priority
                   />
                 </div>
