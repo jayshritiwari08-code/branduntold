@@ -206,9 +206,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 const articleHref = `/blog/${article.slug || article.id}`;
 
                 return (
+                  <Link key={article.id} href={articleHref} className="block group">
                   <article
-                    key={article.id}
-                    className="group rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-1"
+                    className="rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1 h-full"
                     style={{
                       background: 'linear-gradient(160deg, #141414 0%, #0c0c0c 100%)',
                       border: '1px solid rgba(212,175,55,0.12)',
@@ -223,20 +223,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                         alt={article.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40" />
-                      {/* Tag badge */}
-                      {article.tagline && (
-                        <span
-                          className="absolute top-4 left-4 font-sans text-[10px] font-semibold tracking-[0.18em] uppercase"
-                          style={{
-                            background: '#D4AF37',
-                            color: '#0a0a0a',
-                            padding: '4px 10px',
-                          }}
-                        >
-                          {article.tagline}
-                        </span>
-                      )}
+                    
                     </div>
 
                     {/* Content */}
@@ -260,15 +247,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
                       <div className="w-16 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent mb-6" />
 
-                      <Link
-                        href={articleHref}
-                        className="inline-flex items-center font-sans text-gold hover:text-white font-medium transition-colors group/link"
+                      <div
+                        className="inline-flex items-center font-sans text-gold group-hover:text-white font-medium transition-colors"
                       >
                         Read More
-                        <span className="ml-2 group-hover/link:translate-x-1 transition-transform">→</span>
-                      </Link>
+                        <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                      </div>
                     </div>
                   </article>
+                  </Link>
                 );
               })}
             </div>
