@@ -7,7 +7,7 @@ import { Mail, MapPin, Phone } from 'lucide-react';
 
 export default function Footer() {
   const [footerData, setFooterData] = useState<any>(null);
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
   useEffect(() => {
     const fetchFooterData = async () => {
@@ -40,9 +40,10 @@ export default function Footer() {
               <Image
                 src={logoSrc}
                 alt="BRAND UNTOLD"
-                width={96}
-                height={96}
-                style={{ height: 'auto', width: 'auto' }}
+                width={120}
+                height={120}
+                className=""
+                unoptimized
               />
             </div>
             
