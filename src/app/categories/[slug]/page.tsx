@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
+import Image from 'next/image';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -218,7 +219,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                   >
                     {/* Image */}
                     <div className="aspect-video overflow-hidden relative">
-                      <img
+                      <Image
                         src={imageUrl}
                         alt={article.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

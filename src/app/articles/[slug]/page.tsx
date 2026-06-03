@@ -132,7 +132,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 }}
               >
                 <div className="aspect-video overflow-hidden relative">
-                  <img
+                  <Image
                     src={article.image || '/blog-placeholder.jpg'}
                     alt={article.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
