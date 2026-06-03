@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useHeadingBySection } from "../hooks";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 const GOLD = "#C9A84C";
 
@@ -203,7 +204,7 @@ export default function CategoriesCards() {
               >
                 {/* Image */}
                 <div className="relative h-[220px] overflow-hidden">
-                  <img
+                  <Image
                     src={cat.img}
                     alt={cat.title}
                     className="w-full h-full object-cover block transition-all duration-700 ease-in-out"
