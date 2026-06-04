@@ -1,6 +1,7 @@
 // API utility functions for fetching dynamic content from CMS
+// Use same-origin URL, rewrite will handle proxying to localhost:3001
 
-const API_BASE_URL = 'https://admin.branduntold.in//api/data';
+const API_BASE_URL = '/api/data';
 
 // TypeScript Interfaces
 export interface HeroData {

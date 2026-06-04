@@ -7,7 +7,6 @@ import { Mail, MapPin, Phone } from 'lucide-react';
 
 export default function Footer() {
   const [footerData, setFooterData] = useState<any>(null);
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
   useEffect(() => {
     const fetchFooterData = async () => {
@@ -25,9 +24,7 @@ export default function Footer() {
     fetchFooterData();
   }, []);
 
-  const logoSrc = footerData?.footerlogo
-    ? (footerData.footerlogo.startsWith('/') ? `${baseUrl}${footerData.footerlogo}` : footerData.footerlogo)
-    : '/logo.png';
+  const logoSrc = footerData?.footerlogo || '/logo.png';
 
   return (
     <footer className="bg-black  border-t border-gold mt-auto">

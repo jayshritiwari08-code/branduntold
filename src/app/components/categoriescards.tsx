@@ -207,6 +207,8 @@ export default function CategoriesCards() {
                   <Image
                     src={cat.img}
                     alt={cat.title}
+                    width={400}
+                    height={420}
                     className="w-full h-full object-cover block transition-all duration-700 ease-in-out"
                     style={{
                       filter: isActive

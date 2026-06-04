@@ -36,31 +36,32 @@ export default function WorkWithMe() {
     fetchFooterData();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const payload = Object.fromEntries(formData.entries());
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.in';
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  const form = e.currentTarget; // ← capture before async gap
+  const formData = new FormData(form);
+  const payload = Object.fromEntries(formData.entries());
 
-    try {
-      const response = await fetch(`${baseUrl}/api/contact`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+  try {
+    const response = await fetch('/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
 
-      if (response.ok) {
-        alert('Thank you! Your message has been received.');
-        e.currentTarget.reset();
-      } else {
-        alert('Something went wrong. Please try again later.');
-      }
-    } catch (error) {
-      alert('Failed to send message. Please check your connection.');
+    if (response.ok) {
+      alert('Thank you! Your message has been received.');
+      form.reset(); // ← use captured ref, not e.currentTarget
+    } else {
+      alert('Something went wrong. Please try again later.');
     }
-  };
+  } catch (error) {
+    console.error(error);
+    alert('Something went wrong. Please try again later.');
+  }
+};
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden"

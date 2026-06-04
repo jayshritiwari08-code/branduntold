@@ -99,29 +99,29 @@ export default async function BlogPost({ params }: BlogPostProps) {
       <div className="relative">
         {/* Banner Section */}
         <section className="relative py-12 md:py-20 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-#c2a15f/10 to-transparent"></div>
           <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift"></div>
 
           <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative">
             <nav className="mb-8">
               <ol className="flex items-center space-x-2 text-sm">
                 <li>
-                  <Link href="/" className="text-grey hover:text-gold transition-colors">Home</Link>
+                  <Link href="/" className="text-grey hover:text-#c2a15f transition-colors">Home</Link>
                 </li>
-                <li className="text-gold">/</li>
+                <li className="text-#c2a15f">/</li>
                 <li>
-                  <Link href={`/articles/${categorySlug}`} className="text-grey hover:text-gold transition-colors">
+                  <Link href={`/articles/${categorySlug}`} className="text-grey hover:text-#c2a15f transition-colors">
                     {category?.heading || 'Category'}
                   </Link>
                 </li>
-                <li className="text-gold">/</li>
-                <li className="text-gold font-medium truncate max-w-[200px]">{article.title}</li>
+                <li className="text-#c2a15f">/</li>
+                <li className="text-#c2a15f font-medium truncate max-w-[200px]">{article.title}</li>
               </ol>
             </nav>
 
             <div className="text-center mb-8">
-              <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">{article.tagline}</p>
-              <h1 className="font-serif text-4xl md:text-6xl font-bold text-gold leading-tight mb-6">
+              <p className="font-sans tracking-[3px] text-#c2a15f text-sm mb-4 uppercase">{article.tagline}</p>
+              <h1 className="font-serif text-4xl md:text-6xl font-bold text-#c2a15f leading-tight mb-6">
                 {article.title}
               </h1>
               <div className="flex items-center justify-center gap-4 text-sm text-grey">
@@ -142,7 +142,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
           <div className={`grid ${recentArticles.length > 0 ? 'lg:grid-cols-3' : 'lg:grid-cols-1'} gap-8`}>
             <div className={recentArticles.length > 0 ? 'lg:col-span-2' : 'lg:col-span-1'}>
               {/* Featured Image */}
-              <div className="aspect-video mb-12 rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative">
+              <div className="aspect-video mb-12 rounded-3xl overflow-hidden border border-#c2a15f/30 shadow-2xl relative">
                 <Image
                   src={article.image}
                   alt={article.title}
@@ -200,7 +200,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                     font-family: Georgia, serif;
                     font-size: 1.375rem;
                     font-weight: 600;
-                    color: #d6b20f;
+                    color: #c2a15f;
                     margin-top: 2rem;
                     margin-bottom: 0.75rem;
                     line-height: 1.4;
@@ -209,12 +209,12 @@ export default async function BlogPost({ params }: BlogPostProps) {
                     font-family: Georgia, serif;
                     font-size: 1.15rem;
                     font-weight: 600;
-                    color: #e4c84a;
+                    color: #c2a15f;
                     margin-top: 1.75rem;
                     margin-bottom: 0.5rem;
                   }
                   .tiptap-content strong {
-                    color: #dfbe45;
+                    color: #c2a15f;
                     font-weight: 700;
                   }
                   .tiptap-content em {
@@ -241,7 +241,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                     margin-bottom: 0.25rem;
                   }
                   .tiptap-content blockquote {
-                    border-left: 3px solid #d4af37;
+                    border-left: 3px solid #c2a15f;
                     padding: 0.75rem 1.5rem;
                     margin: 2rem 0;
                     background: rgba(212,175,55,0.05);
@@ -257,7 +257,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                     transition: color 0.2s;
                   }
                   .tiptap-content a:hover {
-                    color: #f0d060;
+                    color: #c2a15f;
                   }
                   .tiptap-content code {
                     background: rgba(212,175,55,0.08);
@@ -324,15 +324,15 @@ export default async function BlogPost({ params }: BlogPostProps) {
 
               {/* Author Bio */}
               <div
-                className="mt-12 p-8 rounded-3xl border border-gold/20"
+                className="mt-12 p-8 rounded-3xl border border-#c2a15f/20"
                 style={{ background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)" }}
               >
                 <div className="flex items-start gap-6">
-                  <div className="w-20 h-20 rounded-full bg-gold/10 flex items-center justify-center text-gold border-2 border-gold/30">
+                  <div className="w-20 h-20 rounded-full bg-#c2a15f/10 flex items-center justify-center text-#c2a15f border-2 border-#c2a15f/30">
                     <span className="text-2xl">✨</span>
                   </div>
                   <div>
-                    <h3 className="font-serif text-2xl font-semibold text-gold mb-2">
+                    <h3 className="font-serif text-2xl font-semibold text-#c2a15f mb-2">
                       Written by {article.author || 'Jayshree'}
                     </h3>
                     <p className="font-sans text-gray-400 leading-relaxed">

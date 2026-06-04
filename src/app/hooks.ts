@@ -67,11 +67,24 @@ async function fetchFromApi<T>(endpoint: string): Promise<{ data: T | null; erro
   try {
     const response = await fetch(`${API_BASE_URL}/${endpoint}`);
     
+    // Log response for debugging
+    console.log(`Fetch ${endpoint}:`, response.status, response.ok);
+    
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Response text for ${endpoint}:`, errorText);
       return { data: null, error: `API Error: ${response.status} ${response.statusText}` };
     }
     
-    const result: ApiResponse<T> = await response.json();
+    let result: ApiResponse<T>;
+    try {
+      result = await response.json();
+    } catch (jsonError) {
+      console.error(`Failed to parse JSON for ${endpoint}:`, jsonError);
+      const text = await response.text();
+      console.error(`Raw response text for ${endpoint}:`, text);
+      return { data: null, error: `Failed to parse JSON response for ${endpoint}` };
+    }
     
     if (!result.success) {
       return { data: null, error: result.error || 'Failed to fetch data' };

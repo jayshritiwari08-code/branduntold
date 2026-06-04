@@ -4,10 +4,9 @@ import Image from 'next/image';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
   try {
-    const res = await fetch(`${baseUrl}/api/data/category`, { cache: 'no-store' });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/data/category`, { cache: 'no-store' });
     const catJson = await res.json();
     
     if (catJson.success) {
@@ -42,7 +41,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   console.log("slug", slug);
   
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  console.log("baseUrl", baseUrl);
   
   let catJson: any = { success: false, data: [] };
   let artJson: any = { success: false, data: [] };
@@ -186,13 +184,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             <div className="grid md:grid-cols-2 gap-8">
               {articles.map((article: any) => {
                 // Resolve image URL (handle relative /uploads/ paths)
-                // Use admin base URL for images (localhost:3001 for dev, admin.branduntold.in for prod)
-                const adminBaseUrl = process.env.NODE_ENV === 'production' 
-                  ? 'https://admin.branduntold.in' 
-                  : 'http://localhost:3001';
-                const imageUrl = article.image?.startsWith('/uploads/')
-                  ? `${adminBaseUrl}${article.image}`
-                  : article.image || '/blog-placeholder.jpg';
+                // Use same-origin URL, rewrite will handle proxying to localhost:3001
+                const imageUrl = article.image || '/blog-placeholder.jpg';
 
                 const displayDate = article.date || article.created_at;
                 const formattedDate = displayDate
@@ -220,6 +213,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                     {/* Image */}
                     <div className="aspect-video overflow-hidden relative">
                       <Image
+                      width={800}
+                      height={450}
                         src={imageUrl}
                         alt={article.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
