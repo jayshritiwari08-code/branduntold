@@ -7,10 +7,13 @@ interface BlogPostProps {
   params: Promise<{ slug: string }>;
 }
 
+// Revalidate every 60 seconds (ISR - Incremental Static Regeneration)
+export const revalidate = 60;
+
 async function getArticleData(slug: string) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.in';
   try {
-    const res = await fetch(`${baseUrl}/api/data/articles?slug=${encodeURIComponent(slug)}`, { cache: 'no-store' });
+    const res = await fetch(`${baseUrl}/api/data/articles?slug=${encodeURIComponent(slug)}`, { next: { revalidate: 60 } });
     const artJson = await res.json();
     
     if (artJson.success) {
@@ -51,8 +54,8 @@ export default async function BlogPost({ params }: BlogPostProps) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.in'; // Re-declare for component scope
 
   const [artRes, catRes] = await Promise.all([
-    fetch(`${baseUrl}/api/data/articles?slug=${slug}`, { cache: 'no-store' }),
-    fetch(`${baseUrl}/api/data/category`, { cache: 'no-store' })
+    fetch(`${baseUrl}/api/data/articles?slug=${slug}`, { next: { revalidate: 60 } }),
+    fetch(`${baseUrl}/api/data/category`, { next: { revalidate: 60 } })
   ]);
 
   const artJson = await artRes.json();
@@ -78,8 +81,8 @@ export default async function BlogPost({ params }: BlogPostProps) {
     ? category.heading.trim().toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')
     : '';
 
-  // Fetch recent articles from same category (still needs full list)
-  const recentRes = await fetch(`${baseUrl}/api/data/articles`, { cache: 'no-store' });
+  // Fetch recent articles from same category (revalidate every 60 seconds)
+  const recentRes = await fetch(`${baseUrl}/api/data/articles`, { next: { revalidate: 60 } });
   const recentJson = await recentRes.json();
   const recentArticles = recentJson.success
     ? recentJson.data.filter((a: any) => a.tagline === article.tagline && a.id !== article.id).slice(0, 3)
@@ -106,22 +109,29 @@ export default async function BlogPost({ params }: BlogPostProps) {
             <nav className="mb-8">
               <ol className="flex items-center space-x-2 text-sm">
                 <li>
-                  <Link href="/" className="text-grey hover:text-#c2a15f transition-colors">Home</Link>
+                  <Link href="/" className="text-grey hover:text-[#c2a15f] transition-colors">Home</Link>
                 </li>
-                <li className="text-#c2a15f">/</li>
-                <li>
-                  <Link href={`/articles/${categorySlug}`} className="text-grey hover:text-#c2a15f transition-colors">
-                    {category?.heading || 'Category'}
-                  </Link>
-                </li>
-                <li className="text-#c2a15f">/</li>
-                <li className="text-#c2a15f font-medium truncate max-w-[200px]">{article.title}</li>
+           {category && categorySlug && (
+  <>
+    <li className="text-[#c2a15f]">/</li>
+    <li>
+      <Link
+        href={`/articles/${categorySlug}`}
+        className="text-grey hover:text-[#c2a15f] transition-colors"
+      >
+        {category.heading || "Category"}
+      </Link>
+    </li>
+  </>
+)}
+                <li className="text-[#c2a15f]">/</li>
+                <li className="text-[#c2a15f] font-medium truncate max-w-[200px]">{article.title}</li>
               </ol>
             </nav>
 
             <div className="text-center mb-8">
-              <p className="font-sans tracking-[3px] text-#c2a15f text-sm mb-4 uppercase">{article.tagline}</p>
-              <h1 className="font-serif text-4xl md:text-6xl font-bold text-#c2a15f leading-tight mb-6">
+              <p className="font-sans tracking-[3px] text-[#c2a15f] text-sm mb-4 uppercase">{article.tagline}</p>
+              <h1 className="font-serif text-4xl md:text-6xl font-bold text-[#c2a15f] leading-tight mb-6">
                 {article.title}
               </h1>
               <div className="flex items-center justify-center gap-4 text-sm text-grey">
@@ -237,7 +247,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                     color: #d1d5db;
                     line-height: 1.75;
                   }
-                  .tiptap-content li p {
+                  .tiptap-content li p {  
                     margin-bottom: 0.25rem;
                   }
                   .tiptap-content blockquote {
@@ -328,11 +338,11 @@ export default async function BlogPost({ params }: BlogPostProps) {
                 style={{ background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)" }}
               >
                 <div className="flex items-start gap-6">
-                  <div className="w-20 h-20 rounded-full bg-#c2a15f/10 flex items-center justify-center text-#c2a15f border-2 border-#c2a15f/30">
+                  <div className="w-20 h-20 rounded-full bg-#c2a15f/10 flex items-center justify-center text-[#c2a15f] border-2 border-#c2a15f/30">
                     <span className="text-2xl">✨</span>
                   </div>
                   <div>
-                    <h3 className="font-serif text-2xl font-semibold text-#c2a15f mb-2">
+                    <h3 className="font-serif text-2xl font-semibold text-[#c2a15f] mb-2">
                       Written by {article.author || 'Jayshree'}
                     </h3>
                     <p className="font-sans text-gray-400 leading-relaxed">

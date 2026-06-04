@@ -139,12 +139,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                     Home
                   </Link>
                 </li>
-                <li className="text-gold">/</li>
-                <li>
-                  <Link href="/#categories" className="text-grey hover:text-gold transition-colors">
-                    Categories
-                  </Link>
-                </li>
+              
                 <li className="text-gold">/</li>
                 <li className="text-gold font-medium">{category.heading}</li>
               </ol>
