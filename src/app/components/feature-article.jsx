@@ -42,10 +42,9 @@ function Card3D({ article, index }) {
 
   const isLarge = index === 0;
 
-  // Resolve image: if it starts with "/uploads/", prefix with your base URL
-  const imageUrl = article.image?.startsWith("/uploads/")
-    ? `${article.image}` // adjust base URL if needed, e.g. `${process.env.NEXT_PUBLIC_API_URL}${article.image}`
-    : article.image;
+  // Resolve image URL (handle relative /uploads/ paths)
+  // Use same-origin URL, rewrite will handle proxying to localhost:3001
+  const imageUrl = article.image || '/blog-placeholder.jpg';
 
   // Use tagline as the tag label (strip leading/trailing whitespace)
   const tag = article.category_label || article.tagline || "Article";
@@ -101,7 +100,7 @@ function Card3D({ article, index }) {
         <div
           style={{
             position: "relative",
-            height: isLarge ? "260px" : "200px",
+            height: isLarge ? "300px" : "280px",
             overflow: "hidden",
             flexShrink: 0,
           }}
@@ -115,6 +114,8 @@ function Card3D({ article, index }) {
               backgroundSize: "cover",
               backgroundPosition: "center",
               transition: "transform 0.15s ease-out",
+              objectFit: "cover",
+              repeat: "no-repeat",
             }}
           />
           <div
@@ -124,23 +125,7 @@ function Card3D({ article, index }) {
               background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.55) 100%)",
             }}
           />
-          <div style={{ position: "absolute", top: "14px", left: "14px", zIndex: 2 }}>
-            <span
-              style={{
-                display: "inline-block",
-                fontSize: "10px",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "#0a0a0a",
-                background: "#D4AF37",
-                padding: "4px 10px",
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 600,
-              }}
-            >
-              {tag}
-            </span>
-          </div>
+         
           {article.author && (
             <div style={{ position: "absolute", bottom: "14px", right: "14px", zIndex: 2 }}>
               <span

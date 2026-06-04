@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'branduntold.in',
       },
-      {
+      {  
         protocol: 'https',
         hostname: 'admin.branduntold.in',
       },
@@ -33,16 +33,12 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/data/:path*',
-        destination: process.env.NODE_ENV === 'production' 
-          ? 'https://admin.branduntold.in/api/data/:path*'
-          : 'http://localhost:3001/api/data/:path*',
-      }, 
+        source: '/api/:path*',
+        destination: 'http://localhost:3001/api/:path*',
+      },
       {
         source: '/uploads/:path*',
-        destination: process.env.NODE_ENV === 'production' 
-          ? 'https://admin.branduntold.in/uploads/:path*'
-          : 'http://localhost:3001/uploads/:path*',
+        destination: 'http://localhost:3001/uploads/:path*',
       },
     ];
   },
