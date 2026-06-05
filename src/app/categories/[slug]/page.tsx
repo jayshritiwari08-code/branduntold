@@ -1,116 +1,160 @@
+// src/app/categories/[slug]/page.tsx
+
 import Link from 'next/link';
 import { Metadata } from 'next';
 import Image from 'next/image';
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
-  
+// ── ISR: revalidate this page at most once per hour ──────────────────────────
+export const revalidate = 3600;
+
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (process.env.NODE_ENV === 'production' ? BASE_URL : 'http://localhost:3001');
+
+function buildApiUrl(path: string) {
+  const base = path.startsWith('/api/') ? API_URL : BASE_URL;
+  return new URL(path, base).toString();
+}
+
+// Fetch ALL categories (no slug filter) — used by generateStaticParams to
+// enumerate every category at build time.
+async function fetchAllCategories() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/data/category`, { cache: 'no-store' });
-    const catJson = await res.json();
-    
-    if (catJson.success) {
-      const category = catJson.data.find((c: any) => {
-        const cSlug = c.heading
-          .trim()
-          .toLowerCase()
-          .replace(/ & /g, '-')
-          .replace(/\s+/g, '-');
-        return cSlug === slug;
-      });
-
-      if (category) {
-        return {
-          title: `${category.heading} - Brand Untold`,
-          description: category.subheading || category.tagline,
-        };
-      }
-    }
-  } catch (error) {
-    console.error("Failed to fetch category metadata:", error);
+    const res = await fetch(buildApiUrl('/api/data/category'), {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.success ? json.data : [];
+  } catch {
+    return [];
   }
+}
 
+// Fetch a single category by slug — used at render time.
+async function fetchCategoryBySlug(slug: string) {
+  try {
+    const res = await fetch(buildApiUrl(`/api/data/category?slug=${encodeURIComponent(slug)}`), {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.success ? json.data : [];
+  } catch {
+    return [];
+  }
+}
+
+async function fetchArticles() {
+  try {
+    const res = await fetch(buildApiUrl('/api/data/articles'), {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.success ? json.data : [];
+  } catch {
+    return [];
+  }
+}
+
+function slugify(heading: string) {
+  return heading
+    .trim()
+    .toLowerCase()
+    .replace(/ & /g, '-')
+    .replace(/\s+/g, '-');
+}
+
+// ── Pre-build all category pages at build time ───────────────────────────────
+export async function generateStaticParams() {
+  const categories = await fetchAllCategories();
+  return categories.map((c: any) => ({ slug: slugify(c.heading) }));
+}
+
+// ── Metadata ─────────────────────────────────────────────────────────────────
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const categories = await fetchCategoryBySlug(slug);
+  const category = categories.find((c: any) => slugify(c.heading) === slug);
+
+  if (category) {
+    return {
+      title: `${category.heading} - Brand Untold`,
+      description: category.subheading || category.tagline,
+    };
+  }
   return {
     title: 'Category - Brand Untold',
     description: 'Explore our articles by category.',
   };
 }
 
-export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+// ── Page ─────────────────────────────────────────────────────────────────────
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
-  console.log("slug", slug);
-  
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  
-  let catJson: any = { success: false, data: [] };
-  let artJson: any = { success: false, data: [] };
-  
-  try {
-    const [catRes, artRes] = await Promise.all([
-      fetch(`${baseUrl}/api/data/category`, { cache: 'no-store' }),
-      fetch(`${baseUrl}/api/data/articles`, { cache: 'no-store' }),
-    ]);
 
-    console.log("catRes status:", catRes.status);
-    console.log("artRes status:", artRes.status);
+  // Both fetches are deduped by Next.js — no duplicate network calls
+  const [categories, allArticles] = await Promise.all([
+    fetchCategoryBySlug(slug),
+    fetchArticles(),
+  ]);
 
-    // Only attempt to parse JSON if the response was successful
-    if (catRes.ok) {
-      catJson = await catRes.json();
-      console.log("catJson:", catJson);
-    } else {
-      console.error("Failed to fetch categories:", catRes.statusText);
-    }
-    
-    if (artRes.ok) {
-      artJson = await artRes.json();
-      console.log("artJson", artJson);
-    } else {
-      console.error("Failed to fetch articles:", artRes.statusText);
-    }
-  } catch (error) {
-    console.error("Failed to fetch category or articles:", error);
-  }
+  const category = categories.find((c: any) => slugify(c.heading) === slug) ?? null;
 
-  // ── Find current category by slug ──────────────────────────────────────────
-  // Slug is derived from category heading: "Brand Strategy" → "brand-strategy"
-  const category = catJson.success
-    ? catJson.data.find((c: any) => {
-        const cSlug = c.heading
-          .trim()
-          .toLowerCase()
-          .replace(/ & /g, '-')
-          .replace(/\s+/g, '-');
-        return cSlug === slug;
-      })
-    : null;
-
-  // ── Filter articles by category ID ─────────────────────────────────────────
-  // article.category holds the MongoDB ObjectId string (e.g. "6a0f345f18153bfec723c178")
-  // Match against category._id or category.id (whichever your API returns)
-  const categoryId = category?._id ?? category?.id ?? null;
-
-  const articles: any[] =
-    artJson.success && categoryId
-      ? artJson.data.filter((a: any) => a.category === categoryId)
-      : artJson.success && category
-      ? // Fallback: match by tagline if category ID is unavailable
-        artJson.data.filter((a: any) => a.tagline === category.tagline)
-      : [];
-
-  // ── Category not found ──────────────────────────────────────────────────────
   if (!category) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-3xl text-white font-serif mb-4">Category not found</h1>
-          <Link href="/" className="text-gold hover:text-white transition-colors font-sans text-sm tracking-widest uppercase">
+          <Link
+            href="/"
+            className="text-gold hover:text-white transition-colors font-sans text-sm tracking-widest uppercase"
+          >
             ← Back to Home
           </Link>
         </div>
       </div>
     );
   }
+
+  const categoryId = category._id ?? category.id ?? null;
+
+  // Debug: log data shapes to diagnose build-time vs runtime mismatches
+  console.log('[CategoryPage] slug:', slug);
+  console.log('[CategoryPage] categoryId:', categoryId, typeof categoryId);
+  if (allArticles.length > 0) {
+    console.log('[CategoryPage] sample article.category:', allArticles[0]?.category, typeof allArticles[0]?.category);
+    console.log('[CategoryPage] sample article.category_populated:', allArticles[0]?.category_populated?.id);
+    console.log('[CategoryPage] sample article.tagline:', allArticles[0]?.tagline);
+  }
+  console.log('[CategoryPage] category.tagline:', category.tagline);
+  console.log('[CategoryPage] total articles fetched:', allArticles.length);
+
+  const articles: any[] = categoryId
+    ? allArticles.filter((a: any) => {
+        // Use String() to normalize — prevents ObjectId vs string mismatch
+        const articleCatId = String(a.category ?? '');
+        const catId = String(categoryId);
+        // Also check the populated relation object as a fallback
+        const populatedId = String(a.category_populated?.id ?? a.category_populated?._id ?? '');
+        return articleCatId === catId || populatedId === catId;
+      })
+    : allArticles.filter((a: any) => a.tagline === category.tagline);
+
+  console.log('[CategoryPage] matched articles:', articles.length);
 
   return (
     <div
@@ -121,17 +165,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         backgroundRepeat: 'repeat',
       }}
     >
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/70" />
 
       <div className="relative">
-        {/* ── Banner ─────────────────────────────────────────────────────────── */}
+        {/* Banner */}
         <section className="relative py-12 md:py-20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift" />
 
           <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative">
-            {/* Breadcrumb */}
             <nav className="mb-8" aria-label="Breadcrumb">
               <ol className="flex items-center space-x-2 text-sm">
                 <li>
@@ -139,20 +181,18 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                     Home
                   </Link>
                 </li>
-              
                 <li className="text-gold">/</li>
                 <li className="text-gold font-medium">{category.heading}</li>
               </ol>
             </nav>
 
-            {/* Heading */}
             <div className="text-center">
               <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">
                 {category.tagline}
               </p>
-          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 leading-tight text-gold">
-  {category.heading}
-</h1>
+              <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 leading-tight text-gold">
+                {category.heading}
+              </h1>
               {category.subheading && (
                 <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
                   {category.subheading}
@@ -163,7 +203,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </div>
         </section>
 
-        {/* ── Articles Grid ───────────────────────────────────────────────────── */}
+        {/* Articles Grid */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
           {articles.length === 0 ? (
             <div className="text-center py-20">
@@ -178,10 +218,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           ) : (
             <div className="grid md:grid-cols-2 gap-8">
               {articles.map((article: any) => {
-                // Resolve image URL (handle relative /uploads/ paths)
-                // Use same-origin URL, rewrite will handle proxying to localhost:3001
                 const imageUrl = article.image || '/blog-placeholder.jpg';
-
                 const displayDate = article.date || article.created_at;
                 const formattedDate = displayDate
                   ? new Date(displayDate).toLocaleDateString('en-US', {
@@ -190,62 +227,55 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                       year: 'numeric',
                     })
                   : null;
-
-                // Prefer slug for URL, fall back to id
-                const articleHref = `/blog/${article.slug || article.id}`;
+                const articleHref = `/articles/${article.slug || article.id}`;
 
                 return (
                   <Link key={article.id} href={articleHref} className="block group">
-                  <article
-                    className="rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1 h-full"
-                    style={{
-                      background: 'linear-gradient(160deg, #141414 0%, #0c0c0c 100%)',
-                      border: '1px solid rgba(212,175,55,0.12)',
-                      boxShadow:
-                        '0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)',
-                    }}
-                  >
-                    {/* Image */}
-                    <div className="aspect-video overflow-hidden relative">
-                      <Image
-                      width={800}
-                      height={450}
-                        src={imageUrl}
-                        alt={article.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-6">
-                      <div className="flex items-center justify-between mb-2">
-                        {formattedDate && (
-                          <p className="font-sans text-sm text-gold">{formattedDate}</p>
-                        )}
-                        {article.author && (
-                          <p className="font-sans text-xs text-gray-500">{article.author}</p>
-                        )}
+                    <article
+                      className="rounded-3xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1 h-full"
+                      style={{
+                        background: 'linear-gradient(160deg, #141414 0%, #0c0c0c 100%)',
+                        border: '1px solid rgba(212,175,55,0.12)',
+                        boxShadow:
+                          '0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)',
+                      }}
+                    >
+                      <div className="aspect-video overflow-hidden relative">
+                        <Image
+                          width={800}
+                          height={450}
+                          src={imageUrl}
+                          alt={article.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
                       </div>
 
-                      <h2 className="font-serif text-2xl font-semibold text-white mb-3 group-hover:text-gold transition-colors leading-snug">
-                        {article.title}
-                      </h2>
+                      <div className="p-6">
+                        <div className="flex items-center justify-between mb-2">
+                          {formattedDate && (
+                            <p className="font-sans text-sm text-gold">{formattedDate}</p>
+                          )}
+                          {article.author && (
+                            <p className="font-sans text-xs text-gray-500">{article.author}</p>
+                          )}
+                        </div>
 
-                      <p className="font-sans text-gray-400 mb-6 leading-relaxed line-clamp-3 text-sm">
-                        {article.description}
-                      </p>
+                        <h2 className="font-serif text-2xl font-semibold text-white mb-3 group-hover:text-gold transition-colors leading-snug">
+                          {article.title}
+                        </h2>
 
-                      <div className="w-16 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent mb-6" />
+                        <p className="font-sans text-gray-400 mb-6 leading-relaxed line-clamp-3 text-sm">
+                          {article.description}
+                        </p>
 
-                      <div
-                        className="inline-flex items-center font-sans text-gold group-hover:text-white font-medium transition-colors"
-                      >
-                        Read More
-                        <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                        <div className="w-16 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent mb-6" />
+
+                        <div className="inline-flex items-center font-sans text-gold group-hover:text-white font-medium transition-colors">
+                          Read More
+                          <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                        </div>
                       </div>
-                    </div>
-                  </article>
+                    </article>
                   </Link>
                 );
               })}

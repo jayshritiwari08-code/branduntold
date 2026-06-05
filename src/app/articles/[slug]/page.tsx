@@ -1,70 +1,118 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import RecentArticlesSlider from './RecentArticlesSlider';
+import { Metadata } from 'next';
 
-export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+interface BlogPostProps {
+  params: Promise<{ slug: string }>;
+}
+
+// ─── ISR: revalidate all fetches every 60 s ───────────────────────────────────
+export const revalidate = 60;
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.in';
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (process.env.NODE_ENV === 'production' ? BASE_URL : 'http://localhost:3001');
+
+const FETCH_OPTS = { next: { revalidate: 60 } } as const;
+
+// ─── Shared data-fetching helpers ────────────────────────────────────────────
+
+async function fetchArticle(slug: string) {
+  try {
+    const res = await fetch(
+      `${API_URL}/api/data/articles?slug=${encodeURIComponent(slug)}`,
+      FETCH_OPTS
+    );
+    const json = await res.json();
+    if (!json.success) return null;
+    return Array.isArray(json.data) ? json.data[0] : json.data;
+  } catch (err) {
+    console.error(`fetchArticle failed for slug "${slug}":`, err);
+    return null;
+  }
+}
+
+async function fetchCategories() {
+  try {
+    const res = await fetch(`${API_URL}/api/data/category`, FETCH_OPTS);
+    const json = await res.json();
+    return json.success ? json.data : [];
+  } catch (err) {
+    console.error('fetchCategories failed:', err);
+    return [];
+  }
+}
+
+async function fetchAllArticles() {
+  try {
+    const res = await fetch(`${API_URL}/api/data/articles`, FETCH_OPTS);
+    const json = await res.json();
+    return json.success ? json.data : [];
+  } catch (err) {
+    console.error('fetchAllArticles failed:', err);
+    return [];
+  }
+}
+
+// ─── Pre-build all article pages at build time (eliminates cold-render lag) ──
+export async function generateStaticParams() {
+  const articles = await fetchAllArticles();
+  return articles.map((a: any) => ({ slug: a.slug || a.id }));
+}
+
+// ─── Metadata ────────────────────────────────────────────────────────────────
+
+export async function generateMetadata({ params }: BlogPostProps): Promise<Metadata> {
   const { slug } = await params;
-  console.log('Category Slug:', slug);
-  // Fetch Category and Articles data
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.in';
-  
-  const [catRes, artRes] = await Promise.all([
-    fetch(`${baseUrl}/api/data/category`, { cache: 'no-store' }),
-    fetch(`${baseUrl}/api/data/articles?slug=${slug}`, { cache: 'no-store' })
+  const article = await fetchArticle(slug);
+
+  if (!article) {
+    return {
+      title: 'Article Not Found - Brand Untold',
+      description: 'The requested article could not be found.',
+    };
+  }
+
+  return {
+    title: article.metatitle || article.title,
+    description: article.meta_description || article.description,
+    keywords: article.meta_keyword || [],
+  };
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default async function BlogPost({ params }: BlogPostProps) {
+  const { slug } = await params;
+
+  // All three fetches run in parallel — no waterfall, no duplicate article fetch
+  const [article, categories, allArticles] = await Promise.all([
+    fetchArticle(slug),
+    fetchCategories(),
+    fetchAllArticles(),
   ]);
 
-  const catJson = await catRes.json();
-  const artJson = await artRes.json();
-  console.log('Category API Response:', catJson);
-  console.log('Articles API Response:', artJson);
-
-  const article = artJson.success
-    ? Array.isArray(artJson.data)
-      ? artJson.data[0]
-      : artJson.data
-    : null;
-
-  const category = catJson.success
-    ? catJson.data.find((c: any) => {
-        const cSlug = (c.slug || c.heading)
-          .trim()
-          .toLowerCase()
-          .replace(/ & /g, '-')
-          .replace(/\s+/g, '-');
-
-        return (
-          cSlug === slug ||
-          c.tagline === article?.tagline ||
-          c.id === article?.category ||
-          c._id === article?.category
-        );
-      })
-    : null;
-
-  const articles = artJson.success
-    ? Array.isArray(artJson.data)
-      ? artJson.data
-      : [artJson.data]
-    : [];
-
-  const pageHeading = category?.heading || article?.title || 'Article';
-  const pageTagline = category?.tagline || article?.tagline || '';
-  const pageSubheading = category?.subheading || article?.subheading || article?.description || '';
-
-  if (!article && !category) {
+  if (!article) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center px-4">
-          <h1 className="text-3xl text-white font-serif mb-4">Content not found</h1>
-          <p className="text-gray-400 mb-6">We couldn't find the requested article or category.</p>
-          <Link href="/" className="text-gold hover:text-white transition-colors font-sans text-sm tracking-widest uppercase">
-            ← Back to Home
-          </Link>
-        </div>
+        <h1 className="text-2xl text-white">Article not found</h1>
       </div>
     );
   }
 
+  // Resolve category
+  const category = categories.find((c: any) => c.tagline === article.tagline) ?? null;
+  const categorySlug = category
+    ? category.heading.trim().toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')
+    : '';
 
+  // Recent articles from the same category, max 6, excluding current
+  const recentArticles = allArticles
+    .filter((a: any) => a.tagline === article.tagline && a.id !== article.id)
+    .slice(0, 6);
 
   return (
     <div
@@ -75,92 +123,160 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         backgroundRepeat: 'repeat',
       }}
     >
-      {/* Subtle overlay to maintain readability */}
-      <div className="absolute inset-0 bg-black/70"></div>
+      <div className="absolute inset-0 bg-black/70" />
 
       <div className="relative">
-        {/* Banner Section */}
-        <section className="relative py-24 md:py-32 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift"></div>
+        {/* Banner */}
+        <section className="relative py-12 md:py-20 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#c2a15f]/10 to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift" />
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-            {/* Breadcrumbs */}
+          <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative">
             <nav className="mb-8">
               <ol className="flex items-center space-x-2 text-sm">
                 <li>
-                  <Link href="/" className="text-grey hover:text-gold transition-colors">
+                  <Link href="/" className="text-grey hover:text-[#c2a15f] transition-colors">
                     Home
                   </Link>
                 </li>
-                <li className="text-gold">/</li>
-                <li>
-                  <Link href="/" className="text-grey hover:text-gold transition-colors">
-                    Categories
-                  </Link>
+                {category && categorySlug && (
+                  <>
+                    <li className="text-[#c2a15f]">/</li>
+                    <li>
+                      <Link
+                        href={`/articles/${categorySlug}`}
+                        className="text-grey hover:text-[#c2a15f] transition-colors"
+                      >
+                        {category.heading || 'Category'}
+                      </Link>
+                    </li>
+                  </>
+                )}
+                <li className="text-[#c2a15f]">/</li>
+                <li className="text-[#c2a15f] font-medium truncate max-w-[200px]">
+                  {article.title}
                 </li>
-                <li className="text-gold">/</li>
-                <li className="text-gold font-medium">{pageHeading}</li>
               </ol>
             </nav>
 
-            {/* Banner Content */}
-            <div className="text-center">
-              <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">{pageTagline}</p>
-              <h1 className="font-serif text-5xl md:text-7xl font-bold text-white leading-tight mb-6">
-                {pageHeading}
-              </h1>
-              <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
-                {pageSubheading}
+            <div className="text-center mb-8">
+              <p className="font-sans tracking-[3px] text-[#c2a15f] text-sm mb-4 uppercase">
+                {article.tagline}
               </p>
-              <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent mx-auto mt-10"></div>
+              <h1 className="font-serif text-4xl md:text-6xl font-bold text-[#c2a15f] leading-tight mb-6">
+                {article.title}
+              </h1>
+              <div className="flex items-center justify-center gap-4 text-sm text-grey">
+                <span>By {article.author || 'Jayshree'}</span>
+                <span>•</span>
+                <span>
+                  {new Date(article.date || article.created_at).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </span>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Articles Grid */}
+        {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-          <div className="grid md:grid-cols-2 gap-8">
-            {articles.map((article: any) => (
+          <div
+            className={`grid ${
+              recentArticles.length > 0 ? 'lg:grid-cols-3' : 'lg:grid-cols-1'
+            } gap-8`}
+          >
+            <div className={recentArticles.length > 0 ? 'lg:col-span-2' : 'lg:col-span-1'}>
+              {/* Featured Image */}
+              <div className="aspect-video mb-12 rounded-3xl overflow-hidden border border-[#c2a15f]/30 shadow-2xl relative">
+                <Image
+                  src={article.image}
+                  alt={article.title}
+                  width={1200}
+                  height={675}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />
+              </div>
+
+              {/* Article Body */}
               <article
-                key={article.slug}
-                className="group rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-1"
+                className="rounded-3xl p-8 md:p-12"
                 style={{
-                  background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)",
-                  border: "1px solid rgba(212,175,55,0.12)",
-                  boxShadow: "0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)"
+                  background: 'linear-gradient(160deg, #141414 0%, #0c0c0c 100%)',
+                  border: '1px solid rgba(212,175,55,0.12)',
+                  boxShadow:
+                    '0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)',
                 }}
               >
-                <div className="aspect-video overflow-hidden relative">
-                  <Image
-                    src={article.image || '/blog-placeholder.jpg'}
-                    alt={article.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer"></div>
-                </div>
-                <div className="p-6">
-                  <p className="font-sans text-sm text-gold mb-2">{new Date(article.date || article.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-                  <h2 className="font-serif text-2xl font-semibold text-white mb-3 group-hover:text-gold transition-colors">
-                    {article.title}
-                  </h2>
-                  <p className="font-sans text-gray-400 mb-6 leading-relaxed line-clamp-3">
-                    {article.description}
-                  </p>
+                <style>{`
+                  .tiptap-content { color:#d1d5db; font-size:1.125rem; line-height:1.85; }
+                  .tiptap-content p { margin-bottom:1.5rem; color:#d1d5db; font-size:1.05rem; line-height:1.9; }
+                  .tiptap-content h1 { font-family:Georgia,serif; font-size:2.25rem; font-weight:700; color:#c2a15f; margin-top:2.5rem; margin-bottom:1rem; line-height:1.25; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:0.5rem; }
+                  .tiptap-content h2 { font-family:Georgia,serif; font-size:1.75rem; font-weight:700; color:#c2a15f; margin-top:2.25rem; margin-bottom:0.875rem; line-height:1.3; }
+                  .tiptap-content h3 { font-family:Georgia,serif; font-size:1.375rem; font-weight:600; color:#c2a15f; margin-top:2rem; margin-bottom:0.75rem; line-height:1.4; }
+                  .tiptap-content h4 { font-family:Georgia,serif; font-size:1.15rem; font-weight:600; color:#c2a15f; margin-top:1.75rem; margin-bottom:0.5rem; }
+                  .tiptap-content strong { color:#c2a15f; font-weight:700; }
+                  .tiptap-content em { color:#b0b8c4; font-style:italic; }
+                  .tiptap-content ul { list-style-type:disc; padding-left:1.75rem; margin-bottom:1.5rem; }
+                  .tiptap-content ol { list-style-type:decimal; padding-left:1.75rem; margin-bottom:1.5rem; }
+                  .tiptap-content li { margin-bottom:0.6rem; color:#d1d5db; line-height:1.75; }
+                  .tiptap-content li p { margin-bottom:0.25rem; }
+                  .tiptap-content blockquote { border-left:3px solid #c2a15f; padding:0.75rem 1.5rem; margin:2rem 0; background:rgba(212,175,55,0.05); border-radius:0 0.5rem 0.5rem 0; color:#b8bcc4; font-style:italic; font-size:1.1rem; }
+                  .tiptap-content a { color:#c2a15f; text-decoration:underline; text-underline-offset:3px; transition:color 0.2s; }
+                  .tiptap-content a:hover { color:#d4af37; }
+                  .tiptap-content code { background:rgba(212,175,55,0.08); color:#c2a15f; padding:0.15rem 0.45rem; border-radius:0.25rem; font-family:'Courier New',monospace; font-size:0.9em; border:1px solid rgba(212,175,55,0.15); }
+                  .tiptap-content pre { background:rgba(0,0,0,0.5); border:1px solid rgba(212,175,55,0.15); border-radius:0.75rem; padding:1.25rem 1.5rem; overflow-x:auto; margin:1.5rem 0; }
+                  .tiptap-content pre code { background:none; border:none; padding:0; color:#d1d5db; font-size:0.9rem; }
+                  .tiptap-content hr { border:none; border-top:1px solid rgba(212,175,55,0.2); margin:2.5rem 0; }
+                  .tiptap-content img { border-radius:0.75rem; max-width:100%; margin:1.5rem 0; }
+                  .tiptap-content table { width:100%; border-collapse:collapse; margin:1.5rem 0; }
+                  .tiptap-content th { background:rgba(212,175,55,0.1); color:#c2a15f; font-weight:600; padding:0.75rem 1rem; text-align:left; border:1px solid rgba(212,175,55,0.2); }
+                  .tiptap-content td { padding:0.75rem 1rem; border:1px solid rgba(255,255,255,0.07); color:#d1d5db; }
+                  .tiptap-content tr:nth-child(even) td { background:rgba(255,255,255,0.02); }
+                `}</style>
 
-                  {/* Separator before button */}
-                  <div className="w-16 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent mb-6" />
-
-                  <Link
-                    href={`/blog/${article.slug}`}
-                    className="inline-flex items-center font-sans text-gold hover:text-white font-medium group"
-                  >
-                    Read More
-                    <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-                  </Link>
-                </div>
+                <div
+                  className="tiptap-content"
+                  dangerouslySetInnerHTML={{ __html: article.long_description }}
+                />
               </article>
-            ))}
+
+              {/* Author Bio */}
+              <div
+                className="mt-12 p-8 rounded-3xl border border-[#c2a15f]/20"
+                style={{ background: 'linear-gradient(160deg, #141414 0%, #0c0c0c 100%)' }}
+              >
+                <div className="flex items-start gap-6">
+                  <div className="w-20 h-20 rounded-full bg-[#c2a15f]/10 flex items-center justify-center text-[#c2a15f] border-2 border-[#c2a15f]/30">
+                    <span className="text-2xl">✨</span>
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-2xl font-semibold text-[#c2a15f] mb-2">
+                      Written by {article.author || 'Jayshree'}
+                    </h3>
+                    <p className="font-sans text-gray-400 leading-relaxed">
+                      {article.author_bio ||
+                        'Storyteller, writer, and brand strategist helping founders craft compelling narratives that connect with audiences.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Sidebar — up to 6 recent articles */}
+            {recentArticles.length > 0 && (
+              <div className="lg:col-span-1">
+                <RecentArticlesSlider
+                  articles={recentArticles}
+                  categoryTitle={category?.heading || 'Recent'}
+                  categorySlug={categorySlug}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
