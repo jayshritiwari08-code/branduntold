@@ -1,4 +1,5 @@
-// API utility functions for fetching dynamic content from CMS
+'use client';
+
 
 import { useState, useEffect } from 'react';
 

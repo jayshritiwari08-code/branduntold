@@ -46,7 +46,7 @@ export default function HeroSection({ heroData, heroLoading, heroImage }) {
             <div className="hero-rule" aria-hidden="true" />
 
             <div className="hero-actions">
-              <Link href="/founder-stories" className="btn btn-primary">
+              <Link href="/categories/founder-stories" className="btn btn-primary">
                 <span>Read The Stories</span>
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                   <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

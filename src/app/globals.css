@@ -259,3 +259,9 @@ body {
 .tiptap-content > *:first-child {
   margin-top: 0;
 }
+
+/* Performance optimizations */
+.tiptap-content {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+}
