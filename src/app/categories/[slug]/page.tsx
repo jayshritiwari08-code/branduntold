@@ -1,82 +1,30 @@
 // src/app/categories/[slug]/page.tsx
-
 import Link from 'next/link';
-import { Metadata } from 'next';
 import Image from 'next/image';
+import { Metadata } from 'next';
+import { fetchAllCategories, fetchCategoryBySlug, fetchAllArticles, slugify } from '@/app/lib/api';
 
-// ── ISR: revalidate this page at most once per hour ──────────────────────────
+const months = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  const month = months[d.getUTCMonth()];
+  const day = d.getUTCDate();
+  const year = d.getUTCFullYear();
+  return `${month} ${day}, ${year}`;
+}
+
 export const revalidate = 3600;
+export const dynamicParams = true; // allow ISR for slugs not pre-built
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
-
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  (process.env.NODE_ENV === 'production' ? BASE_URL : 'http://localhost:3001');
-
-function buildApiUrl(path: string) {
-  const base = path.startsWith('/api/') ? API_URL : BASE_URL;
-  return new URL(path, base).toString();
-}
-
-// Fetch ALL categories (no slug filter) — used by generateStaticParams to
-// enumerate every category at build time.
-async function fetchAllCategories() {
-  try {
-    const res = await fetch(buildApiUrl('/api/data/category'), {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json.success ? json.data : [];
-  } catch {
-    return [];
-  }
-}
-
-// Fetch a single category by slug — used at render time.
-async function fetchCategoryBySlug(slug: string) {
-  try {
-    const res = await fetch(buildApiUrl(`/api/data/category?slug=${encodeURIComponent(slug)}`), {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json.success ? json.data : [];
-  } catch {
-    return [];
-  }
-}
-
-async function fetchArticles() {
-  try {
-    const res = await fetch(buildApiUrl('/api/data/articles'), {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json.success ? json.data : [];
-  } catch {
-    return [];
-  }
-}
-
-function slugify(heading: string) {
-  return heading
-    .trim()
-    .toLowerCase()
-    .replace(/ & /g, '-')
-    .replace(/\s+/g, '-');
-}
-
-// ── Pre-build all category pages at build time ───────────────────────────────
 export async function generateStaticParams() {
   const categories = await fetchAllCategories();
   return categories.map((c: any) => ({ slug: slugify(c.heading) }));
 }
 
-// ── Metadata ─────────────────────────────────────────────────────────────────
 export async function generateMetadata({
   params,
 }: {
@@ -98,7 +46,6 @@ export async function generateMetadata({
   };
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
 export default async function CategoryPage({
   params,
 }: {
@@ -106,10 +53,9 @@ export default async function CategoryPage({
 }) {
   const { slug } = await params;
 
-  // Both fetches are deduped by Next.js — no duplicate network calls
   const [categories, allArticles] = await Promise.all([
     fetchCategoryBySlug(slug),
-    fetchArticles(),
+    fetchAllArticles(),
   ]);
 
   const category = categories.find((c: any) => slugify(c.heading) === slug) ?? null;
@@ -119,10 +65,7 @@ export default async function CategoryPage({
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-3xl text-white font-serif mb-4">Category not found</h1>
-          <Link
-            href="/"
-            className="text-gold hover:text-white transition-colors font-sans text-sm tracking-widest uppercase"
-          >
+          <Link href="/" className="text-gold hover:text-white transition-colors font-sans text-sm tracking-widest uppercase">
             ← Back to Home
           </Link>
         </div>
@@ -131,29 +74,19 @@ export default async function CategoryPage({
   }
 
   const categoryId = category._id ?? category.id ?? null;
+  const articles = allArticles.filter((a: any) => {
+    if (!categoryId) return a.tagline === category.tagline;
+    const catId = String(categoryId).trim();
+    const directId = String(a.category ?? '').trim();
+    if (directId === catId) return true;
+    const nestedId = String(a.category?.id ?? a.category?._id ?? '').trim();
+    if (nestedId && nestedId === catId) return true;
+    const populatedId = String(a.category_populated?.id ?? a.category_populated?._id ?? '').trim();
+    if (populatedId && populatedId === catId) return true;
+    return false;
+  });
 
-  // Debug: log data shapes to diagnose build-time vs runtime mismatches
   console.log('[CategoryPage] slug:', slug);
-  console.log('[CategoryPage] categoryId:', categoryId, typeof categoryId);
-  if (allArticles.length > 0) {
-    console.log('[CategoryPage] sample article.category:', allArticles[0]?.category, typeof allArticles[0]?.category);
-    console.log('[CategoryPage] sample article.category_populated:', allArticles[0]?.category_populated?.id);
-    console.log('[CategoryPage] sample article.tagline:', allArticles[0]?.tagline);
-  }
-  console.log('[CategoryPage] category.tagline:', category.tagline);
-  console.log('[CategoryPage] total articles fetched:', allArticles.length);
-
-  const articles: any[] = categoryId
-    ? allArticles.filter((a: any) => {
-        // Use String() to normalize — prevents ObjectId vs string mismatch
-        const articleCatId = String(a.category ?? '');
-        const catId = String(categoryId);
-        // Also check the populated relation object as a fallback
-        const populatedId = String(a.category_populated?.id ?? a.category_populated?._id ?? '');
-        return articleCatId === catId || populatedId === catId;
-      })
-    : allArticles.filter((a: any) => a.tagline === category.tagline);
-
   console.log('[CategoryPage] matched articles:', articles.length);
 
   return (
@@ -166,37 +99,26 @@ export default async function CategoryPage({
       }}
     >
       <div className="absolute inset-0 bg-black/70" />
-
       <div className="relative">
         {/* Banner */}
         <section className="relative py-12 md:py-20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift" />
-
           <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative">
             <nav className="mb-8" aria-label="Breadcrumb">
               <ol className="flex items-center space-x-2 text-sm">
                 <li>
-                  <Link href="/" className="text-grey hover:text-gold transition-colors">
-                    Home
-                  </Link>
+                  <Link href="/" className="text-grey hover:text-gold transition-colors">Home</Link>
                 </li>
                 <li className="text-gold">/</li>
                 <li className="text-gold font-medium">{category.heading}</li>
               </ol>
             </nav>
-
             <div className="text-center">
-              <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">
-                {category.tagline}
-              </p>
-              <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 leading-tight text-gold">
-                {category.heading}
-              </h1>
+              <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">{category.tagline}</p>
+              <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 leading-tight text-gold">{category.heading}</h1>
               {category.subheading && (
-                <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
-                  {category.subheading}
-                </p>
+                <p className="font-sans text-xl text-grey max-w-2xl mx-auto">{category.subheading}</p>
               )}
               <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent mx-auto mt-10" />
             </div>
@@ -208,10 +130,7 @@ export default async function CategoryPage({
           {articles.length === 0 ? (
             <div className="text-center py-20">
               <p className="font-sans text-grey text-lg">No articles in this category yet.</p>
-              <Link
-                href="/"
-                className="inline-block mt-6 text-gold hover:text-white font-sans text-sm tracking-widest uppercase transition-colors"
-              >
+              <Link href="/" className="inline-block mt-6 text-gold hover:text-white font-sans text-sm tracking-widest uppercase transition-colors">
                 ← Browse all articles
               </Link>
             </div>
@@ -220,15 +139,8 @@ export default async function CategoryPage({
               {articles.map((article: any) => {
                 const imageUrl = article.image || '/blog-placeholder.jpg';
                 const displayDate = article.date || article.created_at;
-                const formattedDate = displayDate
-                  ? new Date(displayDate).toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })
-                  : null;
+                const formattedDate = displayDate ? formatDate(displayDate) : null;
                 const articleHref = `/articles/${article.slug || article.id}`;
-
                 return (
                   <Link key={article.id} href={articleHref} className="block group">
                     <article
@@ -241,35 +153,21 @@ export default async function CategoryPage({
                       }}
                     >
                       <div className="aspect-video overflow-hidden relative">
-                        <Image
-                          width={800}
-                          height={450}
-                          src={imageUrl}
-                          alt={article.title}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
+                        <Image width={800} height={450} src={imageUrl} alt={article.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                       </div>
-
                       <div className="p-6">
                         <div className="flex items-center justify-between mb-2">
-                          {formattedDate && (
-                            <p className="font-sans text-sm text-gold">{formattedDate}</p>
-                          )}
-                          {article.author && (
-                            <p className="font-sans text-xs text-gray-500">{article.author}</p>
-                          )}
+                          {formattedDate && <p className="font-sans text-sm text-gold">{formattedDate}</p>}
+                          {article.author && <p className="font-sans text-xs text-gray-500">{article.author}</p>}
                         </div>
-
                         <h2 className="font-serif text-2xl font-semibold text-white mb-3 group-hover:text-gold transition-colors leading-snug">
                           {article.title}
                         </h2>
-
                         <p className="font-sans text-gray-400 mb-6 leading-relaxed line-clamp-3 text-sm">
                           {article.description}
                         </p>
-
                         <div className="w-16 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent mb-6" />
-
                         <div className="inline-flex items-center font-sans text-gold group-hover:text-white font-medium transition-colors">
                           Read More
                           <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>

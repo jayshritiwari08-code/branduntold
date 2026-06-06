@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import RecentArticlesSlider from './RecentArticlesSlider';
 import { Metadata } from 'next';
+import { fetchArticle, fetchAllCategories, fetchAllArticles, fetchAllArticleSlugs } from '@/app/lib/api';
 
 interface BlogPostProps {
   params: Promise<{ slug: string }>;
@@ -10,57 +11,33 @@ interface BlogPostProps {
 // ─── ISR: revalidate all fetches every 60 s ───────────────────────────────────
 export const revalidate = 60;
 
+// Pages not pre-built at build time will be generated on first request
+export const dynamicParams = false;
+
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.in';
 
+// In production: API calls go to same origin (rewrites proxy to CMS backend)
+// In development: API calls go directly to localhost:3001
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   (process.env.NODE_ENV === 'production' ? BASE_URL : 'http://localhost:3001');
 
 const FETCH_OPTS = { next: { revalidate: 60 } } as const;
 
+// Must match the collection name used in categories/[slug]/page.tsx
+const ARTICLES_COLLECTION = 'articles';
+
 // ─── Shared data-fetching helpers ────────────────────────────────────────────
 
-async function fetchArticle(slug: string) {
-  try {
-    const res = await fetch(
-      `${API_URL}/api/data/articles?slug=${encodeURIComponent(slug)}`,
-      FETCH_OPTS
-    );
-    const json = await res.json();
-    if (!json.success) return null;
-    return Array.isArray(json.data) ? json.data[0] : json.data;
-  } catch (err) {
-    console.error(`fetchArticle failed for slug "${slug}":`, err);
-    return null;
-  }
-}
-
-async function fetchCategories() {
-  try {
-    const res = await fetch(`${API_URL}/api/data/category`, FETCH_OPTS);
-    const json = await res.json();
-    return json.success ? json.data : [];
-  } catch (err) {
-    console.error('fetchCategories failed:', err);
-    return [];
-  }
-}
-
-async function fetchAllArticles() {
-  try {
-    const res = await fetch(`${API_URL}/api/data/articles`, FETCH_OPTS);
-    const json = await res.json();
-    return json.success ? json.data : [];
-  } catch (err) {
-    console.error('fetchAllArticles failed:', err);
-    return [];
-  }
-}
 
 // ─── Pre-build all article pages at build time (eliminates cold-render lag) ──
+// Uses slug-only fetch to avoid the 2MB Next.js data cache limit
 export async function generateStaticParams() {
-  const articles = await fetchAllArticles();
-  return articles.map((a: any) => ({ slug: a.slug || a.id }));
+  const articles = await fetchAllArticleSlugs();
+  console.log(`[generateStaticParams] Found ${articles.length} articles to pre-build`);
+  return articles
+    .filter((a: any) => a.slug || a.id)
+    .map((a: any) => ({ slug: a.slug || a.id }));
 }
 
 // ─── Metadata ────────────────────────────────────────────────────────────────
@@ -91,7 +68,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
   // All three fetches run in parallel — no waterfall, no duplicate article fetch
   const [article, categories, allArticles] = await Promise.all([
     fetchArticle(slug),
-    fetchCategories(),
+    fetchAllCategories(),
     fetchAllArticles(),
   ]);
 
@@ -184,9 +161,8 @@ export default async function BlogPost({ params }: BlogPostProps) {
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
           <div
-            className={`grid ${
-              recentArticles.length > 0 ? 'lg:grid-cols-3' : 'lg:grid-cols-1'
-            } gap-8`}
+            className={`grid ${recentArticles.length > 0 ? 'lg:grid-cols-3' : 'lg:grid-cols-1'
+              } gap-8`}
           >
             <div className={recentArticles.length > 0 ? 'lg:col-span-2' : 'lg:col-span-1'}>
               {/* Featured Image */}
