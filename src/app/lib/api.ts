@@ -20,12 +20,30 @@ export const FETCH_OPTS = { next: { revalidate: REVALIDATE_SECONDS } } as const;
 
 export const ARTICLES_COLLECTION = 'articles'; // matches CMS collection name
 export const CATEGORIES_COLLECTION = 'category';
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-/** Build absolute API URL */
-export const buildApiUrl = (path: string) => API_URL ? new URL(path, API_URL).toString() : path;
+/**
+ * Build absolute API URL. During static generation the external API may not be running.
+ * In that case we fall back to using the same site’s base URL (BASE_URL) which resolves to the
+ * internal API routes provided by Next.js.
+ */
+export const buildApiUrl = (path: string) => {
+  // Prefer external API URL if configured
+  if (API_URL) {
+    try {
+      return new URL(path, API_URL).toString();
+    } catch {
+      console.warn('Invalid API_URL, falling back to BASE_URL');
+    }
+  }
+  // Use site base URL for server-side fetch during build
+  const base = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return `${base}${cleanPath}`;
+};
 
 /** Fetch a single article by slug */
+// Fetch a single article by slug
 export async function fetchArticle(slug: string) {
   try {
     const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?slug=${encodeURIComponent(slug)}`), FETCH_OPTS);
@@ -41,67 +59,72 @@ export async function fetchArticle(slug: string) {
     }
     return null;
   } catch (err) {
-    console.error('fetchArticle error', err);
+    console.warn('fetchArticle error', err);
     return null;
   }
 }
 
 /** Fetch all categories (no filter) */
+// Fetch all categories (no filter)
 export async function fetchAllCategories() {
   try {
     const res = await fetch(buildApiUrl('/api/data/category'), FETCH_OPTS);
     const json = await res.json();
     return json.success ? json.data : [];
   } catch (err) {
-    console.error('fetchAllCategories error', err);
+    console.warn('fetchAllCategories error', err);
     return [];
   }
 }
 
 /** Fetch a single category by slug */
+// Fetch a single category by slug
 export async function fetchCategoryBySlug(slug: string) {
   try {
     const res = await fetch(buildApiUrl(`/api/data/category?slug=${encodeURIComponent(slug)}`), FETCH_OPTS);
     const json = await res.json();
     return json.success ? json.data : [];
   } catch (err) {
-    console.error('fetchCategoryBySlug error', err);
+    console.warn('fetchCategoryBySlug error', err);
     return [];
   }
 }
 
 /** Fetch all articles */
+// Fetch all articles
 export async function fetchAllArticles() {
   try {
     const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}`), FETCH_OPTS);
     const json = await res.json();
     return json.success ? json.data : [];
   } catch (err) {
-    console.error('fetchAllArticles error', err);
+    console.warn('fetchAllArticles error', err);
     return [];
   }
 }
 
 /** Fetch only slugs (and ids) for generateStaticParams */
+// Fetch only slugs (and ids) for generateStaticParams
 export async function fetchAllArticleSlugs() {
   try {
     const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?fields=slug,id`), FETCH_OPTS);
     const json = await res.json();
     return json.success && Array.isArray(json.data) ? json.data : [];
   } catch (err) {
-    console.error('fetchAllArticleSlugs error', err);
+    console.warn('fetchAllArticleSlugs error', err);
     return [];
   }
 }
 
 /** Fetch only category slugs for static params */
+// Fetch only category slugs for static params
 export async function fetchAllCategorySlugs() {
   try {
     const res = await fetch(buildApiUrl('/api/data/category'), FETCH_OPTS);
     const json = await res.json();
     return json.success && Array.isArray(json.data) ? json.data : [];
   } catch (err) {
-    console.error('fetchAllCategorySlugs error', err);
+    console.warn('fetchAllCategorySlugs error', err);
     return [];
   }
 }
@@ -129,6 +152,7 @@ export interface HeroData {
 }
 
 /** Fetch hero section data */
+// Fetch hero section data
 export async function getHeroData(): Promise<{ data: HeroData | null; error: string | null }> {
   try {
     const res = await fetch(buildApiUrl('/api/data/herosec'), FETCH_OPTS);
@@ -143,6 +167,7 @@ export async function getHeroData(): Promise<{ data: HeroData | null; error: str
 }
 
 /** Fetch about us data */
+// Fetch about us data
 export async function getAboutUsData(): Promise<{ data: any | null; error: string | null }> {
   try {
     const res = await fetch(buildApiUrl('/api/data/about_us'), FETCH_OPTS);

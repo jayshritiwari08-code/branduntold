@@ -2,7 +2,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import RecentArticlesSlider from './RecentArticlesSlider';
 import { Metadata } from 'next';
-import { fetchArticle, fetchAllCategories, fetchAllArticles, fetchAllArticleSlugs } from '@/app/lib/api';
+import { 
+  fetchArticle, 
+  fetchAllCategories, 
+  fetchAllArticleSlugs,
+  fetchAllArticles
+} from '@/app/lib/api';
 
 interface BlogPostProps {
   params: Promise<{ slug: string }>;
@@ -13,19 +18,6 @@ export const revalidate = 60;
 
 // Pages not pre-built at build time will be generated on first request
 export const dynamicParams = false;
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://branduntold.in';
-
-// In production: API calls go to same origin (rewrites proxy to CMS backend)
-// In development: API calls go directly to localhost:3001
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  (process.env.NODE_ENV === 'production' ? BASE_URL : 'http://localhost:3001');
-
-const FETCH_OPTS = { next: { revalidate: 60 } } as const;
-
-// Must match the collection name used in categories/[slug]/page.tsx
-const ARTICLES_COLLECTION = 'articles';
 
 // ─── Shared data-fetching helpers ────────────────────────────────────────────
 
@@ -66,10 +58,10 @@ export default async function BlogPost({ params }: BlogPostProps) {
   const { slug } = await params;
 
   // All three fetches run in parallel — no waterfall, no duplicate article fetch
-  const [article, categories, allArticles] = await Promise.all([
+  const [article, categories, allArticlesSummary] = await Promise.all([
     fetchArticle(slug),
     fetchAllCategories(),
-    fetchAllArticles(),
+    fetchAllArticles(), // Use optimized summary fetch to stay under 2MB cache limit
   ]);
 
   if (!article) {
@@ -87,7 +79,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
     : '';
 
   // Recent articles from the same category, max 6, excluding current
-  const recentArticles = allArticles
+  const recentArticles = allArticlesSummary
     .filter((a: any) => a.tagline === article.tagline && a.id !== article.id)
     .slice(0, 6);
 
