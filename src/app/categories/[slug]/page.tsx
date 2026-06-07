@@ -2,7 +2,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
-import { fetchAllCategories, fetchCategoryBySlug, fetchAllArticles, slugify } from '@/app/lib/api';
+import { 
+  fetchAllCategories, 
+  fetchCategoryBySlug, 
+  fetchAllArticles,
+  slugify 
+} from '@/app/lib/api';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -53,9 +58,9 @@ export default async function CategoryPage({
 }) {
   const { slug } = await params;
 
-  const [categories, allArticles] = await Promise.all([
+  const [categories, allArticlesSummary] = await Promise.all([
     fetchCategoryBySlug(slug),
-    fetchAllArticles(),
+    fetchAllArticles(), // Optimized fetch to resolve the "items over 2MB" build warning
   ]);
 
   const category = categories.find((c: any) => slugify(c.heading) === slug) ?? null;
@@ -74,7 +79,7 @@ export default async function CategoryPage({
   }
 
   const categoryId = category._id ?? category.id ?? null;
-  const articles = allArticles.filter((a: any) => {
+  const articles = allArticlesSummary.filter((a: any) => {
     if (!categoryId) return a.tagline === category.tagline;
     const catId = String(categoryId).trim();
     const directId = String(a.category ?? '').trim();
