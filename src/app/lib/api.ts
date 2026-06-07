@@ -45,15 +45,17 @@ export const buildApiUrl = (path: string) => {
 
 /** Fetch a single article by slug */
 // Fetch a single article by slug
+// Fetch a single article by slug
 export async function fetchArticle(slug: string) {
   try {
-    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?slug=${encodeURIComponent(slug)}`), NO_CACHE_OPTS);
+    // Use ISR options for static generation
+    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?slug=${encodeURIComponent(slug)}`), FETCH_OPTS);
     const json = await res.json();
     if (json.success && json.data && json.data.length > 0) {
       return Array.isArray(json.data) ? json.data[0] : json.data;
     }
-    // fallback: fetch all and find manually
-    const allRes = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}`), NO_CACHE_OPTS);
+    // fallback: fetch all and find manually using ISR options
+    const allRes = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}`), FETCH_OPTS);
     const allJson = await allRes.json();
     if (allJson.success && Array.isArray(allJson.data)) {
       return allJson.data.find((a: any) => a.slug === slug || a.id === slug) || null;
