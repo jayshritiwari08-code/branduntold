@@ -17,6 +17,7 @@ export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ||
  * Shared fetch options – Next.js ISR revalidation.
  */
 export const FETCH_OPTS = { next: { revalidate: REVALIDATE_SECONDS } } as const;
+export const NO_CACHE_OPTS = { cache: "no-store" } as const;
 
 export const ARTICLES_COLLECTION = 'articles'; // matches CMS collection name
 export const CATEGORIES_COLLECTION = 'category';
@@ -46,13 +47,13 @@ export const buildApiUrl = (path: string) => {
 // Fetch a single article by slug
 export async function fetchArticle(slug: string) {
   try {
-    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?slug=${encodeURIComponent(slug)}`), FETCH_OPTS);
+    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?slug=${encodeURIComponent(slug)}`), NO_CACHE_OPTS);
     const json = await res.json();
     if (json.success && json.data && json.data.length > 0) {
       return Array.isArray(json.data) ? json.data[0] : json.data;
     }
     // fallback: fetch all and find manually
-    const allRes = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}`), FETCH_OPTS);
+    const allRes = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}`), NO_CACHE_OPTS);
     const allJson = await allRes.json();
     if (allJson.success && Array.isArray(allJson.data)) {
       return allJson.data.find((a: any) => a.slug === slug || a.id === slug) || null;
@@ -94,7 +95,7 @@ export async function fetchCategoryBySlug(slug: string) {
 // Fetch all articles
 export async function fetchAllArticles() {
   try {
-    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}`), FETCH_OPTS);
+    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}`), NO_CACHE_OPTS);
     const json = await res.json();
     return json.success ? json.data : [];
   } catch (err) {
@@ -107,7 +108,7 @@ export async function fetchAllArticles() {
 // Fetch only slugs (and ids) for generateStaticParams
 export async function fetchAllArticleSlugs() {
   try {
-    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?fields=slug,id`), FETCH_OPTS);
+    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?fields=slug,id`), NO_CACHE_OPTS);
     const json = await res.json();
     return json.success && Array.isArray(json.data) ? json.data : [];
   } catch (err) {

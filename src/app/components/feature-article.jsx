@@ -43,7 +43,7 @@ function Card3D({ article, index }) {
   const isLarge = index === 0;
 
   // Resolve image URL (handle relative /uploads/ paths)
-  // Use same-origin URL, rewrite will handle proxying to localhost:3001
+  // Use same-origin URL, rewrite will handle proxying to admin.branduntold.in
   const imageUrl = article.image || '/blog-placeholder.jpg';
 
   // Use tagline as the tag label (strip leading/trailing whitespace)

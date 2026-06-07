@@ -54,11 +54,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:3001/api/:path*',
+        destination: 'http://admin.branduntold.in/api/:path*',
       },
       {
         source: '/uploads/:path*',
-        destination: 'http://localhost:3001/uploads/:path*',
+        destination: 'http://admin.branduntold.in/uploads/:path*',
       },
     ];
   },
