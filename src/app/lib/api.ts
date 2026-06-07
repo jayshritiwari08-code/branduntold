@@ -20,7 +20,7 @@ export const FETCH_OPTS = { next: { revalidate: REVALIDATE_SECONDS } } as const;
 
 export const ARTICLES_COLLECTION = 'articles'; // matches CMS collection name
 export const CATEGORIES_COLLECTION = 'category';
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://admin.branduntold.in';
 
 /**
  * Build absolute API URL. During static generation the external API may not be running.
