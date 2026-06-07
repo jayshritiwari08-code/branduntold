@@ -7,29 +7,29 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getHeroData, getAboutUsData } from './lib/api';
 
+export const revalidate = 60; // optional: ISR revalidate interval (seconds)
+
 export default async function Home() {
-  // Fetch data at build time / request time with ISR revalidation
   const { data: heroData, error: heroError } = await getHeroData();
   const { data: aboutData, error: aboutError } = await getAboutUsData();
 
-  // Loading states are unnecessary on the server side; data is ready when rendered
-  const heroLoading = false;
-  const aboutLoading = false;
+  // Loading states are not needed on server; if you want to show a fallback when
+  // data is missing (not just during SSR), you can show skeletons based on error/null data.
 
   return (
     <>
-      {/* Initialize AOS for scroll animations (client component) */}
       <AosInit />
       <div className="min-h-screen">
+
         {/* Hero Section */}
-        <HeroSection data={{ heroData, loading: heroLoading }} />
+        <HeroSection data={{ heroData }} />
 
         {/* Categories Overview */}
         <div data-aos="fade-up">
           <CategoriesCards />
         </div>
 
-        {/* Featured Articles */}
+        {/* Featured Articles — client component, polls /api/data/articles every 60s */}
         <div data-aos="fade-up">
           <FeaturedArticles />
         </div>
@@ -40,15 +40,22 @@ export default async function Home() {
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
               {/* Image Side */}
               <div className="relative group" data-aos="fade-right">
                 <div className="aspect-[3.5/4] rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative">
-                  {aboutLoading ? (
-                    <div className="w-full h-full bg-gray-800 animate-pulse" />
+                  {aboutData?.image ? (
+                    <Image
+                      src={aboutData.image}
+                      alt={aboutData?.heading || 'Brand Untold'}
+                      width={800}
+                      height={900}
+                      className="w-full h-full object-fill transition-transform duration-700 group-hover:scale-105"
+                    />
                   ) : (
                     <Image
-                      src={aboutData?.image || '/about1.jpg'}
-                      alt={aboutData?.heading || 'Brand Untold'}
+                      src="/about1.jpg"
+                      alt="Brand Untold"
                       width={800}
                       height={900}
                       className="w-full h-full object-fill transition-transform duration-700 group-hover:scale-105"
@@ -56,27 +63,34 @@ export default async function Home() {
                   )}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />
                 </div>
-                <div className="absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow" data-aos="zoom-in" data-aos-delay="400" />
-                <div className="absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float" data-aos="zoom-in" data-aos-delay="600" />
+                <div
+                  className="absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow"
+                  data-aos="zoom-in"
+                  data-aos-delay="400"
+                />
+                <div
+                  className="absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float"
+                  data-aos="zoom-in"
+                  data-aos-delay="600"
+                />
               </div>
 
               {/* Text Content */}
               <div className="space-y-10" data-aos="fade-left">
                 <div data-aos="fade-up" data-aos-delay="200">
-                  {aboutLoading ? (
+                  {aboutData?.short_description ? (
+                    <div
+                      className="tiptap-content"
+                      dangerouslySetInnerHTML={{ __html: aboutData.short_description }}
+                    />
+                  ) : (
+                    /* Fallback skeleton shown only when aboutData is genuinely missing */
                     <div className="space-y-3">
                       <div className="h-8 bg-gray-800 animate-pulse rounded w-3/4" />
                       <div className="h-4 bg-gray-800 animate-pulse rounded w-full" />
                       <div className="h-4 bg-gray-800 animate-pulse rounded w-5/6" />
                       <div className="h-4 bg-gray-800 animate-pulse rounded w-4/6" />
                     </div>
-                  ) : (
-                    aboutData?.short_description && (
-                      <div
-                        className="tiptap-content"
-                        dangerouslySetInnerHTML={{ __html: aboutData.short_description }}
-                      />
-                    )
                   )}
                 </div>
 
@@ -99,9 +113,11 @@ export default async function Home() {
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </section>
+
       </div>
     </>
   );

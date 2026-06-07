@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+
+const POLL_INTERVAL = 60_000; // 60 seconds — match your ISR revalidate value
 
 function Card3D({ article, index }) {
   const cardRef = useRef(null);
@@ -41,15 +43,8 @@ function Card3D({ article, index }) {
   };
 
   const isLarge = index === 0;
-
-  // Resolve image URL (handle relative /uploads/ paths)
-  // Use same-origin URL, rewrite will handle proxying to admin.branduntold.in
   const imageUrl = article.image || '/blog-placeholder.jpg';
-
-  // Use tagline as the tag label (strip leading/trailing whitespace)
   const tag = article.category_label || article.tagline || "Article";
-
-  // Format date
   const formattedDate = article.date
     ? new Date(article.date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
     : null;
@@ -125,7 +120,6 @@ function Card3D({ article, index }) {
               background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.55) 100%)",
             }}
           />
-         
           {article.author && (
             <div style={{ position: "absolute", bottom: "14px", right: "14px", zIndex: 2 }}>
               <span
@@ -190,7 +184,6 @@ function Card3D({ article, index }) {
               fontSize: "0.9rem",
               flex: 1,
               marginBottom: "1.25rem",
-              // Clamp to ~3 lines
               display: "-webkit-box",
               WebkitLineClamp: 3,
               WebkitBoxOrient: "vertical",
@@ -250,7 +243,6 @@ function Card3D({ article, index }) {
   );
 }
 
-// Skeleton card shown while loading
 function SkeletonCard({ index }) {
   const isLarge = index === 0;
   return (
@@ -263,12 +255,7 @@ function SkeletonCard({ index }) {
         animation: "pulse 1.8s ease-in-out infinite",
       }}
     >
-      <div
-        style={{
-          height: isLarge ? "260px" : "200px",
-          background: "rgba(255,255,255,0.04)",
-        }}
-      />
+      <div style={{ height: isLarge ? "260px" : "200px", background: "rgba(255,255,255,0.04)" }} />
       <div style={{ padding: "1.5rem" }}>
         <div style={{ height: "12px", width: "60px", background: "rgba(212,175,55,0.15)", borderRadius: "2px", marginBottom: "0.75rem" }} />
         <div style={{ height: "20px", background: "rgba(255,255,255,0.06)", borderRadius: "2px", marginBottom: "0.5rem" }} />
@@ -295,42 +282,45 @@ export default function FeaturedArticles() {
     });
   }, []);
 
-  useEffect(() => {
-    async function fetchArticles() {
-      try {
-        const res = await fetch("/api/data/articles?limit=3");
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        console.log("Articles",json)
-        if (json.success && Array.isArray(json.data)) {
-          setArticles(json.data);
-        } else {
-          throw new Error("Unexpected response format");
-        }
-      } catch (err) {
-        console.error("Failed to fetch articles:", err);
-        setError("Failed to load articles.");
-      } finally {
-        setLoading(false);
+  // Wrap in useCallback so the interval reference is stable
+  const fetchArticles = useCallback(async () => {
+    try {
+      const res = await fetch("/api/data/articles?limit=3");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      console.log("Articles", json);
+      if (json.success && Array.isArray(json.data)) {
+        setArticles(json.data);
+        setError(null); // clear any previous error on success
+      } else {
+        throw new Error("Unexpected response format");
       }
+    } catch (err) {
+      console.error("Failed to fetch articles:", err);
+      setError("Failed to load articles.");
+    } finally {
+      setLoading(false);
     }
-    fetchArticles();
   }, []);
+
+  useEffect(() => {
+    fetchArticles(); // run immediately on mount
+
+    const intervalId = setInterval(fetchArticles, POLL_INTERVAL); // re-fetch every 60s
+    return () => clearInterval(intervalId); // cleanup on unmount
+  }, [fetchArticles]);
 
   return (
     <section
       className="py-20"
       style={{
         backgroundColor: '#111111',
-        backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='152' height='152' viewBox='0 0 152 152'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='temple' fill='%23333333' fill-opacity='0.1'%3E%3Cpath d='M152 150v2H0v-2h28v-8H8v-20H0v-2h8V80h42v20h20v42H30v8h90v-8H80v-42h20V80h42v40h8V30h-8v40h-42V50H80V8h40V0h2v8h20v20h8V0h2v150zm-2 0v-28h-8v20h-20v8h28zM82 30v18h18V30H82zm20 18h20v20h18V30h-20V10H82v18h20v20zm0 2v18h18V50h-18zm20-22h18V10h-18v18zm-54 92v-18H50v18h18zm-20-18H28V82H10v38h20v20h38v-18H48v-20zm0-2V82H30v18h18zm-20 22H10v18h18v-18zm54 0v18h38v-20h20V82h-18v20h-20v20H82zm18-20H82v18h18v-18zm2-2h18V82h-18v18zm20 40v-18h18v18h-18zM30 0h-2v8H8v20H0v2h8v40h42V50h20V8H30V0zm20 48h18V30H50v18zm18-20H48v20H28v20H10V30h20V10h38v18zM30 50h18v18H30V50zm-2-40H10v18h18V10z'/%3E%3C/g%3E%3C/G%3E%3C/svg%3E\")"
+        backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='152' height='152' viewBox='0 0 152 152'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='temple' fill='%23333333' fill-opacity='0.1'%3E%3Cpath d='M152 150v2H0v-2h28v-8H8v-20H0v-2h8V80h42v20h20v42H30v8h90v-8H80v-42h20V80h42v40h8V30h-8v40h-42V50H80V8h40V0h2v8h20v20h8V0h2v150zm-2 0v-28h-8v20h-20v8h28zM82 30v18h18V30H82zm20 18h20v20h18V30h-20V10H82v18h20v20zm0 2v18h18V50h-18zm20-22h18V10h-18v18zm-54 92v-18H50v18h18zm-20-18H28V82H10v38h20v20h38v-18H48v-20zm0-2V82H30v18h18zm-20 22H10v18h18v-18zm54 0v18h38v-20h20V82h-18v20h-20v20H82zm18-20H82v18h18v-18zm2-2h18V82h-18v18zm20 40v-18h18v18h-18zM30 0h-2v8H8v20H0v2h8v40h42V50h20V8H30V0zm20 48h18V30H50v18zm18-20H48v20H28v20H10V30h20V10h38v18zM30 50h18v18H30V50zm-2-40H10v18h18V10z'/%3E%3C/G%3E%3C/svg%3E\")"
       }}
     >
       <div className="max-w-6xl mx-auto px-2.5 sm:px-6 lg:px-8">
         {/* Header */}
-        <div
-          style={{ textAlign: "center", marginBottom: "3.5rem" }}
-          data-aos="fade-up"
-        >
+        <div style={{ textAlign: "center", marginBottom: "3.5rem" }} data-aos="fade-up">
           <p
             style={{
               fontFamily: "'DM Sans', sans-serif",
@@ -385,8 +375,8 @@ export default function FeaturedArticles() {
           {loading
             ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} index={i} />)
             : articles.map((article, i) => (
-                <Card3D key={article.id} article={article} index={i} />
-              ))}
+              <Card3D key={article.id} article={article} index={i} />
+            ))}
         </div>
       </div>
     </section>
