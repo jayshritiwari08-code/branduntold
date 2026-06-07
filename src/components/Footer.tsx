@@ -60,8 +60,7 @@ export default function Footer() {
       <path d="m16.6138182 25.2349091v-9.2349091h3.0472727l.4814545-3.0603636h-3.5287272v-1.5345455c0-.7985455.2618182-1.56072727 1.408-1.56072727h2.2909091v-3.05454547h-3.2523636c-2.7345455 0-3.4807273 1.80072728-3.4807273 4.29672724v1.8516364h-1.8763637v3.0618182h1.8763636v9.2349091z"/>
     </g>
   </g>
-</svg>
-                </a>
+</svg>     </a>
               )}
               {footerData?.instagram && (
                 <a href={footerData.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">
