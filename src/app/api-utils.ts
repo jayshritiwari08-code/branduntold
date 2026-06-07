@@ -1,5 +1,5 @@
 // API utility functions for fetching dynamic content from CMS
-// Use same-origin URL, rewrite will handle proxying to localhost:3001
+// Use same-origin URL, rewrite will handle proxying to admin.branduntold.in
 
 const API_BASE_URL = '/api/data';
 
