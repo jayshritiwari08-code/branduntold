@@ -95,7 +95,7 @@ export async function fetchCategoryBySlug(slug: string) {
 // Fetch all articles
 export async function fetchAllArticles() {
   try {
-    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}`), NO_CACHE_OPTS);
+    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}`), FETCH_OPTS);
     const json = await res.json();
     return json.success ? json.data : [];
   } catch (err) {
@@ -108,7 +108,7 @@ export async function fetchAllArticles() {
 // Fetch only slugs (and ids) for generateStaticParams
 export async function fetchAllArticleSlugs() {
   try {
-    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?fields=slug,id`), NO_CACHE_OPTS);
+    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?fields=slug,id`), FETCH_OPTS);
     const json = await res.json();
     return json.success && Array.isArray(json.data) ? json.data : [];
   } catch (err) {
