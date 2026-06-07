@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
-import Head from "next/head";
 import "./globals.css";
 
 import Header from "@/components/Header";
@@ -22,8 +21,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "The Story Behind | Storytelling Platform",
   description: "A clean, minimal, content-focused platform for high-quality articles and stories about founders, brands, and storytelling.",
-  
-  // ✅ Recommended way - Use string path
   icons: {
     icon: "/logo.png",
     shortcut: "/logo.png",
@@ -40,11 +37,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${playfair.variable} ${inter.variable} h-full antialiased`}
-      >
-      <Head>
-        <link rel="preload" href="/globals.css" as="style" onload="this.rel='stylesheet'" />
-        <noscript><link rel="stylesheet" href="/globals.css" /></noscript>
-      </Head>
+    >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <Providers>
           <Header />
