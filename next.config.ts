@@ -2,8 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Optimize images for faster loading
+   staticPageGenerationTimeout: 300,
   images: {
     unoptimized: false, // Enable Next.js image optimization
+    
     remotePatterns: [
       {
         protocol: 'https',
@@ -44,6 +46,7 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', 'date-fns'],
     // Enable CSS optimization
     optimizeCss: true,
+     cpus: 1, 
   },
 
   // Enable compressible formats
