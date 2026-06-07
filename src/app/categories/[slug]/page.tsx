@@ -22,7 +22,7 @@ function formatDate(dateStr: string): string {
   return `${month} ${day}, ${year}`;
 }
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic"; // Allow dynamic fetches
 export const dynamicParams = true; // allow ISR for slugs not pre-built
 
 export async function generateStaticParams() {
