@@ -5,13 +5,13 @@ import CategoriesCards from './components/categoriescards';
 import FeaturedArticles from './components/feature-article';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getHeroData, getAboutUsData } from './lib/api';
+import { getOneFromCollection } from '@/lib/db';
 
 export const revalidate = 60; // optional: ISR revalidate interval (seconds)
 
 export default async function Home() {
-  const { data: heroData, error: heroError } = await getHeroData();
-  const { data: aboutData, error: aboutError } = await getAboutUsData();
+  const heroData = await getOneFromCollection('herosec');
+  const aboutData = await getOneFromCollection('about_us');
 
   // Loading states are not needed on server; if you want to show a fallback when
   // data is missing (not just during SSR), you can show skeletons based on error/null data.

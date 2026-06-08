@@ -3,11 +3,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
 import { 
-  fetchAllCategories, 
-  fetchCategoryBySlug, 
-  fetchAllArticles,
+  getCategories, 
+  getArticles,
   slugify 
-} from '@/app/lib/api';
+} from '@/lib/db';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -27,7 +26,7 @@ export const revalidate = 60; // ISR: revalidate after 60 seconds
 export const dynamicParams = true; // allow ISR for slugs not pre-built
 
 export async function generateStaticParams() {
-  const categories = await fetchAllCategories();
+  const categories = await getCategories();
   return categories.map((c: any) => ({ slug: slugify(c.heading) }));
 }
 
@@ -37,7 +36,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const categories = await fetchCategoryBySlug(slug);
+  const categories = await getCategories();
   const category = categories.find((c: any) => slugify(c.heading) === slug);
 
   if (category) {
@@ -60,8 +59,8 @@ export default async function CategoryPage({
   const { slug } = await params;
 
   const [categories, allArticlesSummary] = await Promise.all([
-    fetchCategoryBySlug(slug),
-    fetchAllArticles(), // Optimized fetch to resolve the "items over 2MB" build warning
+    getCategories(),
+    getArticles('articles', { long_description: 0 }), // Optimized: exclude heavy content
   ]);
 
   const category = categories.find((c: any) => slugify(c.heading) === slug) ?? null;

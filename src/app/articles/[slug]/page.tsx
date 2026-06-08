@@ -3,11 +3,11 @@ import Image from 'next/image';
 import RecentArticlesSlider from './RecentArticlesSlider';
 import { Metadata } from 'next';
 import { 
-  fetchArticle, 
-  fetchAllCategories, 
-  fetchAllArticleSlugs,
-  fetchAllArticles
-} from '@/app/lib/api';
+  getArticleBySlug,
+  getCategories,
+  getArticleSlugs,
+  getArticles
+} from '@/lib/db';
 
 interface BlogPostProps {
   params: Promise<{ slug: string }>;
@@ -25,18 +25,16 @@ export const dynamicParams = false;
 // ─── Pre-build all article pages at build time (eliminates cold-render lag) ──
 // Uses slug-only fetch to avoid the 2MB Next.js data cache limit
 export async function generateStaticParams() {
-  const articles = await fetchAllArticleSlugs();
-  console.log(`[generateStaticParams] Found ${articles.length} articles to pre-build`);
-  return articles
-    .filter((a: any) => a.slug || a.id)
-    .map((a: any) => ({ slug: a.slug || a.id }));
+  const slugs = await getArticleSlugs();
+  console.log(`[generateStaticParams] Found ${slugs.length} articles to pre-build`);
+  return slugs.map((slug) => ({ slug }));
 }
 
 // ─── Metadata ────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: BlogPostProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = await fetchArticle(slug);
+  const article = await getArticleBySlug(slug);
 
   if (!article) {
     return {
@@ -59,9 +57,9 @@ export default async function BlogPost({ params }: BlogPostProps) {
 
   // All three fetches run in parallel — no waterfall, no duplicate article fetch
   const [article, categories, allArticlesSummary] = await Promise.all([
-    fetchArticle(slug),
-    fetchAllCategories(),
-    fetchAllArticles(), // Use optimized summary fetch to stay under 2MB cache limit
+    getArticleBySlug(slug),
+    getCategories(),
+    getArticles('articles', { long_description: 0 }), // Exclude heavy long_description field
   ]);
 
   if (!article) {

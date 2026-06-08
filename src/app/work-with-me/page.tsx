@@ -4,6 +4,7 @@
 
 import { Metadata } from 'next';
 import WorkWithMeClient from '../components/Workwithmeclient';
+import { getOneFromCollection, getFromCollection } from '@/lib/db';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 export interface ContactUsHeading {
@@ -38,66 +39,6 @@ export interface FooterData {
 // or use `revalidate = false` (cache forever) + on-demand revalidation via
 // a webhook / revalidateTag() when your CMS updates.
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
-
-async function getHeadingBySection(section: string): Promise<ContactUsHeading | null> {
-  try {
-    const res = await fetch(
-      `${BASE_URL}/api/data/heading?section=${encodeURIComponent(section)}`,
-      {
-        next: {
-          // Revalidate every 60 s — swap for { tags: ['headings'] } + on-demand if you prefer
-          revalidate: 60,
-        },
-      },
-    );
-    if (!res.ok) return null;
-    const json = await res.json();
-    return json.success && json.data ? json.data : null;
-  } catch {
-    return null;
-  }
-}
-
-async function getServicesData(): Promise<ServicesData | null> {
-  try {
-    const res = await fetch(`${BASE_URL}/api/data/services`, {
-      next: { revalidate: 60 },
-    });
-    if (!res.ok) return null;
-    const json = await res.json();
-    return json.success && json.data ? json.data : null;
-  } catch {
-    return null;
-  }
-}
-
-async function getFAQData(): Promise<FAQItem[] | null> {
-  try {
-    const res = await fetch(`${BASE_URL}/api/data/faq`, {
-      next: {
-        revalidate: 60,
-      },
-    });
-    if (!res.ok) return null;
-    const json = await res.json();
-    return json.success && Array.isArray(json.data) ? json.data : null;
-  } catch {
-    return null;
-  }
-}
-
-async function getFooterData(): Promise<FooterData | null> {
-  try {
-    const res = await fetch(`${BASE_URL}/api/data/footer`, { cache: 'no-store' });
-    if (!res.ok) return null;
-    const json = await res.json();
-    return json.success && json.data ? json.data : null;
-  } catch {
-    return null;
-  }
-}
-
 // ─── Optional: page-level revalidation interval (seconds) ────────────────────
 // This acts as the fallback if individual fetches don't specify their own.
 export const revalidate = 60;
@@ -112,11 +53,11 @@ export const metadata: Metadata = {
 export default async function WorkWithMePage() {
   // All three fetches run in parallel — no waterfall
   const [contactUsHeading, contactFormHeading, servicesData, footerData, faqData] = await Promise.all([
-    getHeadingBySection('Contact Us'),
-    getHeadingBySection('contact form'),
-    getServicesData(),
-    getFooterData(),
-    getFAQData(),
+    getOneFromCollection('heading', { section: 'Contact Us' }),
+    getOneFromCollection('heading', { section: 'contact form' }),
+    getOneFromCollection('services'),
+    getOneFromCollection('footer'),
+    getFromCollection('faq'),
   ]);
 
 
