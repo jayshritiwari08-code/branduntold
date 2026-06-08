@@ -22,7 +22,6 @@ async function getClient(): Promise<MongoClient> {
   }
   return globalWithMongo._mongoClient;
 }
-
 export async function getDb() {
   const client = await getClient();
   return client.db(dbName);
