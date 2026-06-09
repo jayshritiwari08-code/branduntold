@@ -5,7 +5,6 @@ import { Metadata } from 'next';
 import { 
   getArticleBySlug,
   getCategories,
-  getArticleSlugs,
   getArticles
 } from '@/lib/db';
 
@@ -13,22 +12,16 @@ interface BlogPostProps {
   params: Promise<{ slug: string }>;
 }
 
-// ─── ISR: revalidate all fetches every 60 s ───────────────────────────────────
-export const revalidate = 60;
+// Force dynamic rendering — article content (long_description) is too large
+// for Vercel's 19MB ISR fallback limit. SSR on every request is fine since
+// articles are cached at the CDN edge via Cache-Control headers.
+export const dynamic = 'force-dynamic';
 
-// Pages not pre-built at build time will be generated on first request
-export const dynamicParams = true;
+// Still revalidate the route cache
+export const revalidate = 60;
 
 // ─── Shared data-fetching helpers ────────────────────────────────────────────
 
-
-// ─── Pre-build all article pages at build time (eliminates cold-render lag) ──
-// Uses slug-only fetch to avoid the 2MB Next.js data cache limit
-export async function generateStaticParams() {
-  const slugs = await getArticleSlugs();
-  console.log(`[generateStaticParams] Found ${slugs.length} articles to pre-build`);
-  return slugs.map((slug) => ({ slug }));
-}
 
 // ─── Metadata ────────────────────────────────────────────────────────────────
 
