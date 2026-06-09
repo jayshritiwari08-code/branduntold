@@ -17,7 +17,7 @@ interface BlogPostProps {
 export const revalidate = 60;
 
 // Pages not pre-built at build time will be generated on first request
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 // ─── Shared data-fetching helpers ────────────────────────────────────────────
 
