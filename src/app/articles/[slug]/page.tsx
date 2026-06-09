@@ -13,12 +13,9 @@ interface BlogPostProps {
 }
 
 // Force dynamic rendering — article content (long_description) is too large
-// for Vercel's 19MB ISR fallback limit. SSR on every request is fine since
-// articles are cached at the CDN edge via Cache-Control headers.
+// for Vercel's 19MB ISR fallback limit. SSR renders fresh on every request;
+// Vercel's CDN edge cache handles repeat-visit performance.
 export const dynamic = 'force-dynamic';
-
-// Still revalidate the route cache
-export const revalidate = 60;
 
 // ─── Shared data-fetching helpers ────────────────────────────────────────────
 
