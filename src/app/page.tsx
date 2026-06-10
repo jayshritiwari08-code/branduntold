@@ -1,20 +1,22 @@
-// src/app/page.tsx
 import HeroSection from './components/herosection';
 import AosInit from './components/aosinit';
 import CategoriesCards from './components/categoriescards';
 import FeaturedArticles from './components/feature-article';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getOneFromCollection } from '@/lib/db';
+import { getOneFromCollection, getArticles } from '@/lib/db';
 
-export const revalidate = 60; // optional: ISR revalidate interval (seconds)
+export const revalidate = 60; // ISR: rebuild this page at most once per minute
 
 export default async function Home() {
   const heroData = await getOneFromCollection('herosec');
   const aboutData = await getOneFromCollection('about_us');
 
-  // Loading states are not needed on server; if you want to show a fallback when
-  // data is missing (not just during SSR), you can show skeletons based on error/null data.
+  // Fetch latest 3 articles server-side — no client API call needed
+  // long_description excluded to keep the payload small
+  const featuredArticles = await getArticles('articles', { long_description: 0 } as any)
+    .then((arts: any[]) => arts.slice(0, 3))
+    .catch(() => [] as any[]);
 
   return (
     <>
@@ -29,9 +31,10 @@ export default async function Home() {
           <CategoriesCards />
         </div>
 
-        {/* Featured Articles — client component, polls /api/data/articles every 60s */}
+        {/* Featured Articles — server-rendered, cached via ISR (revalidate 60s) */}
         <div data-aos="fade-up">
-          <FeaturedArticles />
+          {/* @ts-ignore — JSX component has no TS types */}
+          <FeaturedArticles articles={featuredArticles} />
         </div>
 
         {/* About Preview */}
