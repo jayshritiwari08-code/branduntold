@@ -4,19 +4,23 @@ import CategoriesCards from './components/categoriescards';
 import FeaturedArticles from './components/feature-article';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getOneFromCollection, getArticles } from '@/lib/db';
+import { getOneFromCollection, getArticles, getCategories, getFromCollection } from '@/lib/db';
 
 export const revalidate = 60; // ISR: rebuild this page at most once per minute
 
 export default async function Home() {
-  const heroData = await getOneFromCollection('herosec');
-  const aboutData = await getOneFromCollection('about_us');
+  const [heroData, aboutData, featuredArticles, rawCategories, allHeadings] = await Promise.all([
+    getOneFromCollection('herosec'),
+    getOneFromCollection('about_us'),
+    getArticles('articles', { long_description: 0 } as any).then((a: any[]) => a.slice(0, 3)).catch(() => [] as any[]),
+    getCategories(),
+    getFromCollection('all_headings'),
+  ]);
 
-  // Fetch latest 3 articles server-side — no client API call needed
-  // long_description excluded to keep the payload small
-  const featuredArticles = await getArticles('articles', { long_description: 0 } as any)
-    .then((arts: any[]) => arts.slice(0, 3))
-    .catch(() => [] as any[]);
+  // Find the heading for the category section
+  const categoryHeading = (allHeadings as any[]).find(
+    (h: any) => h.section?.toLowerCase() === 'category'
+  ) ?? null;
 
   return (
     <>
@@ -28,7 +32,8 @@ export default async function Home() {
 
         {/* Categories Overview */}
         <div data-aos="fade-up">
-          <CategoriesCards />
+          {/* @ts-ignore */}
+          <CategoriesCards categories={rawCategories} heading={categoryHeading} />
         </div>
 
         {/* Featured Articles — server-rendered, cached via ISR (revalidate 60s) */}
