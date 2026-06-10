@@ -4,7 +4,7 @@
 
 import { Metadata } from 'next';
 import WorkWithMeClient from '../components/Workwithmeclient';
-import { getOneFromCollection, getFromCollection } from '@/lib/db';
+import { getOneFromCollection, getFromCollection, getStaticMeta } from '@/lib/db';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 export interface ContactUsHeading {
@@ -44,30 +44,48 @@ export interface FooterData {
 export const revalidate = 60;
 
 // ─── Metadata (also benefits from ISR) ───────────────────────────────────────
-export const metadata: Metadata = {
-  title: 'Work With Me',
-  description: "Let's craft your brand's story together.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const meta = await getStaticMeta('work-with-me');
+  if (!meta) {
+    return {
+      title: 'Work With Me',
+      description: "Let's craft your brand's story together.",
+    };
+  }
+  return {
+    title: meta.metatitle,
+    description: meta.meta_description,
+    keywords: meta.meta_keyword,
+  };
+}
 
 // ─── Page (Server Component) ─────────────────────────────────────────────────
 export default async function WorkWithMePage() {
-  // All three fetches run in parallel — no waterfall
-  const [contactUsHeading, contactFormHeading, servicesData, footerData, faqData] = await Promise.all([
+  // All fetches run in parallel — no waterfall
+  const [contactUsHeading, contactFormHeading, servicesData, footerData, faqData, pageMeta] = await Promise.all([
     getOneFromCollection('heading', { section: 'Contact Us' }),
     getOneFromCollection('heading', { section: 'contact form' }),
     getOneFromCollection('services'),
     getOneFromCollection('footer'),
     getFromCollection('faq'),
+    getStaticMeta('work-with-me'),
   ]);
 
-
   return (
-    <WorkWithMeClient
-      contactUsHeading={contactUsHeading}
-      contactFormHeading={contactFormHeading}
-      servicesData={servicesData}
-      footerData={footerData}
-      faqData={faqData}
-    />
+    <>
+      {pageMeta?.schema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: pageMeta.schema }}
+        />
+      )}
+      <WorkWithMeClient
+        contactUsHeading={contactUsHeading}
+        contactFormHeading={contactFormHeading}
+        servicesData={servicesData}
+        footerData={footerData}
+        faqData={faqData}
+      />
+    </>
   );
 }

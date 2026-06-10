@@ -135,3 +135,29 @@ export async function getCategories() {
     return [];
   }
 }
+
+export interface StaticMeta {
+  id: string;
+  slug: string;
+  metatitle: string;
+  meta_description: string;
+  meta_keyword: string[];
+  schema: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Fetch SEO metadata for a static page by its slug.
+ * Home page uses an empty string slug ("").
+ */
+export async function getStaticMeta(slug: string): Promise<StaticMeta | null> {
+  try {
+    const db = await getDb();
+    const doc = await db.collection('static_meta').findOne({ slug });
+    return doc ? (normalizeId(doc) as StaticMeta) : null;
+  } catch (err) {
+    console.error('[getStaticMeta] DB error:', err);
+    return null;
+  }
+}

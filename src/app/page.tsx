@@ -4,17 +4,30 @@ import CategoriesCards from './components/categoriescards';
 import FeaturedArticles from './components/feature-article';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getOneFromCollection, getArticles, getCategories, getFromCollection } from '@/lib/db';
+import { Metadata } from 'next';
+import { getOneFromCollection, getArticles, getCategories, getFromCollection, getStaticMeta } from '@/lib/db';
 
 export const revalidate = 60; // ISR: rebuild this page at most once per minute
 
+export async function generateMetadata(): Promise<Metadata> {
+  const meta = await getStaticMeta('');
+  if (!meta) return { title: 'BrandUntold' };
+
+  return {
+    title: meta.metatitle,
+    description: meta.meta_description,
+    keywords: meta.meta_keyword,
+  };
+}
+
 export default async function Home() {
-  const [heroData, aboutData, featuredArticles, rawCategories, allHeadings] = await Promise.all([
+  const [heroData, aboutData, featuredArticles, rawCategories, allHeadings, pageMeta] = await Promise.all([
     getOneFromCollection('herosec'),
     getOneFromCollection('about_us'),
     getArticles('articles', { long_description: 0 } as any).then((a: any[]) => a.slice(0, 3)).catch(() => [] as any[]),
     getCategories(),
     getFromCollection('all_headings'),
+    getStaticMeta(''),
   ]);
 
   // Find the heading for the category section
@@ -25,6 +38,12 @@ export default async function Home() {
   return (
     <>
       <AosInit />
+      {pageMeta?.schema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: pageMeta.schema }}
+        />
+      )}
       <div className="min-h-screen">
 
         {/* Hero Section */}

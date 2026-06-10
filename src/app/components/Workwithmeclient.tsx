@@ -317,6 +317,21 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                         </form>
                     </section>
 
+                     {/* FAQ */}
+                {faqData && faqData.length > 0 && (
+                    <section className="my-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8" data-aos="fade-up" data-aos-delay="300">
+                        <h2 className="font-serif text-3xl text-gold mb-10 text-center">Frequently Asked Questions</h2>
+                        <div className="space-y-4">
+                            {faqData.map((item) => (
+                                <details key={item.id} className="group bg-black/30 border border-gold/20 rounded-xl p-4">
+                                    <summary className="cursor-pointer font-medium text-white group-open:text-gold">{item.question}</summary>
+                                    <p className="mt-2 text-gray-300">{item.ans}</p>
+                                </details>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                     {/* Map */}
                     {(footerData?.map || footerData?.address) && (
                         <section
@@ -363,20 +378,7 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                     )}
                 </div>
 
-                {/* FAQ */}
-                {faqData && faqData.length > 0 && (
-                    <section className="mb-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8" data-aos="fade-up" data-aos-delay="300">
-                        <h2 className="font-serif text-3xl text-gold mb-10 text-center">Frequently Asked Questions</h2>
-                        <div className="space-y-4">
-                            {faqData.map((item) => (
-                                <details key={item.id} className="group bg-black/30 border border-gold/20 rounded-xl p-4">
-                                    <summary className="cursor-pointer font-medium text-white group-open:text-gold">{item.question}</summary>
-                                    <p className="mt-2 text-gray-300">{item.ans}</p>
-                                </details>
-                            ))}
-                        </div>
-                    </section>
-                )}
+               
             </div>
         </div>
     );

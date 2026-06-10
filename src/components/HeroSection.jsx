@@ -48,13 +48,13 @@ export default function HeroSection({ heroData, heroLoading, heroImage }) {
             <div className="hero-actions">
               <Link href="/categories/founder-stories" className="btn btn-primary">
                 <span>Read The Stories</span>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                {/* <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                   <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                </svg> */}
                 <div className="btn-sheen" aria-hidden="true" />
               </Link>
               <Link href="/work-with-me" className="btn btn-secondary">
-                <span>Work With Me</span>
+                <span>Work With Us</span>
                 <div className="btn-sheen" aria-hidden="true" />
               </Link>
             </div>

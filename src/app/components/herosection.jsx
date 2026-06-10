@@ -68,7 +68,7 @@ export default function HeroSection({ data }) {
                 data-aos="fade-up"
                 data-aos-delay="500"
               >
-                <span className="relative z-10">Work With Me</span>
+                <span className="relative z-10">Work With Us</span>
                 <div className="absolute inset-0 w-1/2 h-full bg-white/40 skew-x-[-25deg] -translate-x-[150%] group-hover:translate-x-[250%] transition-transform duration-1000 ease-in-out pointer-events-none"></div>
               </Link>
             </div>

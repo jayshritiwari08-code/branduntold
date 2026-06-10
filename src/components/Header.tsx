@@ -51,7 +51,7 @@ export default function Header() {
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
 
           {/* Logo */}
-          <button onClick={() => navigate('/')} className="flex items-center gap-2 sm:gap-3">
+          <button onClick={() => navigate('/')} className="flex cursor-pointer items-center gap-2 sm:gap-3">
             <Image
               src={logoSrc}
               alt="BRAND UNTOLD"
@@ -93,13 +93,13 @@ export default function Header() {
               {isDropdownOpen && (
                 <div className="absolute left-0 mt-2 w-56 bg-gray-900 border border-gray-800 rounded-lg shadow-xl">
                   <div className="py-2">
-                    <button onClick={() => navigate('/categories/founder-stories')} className="w-full text-left block px-4 py-3 text-grey hover:text-gold hover:bg-gray-800 transition-colors text-sm">
+                    <button onClick={() => navigate('/categories/founder-stories')} className="w-full text-left block px-4 py-3 text-white hover:text-gold hover:bg-gray-800 transition-colors text-sm">
                       Founder Stories
                     </button>
-                    <button onClick={() => navigate('/categories/story-breakdowns')} className="w-full text-left block px-4 py-3 text-grey hover:text-gold hover:bg-gray-800 transition-colors text-sm">
+                    <button onClick={() => navigate('/categories/story-breakdowns')} className="w-full text-left block px-4 py-3 text-white hover:text-gold hover:bg-gray-800 transition-colors text-sm">
                       Story Breakdowns
                     </button>
-                    <button onClick={() => navigate('/categories/writing-branding')} className="w-full text-left block px-4 py-3 text-grey hover:text-gold hover:bg-gray-800 transition-colors text-sm">
+                    <button onClick={() => navigate('/categories/writing-branding')} className="w-full text-left block px-4 py-3 text-white hover:text-gold hover:bg-gray-800 transition-colors text-sm">
                       Writing & Branding
                     </button>
                   </div>
@@ -108,7 +108,7 @@ export default function Header() {
             </div>
 
             <button onClick={() => navigate('/work-with-me')} className="text-gold hover:text-white transition-colors font-medium text-sm sm:text-base">
-              Work With Me
+              Work With Us
             </button>
           </div>
 
@@ -142,20 +142,20 @@ export default function Header() {
               <div className="px-4 py-2">
                 <p className="text-sm text-gold/70 font-medium mb-2">Stories & Writing</p>
                 <div className="space-y-1">
-                  <button onClick={() => navigate('/categories/founder-stories')} className="w-full text-left block px-4 py-2 text-grey hover:text-gold hover:bg-gray-900 rounded-lg transition-colors text-sm">
+                  <button onClick={() => navigate('/categories/founder-stories')} className="w-full text-left block px-4 py-2 text-white hover:text-gold hover:bg-gray-900 rounded-lg transition-colors text-sm">
                     Founder Stories
                   </button>
-                  <button onClick={() => navigate('/categories/story-breakdowns')} className="w-full text-left block px-4 py-2 text-grey hover:text-gold hover:bg-gray-900 rounded-lg transition-colors text-sm">
+                  <button onClick={() => navigate('/categories/story-breakdowns')} className="w-full text-left block px-4 py-2 text-white hover:text-gold hover:bg-gray-900 rounded-lg transition-colors text-sm">
                     Story Breakdowns
                   </button>
-                  <button onClick={() => navigate('/categories/writing-branding')} className="w-full text-left block px-4 py-2 text-grey hover:text-gold hover:bg-gray-900 rounded-lg transition-colors text-sm">
+                  <button onClick={() => navigate('/categories/writing-branding')} className="w-full text-left block px-4 py-2 text-white hover:text-gold hover:bg-gray-900 rounded-lg transition-colors text-sm">
                     Writing & Branding
                   </button>
                 </div>
               </div>
               <div className="border-t border-gray-800 my-2"></div>
               <button onClick={() => navigate('/work-with-me')} className="w-full text-left block px-4 py-3 text-gold hover:text-white hover:bg-gray-900 rounded-lg transition-colors font-medium">
-                Work With Me
+                Work With Us
               </button>
             </div>
           </div>
