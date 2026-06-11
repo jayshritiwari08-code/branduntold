@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRef } from "react";
 
 export default function FeatureArticleCard({ article, index }) {
@@ -100,17 +101,24 @@ export default function FeatureArticleCard({ article, index }) {
             flexShrink: 0,
           }}
         >
+          {/* ref lives on this wrapper; the transform is applied here for the parallax effect */}
           <div
             ref={imgRef}
             style={{
-              width: "100%",
-              height: "100%",
-              backgroundImage: `url(${imageUrl})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
+              position: "absolute",
+              inset: 0,
               transition: "transform 0.15s ease-out",
             }}
-          />
+          >
+            <Image
+              src={imageUrl}
+              alt={article.title || "Article image"}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover object-center"
+              style={{ display: "block" }}
+            />
+          </div>
           <div
             style={{
               position: "absolute",

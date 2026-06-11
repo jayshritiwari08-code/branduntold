@@ -5,6 +5,7 @@ import Link from "next/link";
 
 export default function HeroSection({ data }) {
   const { heroData, loading } = data;
+  console.log("heroData", heroData)
   return (
     <section className="py-10 md:py-20 bg-black relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
@@ -16,7 +17,7 @@ export default function HeroSection({ data }) {
           {/* Mobile image */}
           <div className="relative lg:hidden block flex justify-center" data-aos="fade-left" data-aos-duration="1100">
             <div className="relative">
-              <div className="relative bg-gray-900 overflow-hidden mx-auto" style={{ width: '520px', height: '590px', borderRadius: '50%' }}>
+              <div className="relative bg-gray-900 overflow-hidden mx-auto" style={{ width: '520px', height: '590px' }}>
                 <Image
                   src={heroData?.image || "/home1.jpeg"}
                   alt={heroData?.heading || 'Hero Image'}
@@ -26,7 +27,6 @@ export default function HeroSection({ data }) {
                   priority
                 />
               </div>
-              <div className="absolute inset-0 rounded-[50%] border border-gold/20 animate-pulse-slow pointer-events-none" style={{ width: '520px', height: '590px' }}></div>
             </div>
           </div>
 
@@ -77,7 +77,7 @@ export default function HeroSection({ data }) {
           {/* Desktop image */}
           <div className="relative hidden lg:block flex justify-center" data-aos="fade-left" data-aos-duration="1100">
             <div className="relative">
-              <div className="relative bg-gray-900 overflow-hidden mx-auto" style={{ width: '520px', height: '590px', borderRadius: '50%' }}>
+              <div className="relative bg-gray-900 overflow-hidden mx-auto" style={{ width: '520px', height: '590px' }}>
                 <Image
                   src={heroData?.image || "/home1.jpeg"}
                   alt={heroData?.heading || 'Hero Image'}
@@ -87,7 +87,6 @@ export default function HeroSection({ data }) {
                   priority
                 />
               </div>
-              <div className="absolute inset-0 rounded-[50%] border border-gold/20 animate-pulse-slow pointer-events-none" style={{ width: '520px', height: '590px' }}></div>
             </div>
           </div>
         </div>
