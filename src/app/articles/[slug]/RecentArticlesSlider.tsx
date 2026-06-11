@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { getImageUrl } from '@/app/lib/api';
 
 interface Article {
   title: string;
@@ -104,7 +105,7 @@ export default function RecentArticlesSlider({ articles, categoryTitle, category
                   >
                     <div className="aspect-video w-full overflow-hidden relative">
                       <Image
-                        src={article.image}
+                        src={getImageUrl(article.image)}
                         alt={article.title}
                         width={300}
                         height={169}

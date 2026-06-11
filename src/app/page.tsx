@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { getOneFromCollection, getArticles, getCategories, getFromCollection, getStaticMeta } from '@/lib/db';
+import { getImageUrl } from '@/app/lib/api';
 
 export const revalidate = 60; // ISR: rebuild this page at most once per minute
 
@@ -29,7 +30,7 @@ export default async function Home() {
     getFromCollection('all_headings'),
     getStaticMeta(''),
   ]);
-
+  console.log("heroData", heroData)
   // Find the heading for the category section
   const categoryHeading = (allHeadings as any[]).find(
     (h: any) => h.section?.toLowerCase() === 'category'
@@ -73,7 +74,7 @@ export default async function Home() {
                 <div className="aspect-[3.5/4] rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative">
                   {aboutData?.image ? (
                     <Image
-                      src={aboutData.image}
+                      src={getImageUrl(aboutData.image, '/about1.jpg')}
                       alt={aboutData?.heading || 'Brand Untold'}
                       width={800}
                       height={900}

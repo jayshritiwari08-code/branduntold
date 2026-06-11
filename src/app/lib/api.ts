@@ -24,6 +24,26 @@ export const CATEGORIES_COLLECTION = 'category';
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://admin.branduntold.in';
 
 /**
+ * Resolve an image URL from the CMS.
+ * - Absolute URLs (http/https) are returned as-is.
+ * - Relative paths like /uploads/... are prefixed with the CMS base URL.
+ * - Fallback is returned when the src is empty/undefined.
+ */
+export function getImageUrl(src: any, fallback = '/placeholder.jpg'): string {
+  if (!src) return fallback;
+  // If it's an array, take the first element
+  if (Array.isArray(src)) {
+    src = src[0];
+  }
+  // Ensure src is a string
+  if (typeof src !== 'string' || !src) return fallback;
+  // Already an absolute URL — use as-is
+  if (src.startsWith('http://') || src.startsWith('https://')) return src;
+  // Relative path — prefix with CMS base URL
+  return `${API_URL}${src.startsWith('/') ? '' : '/'}${src}`;
+}
+
+/**
  * Build absolute API URL. During static generation the external API may not be running.
  * In that case we fall back to using the same site’s base URL (BASE_URL) which resolves to the
  * internal API routes provided by Next.js.

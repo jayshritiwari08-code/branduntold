@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
 import { getOneFromCollection, getFromCollection, getStaticMeta } from '@/lib/db';
+import { getImageUrl } from '@/app/lib/api';
 import AboutClient from './AboutClient';
 
 export const revalidate = 60;
@@ -193,7 +194,7 @@ export default async function About() {
                 style={{ boxShadow: '0 35px 60px rgba(0,0,0,0.8), inset 0 2px 0 rgba(255,255,255,0.05)' }}
               >
                 <Image
-                  src={about?.image || '/about1.jpg'}
+                  src={getImageUrl(about?.image, '/about1.jpg')}
                   alt={about?.heading || 'Jayshree - Storyteller'}
                   width={600}
                   height={750}

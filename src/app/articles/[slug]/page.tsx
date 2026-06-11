@@ -7,6 +7,7 @@ import {
   getCategories,
   getArticles
 } from '@/lib/db';
+import { getImageUrl } from '@/app/lib/api';
 
 interface BlogPostProps {
   params: Promise<{ slug: string }>;
@@ -148,7 +149,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
               {/* Featured Image */}
               <div className="aspect-video mb-12 rounded-3xl overflow-hidden border border-[#c2a15f]/30 shadow-2xl relative">
                 <Image
-                  src={article.image}
+                  src={getImageUrl(article.image)}
                   alt={article.title}
                   width={1200}
                   height={675}

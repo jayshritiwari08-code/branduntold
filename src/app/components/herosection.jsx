@@ -1,7 +1,7 @@
 // src/app/components/herosection.jsx
 import Image from "next/image";
 import Link from "next/link";
-// Removed invalid import; using public path directly
+import { getImageUrl } from "@/app/lib/api";
 
 export default function HeroSection({ data }) {
   const { heroData, loading } = data;
@@ -19,7 +19,7 @@ export default function HeroSection({ data }) {
             <div className="relative">
               <div className="relative bg-gray-900 overflow-hidden mx-auto" style={{ width: '520px', height: '590px' }}>
                 <Image
-                  src={heroData?.image || "/home1.jpeg"}
+                  src={getImageUrl(heroData?.image?.[0], "/home1.jpeg")}
                   alt={heroData?.heading || 'Hero Image'}
                   width={520}
                   height={590}
@@ -77,13 +77,13 @@ export default function HeroSection({ data }) {
           {/* Desktop image */}
           <div className="relative hidden lg:block flex justify-center" data-aos="fade-left" data-aos-duration="1100">
             <div className="relative">
-              <div className="relative bg-gray-900 overflow-hidden mx-auto" style={{ width: '520px', height: '590px' }}>
+              <div className="relative bg-gray-900 overflow-hidden mx-auto" style={{ width: '520px', height: '520px' }}>
                 <Image
-                  src={heroData?.image || "/home1.jpeg"}
+                  src={getImageUrl(heroData?.image?.[0], "/home1.jpeg")}
                   alt={heroData?.heading || 'Hero Image'}
                   width={520}
                   height={590}
-                  className="lg:w-full lg:h-full object-cover transition-transform duration-1000 hover:scale-105"
+                  className="lg:w-full lg:h-full object-fill transition-transform duration-1000 hover:scale-105"
                   priority
                 />
               </div>

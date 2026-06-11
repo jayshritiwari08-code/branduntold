@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRef } from "react";
+import { getImageUrl } from "@/app/lib/api";
 
 export default function FeatureArticleCard({ article, index }) {
   const cardRef = useRef(null);
@@ -40,7 +41,7 @@ export default function FeatureArticleCard({ article, index }) {
   };
 
   const isLarge = index === 0;
-  const imageUrl = article.image || "/blog-placeholder.jpg";
+  const imageUrl = getImageUrl(article.image, "/blog-placeholder.jpg");
   const formattedDate = article.date
     ? new Date(article.date).toLocaleDateString("en-US", {
         year: "numeric",

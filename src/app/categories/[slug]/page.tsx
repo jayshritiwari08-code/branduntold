@@ -7,6 +7,7 @@ import {
   getArticles,
   slugify 
 } from '@/lib/db';
+import { getImageUrl } from '@/app/lib/api';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -142,7 +143,7 @@ export default async function CategoryPage({
           ) : (
             <div className="grid md:grid-cols-2 gap-8">
               {articles.map((article: any) => {
-                const imageUrl = article.image || '/blog-placeholder.jpg';
+                const imageUrl = getImageUrl(article.image, '/blog-placeholder.jpg');
                 const displayDate = article.date || article.created_at;
                 const formattedDate = displayDate ? formatDate(displayDate) : null;
                 const articleHref = `/articles/${article.slug || article.id}`;

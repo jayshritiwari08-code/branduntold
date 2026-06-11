@@ -2,10 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Optimize images for faster loading
-   staticPageGenerationTimeout: 300,
+  staticPageGenerationTimeout: 300,
   images: {
     unoptimized: false, // Enable Next.js image optimization
-    
+
     remotePatterns: [
       {
         protocol: 'https',
@@ -15,8 +15,16 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'branduntold.in',
       },
-      {  
+      {
+        protocol: 'http',
+        hostname: 'branduntold.in',
+      },
+      {
         protocol: 'https',
+        hostname: 'admin.branduntold.in',
+      },
+      {
+        protocol: 'http',
         hostname: 'admin.branduntold.in',
       },
       {
@@ -29,6 +37,11 @@ const nextConfig: NextConfig = {
         hostname: 'localhost',
         port: '3000',
       },
+      {
+        protocol: 'https',
+        hostname: '*.public.blob.vercel-storage.com',
+      },
+
     ],
     // Optimize image loading
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -41,7 +54,7 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', 'date-fns'],
     // Enable CSS optimization
     optimizeCss: true,
-     cpus: 1, 
+    cpus: 1,
   },
 
   // Enable compressible formats

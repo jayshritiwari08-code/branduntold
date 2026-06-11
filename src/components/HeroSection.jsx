@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { getImageUrl } from '@/app/lib/api';
 
 export default function HeroSection({ heroData, heroLoading, heroImage }) {
   return (
@@ -69,7 +70,7 @@ export default function HeroSection({ heroData, heroLoading, heroImage }) {
 
             <div className="portrait-frame">
               <Image
-                src={heroData?.image || heroImage || '/placeholder.jpg'}
+                src={getImageUrl(heroData?.image || heroImage, '/placeholder.jpg')}
                 alt={heroData?.heading || 'Hero portrait'}
                 width={520}
                 height={590}
