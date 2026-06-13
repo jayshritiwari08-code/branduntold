@@ -98,7 +98,7 @@ export default function CategoriesCarousel({ categories }: { categories: Categor
     <div onMouseEnter={stopAuto} onMouseLeave={startAuto}>
       {/* Carousel Stage */}
       <div
-        className="relative h-[520px] w-full max-w-[1600px] mx-auto"
+        className="relative h-[520px] w-full max-w-6xl mx-auto"
         style={{ perspective: "1100px", perspectiveOrigin: "center" }}
       >
         {categories.map((cat, idx) => {

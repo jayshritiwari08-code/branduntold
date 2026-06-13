@@ -52,7 +52,7 @@ export default function CategoriesCards({ categories = [], heading }: Props) {
       style={{ fontFamily: "var(--font-playfair)" }}
     >
       {/* Header */}
-      <div className="max-w-2xl mx-auto px-2.5 sm:px-4 mb-12 text-center">
+      <div className="max-w-3xl mx-auto px-2.5 sm:px-4 mb-12 text-center">
         <h2
           className="text-4xl md:text-5xl font-bold mb-3"
           style={{ color: GOLD, fontFamily: "var(--font-playfair)" }}

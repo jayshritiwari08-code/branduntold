@@ -57,8 +57,7 @@ export default function Header() {
               alt="BRAND UNTOLD"
               height={90}
               width={90}
-              className="lg:w-[8rem] mt-5"
-              loading="eager"
+              className="lg:w-[8rem] h-auto mt-5"
               priority
               unoptimized
             />
