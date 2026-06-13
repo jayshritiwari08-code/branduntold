@@ -1,8 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
-import { getOneFromCollection, getFromCollection, getStaticMeta } from '@/lib/db';
-import { getImageUrl } from '@/app/lib/api';
+import { 
+  getOneFromCollectionApi, 
+  getFromCollectionApi, 
+  fetchStaticMeta,
+  getImageUrl 
+} from '@/app/lib/api';
 import AboutClient from './AboutClient';
 
 export const revalidate = 60;
@@ -10,7 +14,7 @@ export const revalidate = 60;
 // ─── Metadata ────────────────────────────────────────────────────────────────
 
 export async function generateMetadata(): Promise<Metadata> {
-  const meta = await getStaticMeta('about');
+  const meta = await fetchStaticMeta('about');
   if (!meta) {
     return {
       title: 'About BrandUntold',
@@ -114,9 +118,9 @@ const TIPTAP_STYLES = `
 
 export default async function About() {
   const [aboutData, allHeadings, pageMeta] = await Promise.all([
-    getOneFromCollection('about_us'),
-    getFromCollection('all_headings'),
-    getStaticMeta('about'),
+    getOneFromCollectionApi('about_us'),
+    getFromCollectionApi('all_headings'),
+    fetchStaticMeta('about'),
   ]);
 
   const headings = allHeadings as any[];

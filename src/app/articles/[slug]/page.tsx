@@ -3,29 +3,29 @@ import Image from 'next/image';
 import RecentArticlesSlider from './RecentArticlesSlider';
 import { Metadata } from 'next';
 import { 
-  getArticleBySlug,
-  getCategories,
-  getArticles
-} from '@/lib/db';
-import { getImageUrl } from '@/app/lib/api';
+  fetchArticle,
+  fetchArticleMeta,
+  fetchAllCategories,
+  fetchAllArticles,
+  getImageUrl
+} from '@/app/lib/api';
 
 interface BlogPostProps {
   params: Promise<{ slug: string }>;
 }
 
-// Force dynamic rendering — article content (long_description) is too large
-// for Vercel's 19MB ISR fallback limit. SSR renders fresh on every request;
-// Vercel's CDN edge cache handles repeat-visit performance.
-export const dynamic = 'force-dynamic';
-
-// ─── Shared data-fetching helpers ────────────────────────────────────────────
+// Pure ISR — pages are built on first request and cached.
+// No generateStaticParams = no build-time fetch of long_description for every article.
+export const revalidate = 60;
+export const dynamicParams = true;
 
 
 // ─── Metadata ────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: BlogPostProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
+  // Fetch only meta fields — avoids loading long_description just for <head> tags
+  const article = await fetchArticleMeta(slug);
 
   if (!article) {
     return {
@@ -48,9 +48,9 @@ export default async function BlogPost({ params }: BlogPostProps) {
 
   // All three fetches run in parallel — no waterfall, no duplicate article fetch
   const [article, categories, allArticlesSummary] = await Promise.all([
-    getArticleBySlug(slug),
-    getCategories(),
-    getArticles('articles', { long_description: 0 }), // Exclude heavy long_description field
+    fetchArticle(slug),
+    fetchAllCategories(),
+    fetchAllArticles(),
   ]);
 
   if (!article) {

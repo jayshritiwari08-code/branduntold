@@ -64,25 +64,37 @@ export const buildApiUrl = (path: string) => {
 };
 
 /** Fetch a single article by slug */
-// Fetch a single article by slug
-// Fetch a single article by slug
 export async function fetchArticle(slug: string) {
   try {
-    // Use ISR options for static generation
-    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?slug=${encodeURIComponent(slug)}`), FETCH_OPTS);
+    const res = await fetch(
+      buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?slug=${encodeURIComponent(slug)}`),
+      FETCH_OPTS
+    );
     const json = await res.json();
     if (json.success && json.data && json.data.length > 0) {
       return Array.isArray(json.data) ? json.data[0] : json.data;
     }
-    // fallback: fetch all and find manually using ISR options
-    const allRes = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}`), FETCH_OPTS);
-    const allJson = await allRes.json();
-    if (allJson.success && Array.isArray(allJson.data)) {
-      return allJson.data.find((a: any) => a.slug === slug || a.id === slug) || null;
-    }
     return null;
   } catch (err) {
     console.warn('fetchArticle error', err);
+    return null;
+  }
+}
+
+/** Fetch a single article meta fields only (for generateMetadata — avoids loading long_description) */
+export async function fetchArticleMeta(slug: string) {
+  try {
+    const res = await fetch(
+      buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?slug=${encodeURIComponent(slug)}&fields=id,slug,title,description,metatitle,meta_description,meta_keyword`),
+      FETCH_OPTS
+    );
+    const json = await res.json();
+    if (json.success && json.data && json.data.length > 0) {
+      return Array.isArray(json.data) ? json.data[0] : json.data;
+    }
+    return null;
+  } catch (err) {
+    console.warn('fetchArticleMeta error', err);
     return null;
   }
 }
@@ -113,11 +125,15 @@ export async function fetchCategoryBySlug(slug: string) {
   }
 }
 
-/** Fetch all articles */
+/** Fetch all articles — summary fields only (no heavy description/body) */
 // Fetch all articles
 export async function fetchAllArticles() {
   try {
-    const res = await fetch(buildApiUrl(`/api/data/${ARTICLES_COLLECTION}`), FETCH_OPTS);
+    // Only request fields needed for list/card views — skips large long_description HTML
+    const res = await fetch(
+      buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?fields=id,slug,title,description,image,date,author,category,tagline`),
+      FETCH_OPTS
+    );
     const json = await res.json();
     return json.success ? json.data : [];
   } catch (err) {
@@ -203,3 +219,54 @@ export async function getAboutUsData(): Promise<{ data: any | null; error: strin
     return { data: null, error: (err as Error).message };
   }
 }
+
+/** Generic function to fetch a single item from a collection */
+export async function getOneFromCollectionApi(collectionName: string, queryParams: Record<string, string> = {}) {
+  try {
+    const qString = new URLSearchParams(queryParams).toString();
+    const url = buildApiUrl(`/api/data/${collectionName}${qString ? `?${qString}` : ''}`);
+    const res = await fetch(url, FETCH_OPTS);
+    const json = await res.json();
+    if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+      return json.data[0];
+    }
+    return null;
+  } catch (err) {
+    console.warn(`getOneFromCollectionApi error (${collectionName})`, err);
+    return null;
+  }
+}
+
+/** Generic function to fetch all items from a collection */
+export async function getFromCollectionApi(collectionName: string, queryParams: Record<string, string> = {}) {
+  try {
+    const qString = new URLSearchParams(queryParams).toString();
+    const url = buildApiUrl(`/api/data/${collectionName}${qString ? `?${qString}` : ''}`);
+    const res = await fetch(url, FETCH_OPTS);
+    const json = await res.json();
+    if (json.success && Array.isArray(json.data)) {
+      return json.data;
+    }
+    return [];
+  } catch (err) {
+    console.warn(`getFromCollectionApi error (${collectionName})`, err);
+    return [];
+  }
+}
+
+/** Fetch static metadata by slug */
+export async function fetchStaticMeta(slug: string) {
+  try {
+    const url = buildApiUrl(`/api/data/static_meta?slug=${encodeURIComponent(slug)}`);
+    const res = await fetch(url, FETCH_OPTS);
+    const json = await res.json();
+    if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+      return json.data[0];
+    }
+    return null;
+  } catch (err) {
+    console.warn(`fetchStaticMeta error (${slug})`, err);
+    return null;
+  }
+}
+

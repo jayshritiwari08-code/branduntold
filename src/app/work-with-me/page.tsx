@@ -4,7 +4,7 @@
 
 import { Metadata } from 'next';
 import WorkWithMeClient from '../components/Workwithmeclient';
-import { getOneFromCollection, getFromCollection, getStaticMeta } from '@/lib/db';
+import { getOneFromCollectionApi, getFromCollectionApi, fetchStaticMeta } from '@/app/lib/api';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 export interface ContactUsHeading {
@@ -45,7 +45,7 @@ export const revalidate = 60;
 
 // ─── Metadata (also benefits from ISR) ───────────────────────────────────────
 export async function generateMetadata(): Promise<Metadata> {
-  const meta = await getStaticMeta('work-with-me');
+  const meta = await fetchStaticMeta('work-with-me');
   if (!meta) {
     return {
       title: 'Work With Me',
@@ -63,12 +63,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function WorkWithMePage() {
   // All fetches run in parallel — no waterfall
   const [contactUsHeading, contactFormHeading, servicesData, footerData, faqData, pageMeta] = await Promise.all([
-    getOneFromCollection('heading', { section: 'Contact Us' }),
-    getOneFromCollection('heading', { section: 'contact form' }),
-    getOneFromCollection('services'),
-    getOneFromCollection('footer'),
-    getFromCollection('faq'),
-    getStaticMeta('work-with-me'),
+    getOneFromCollectionApi('heading', { section: 'Contact Us' }),
+    getOneFromCollectionApi('heading', { section: 'contact form' }),
+    getOneFromCollectionApi('services'),
+    getOneFromCollectionApi('footer'),
+    getFromCollectionApi('faq'),
+    fetchStaticMeta('work-with-me'),
   ]);
 
   return (

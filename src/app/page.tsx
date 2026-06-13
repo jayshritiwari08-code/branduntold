@@ -5,13 +5,19 @@ import FeaturedArticles from './components/feature-article';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { getOneFromCollection, getArticles, getCategories, getFromCollection, getStaticMeta } from '@/lib/db';
-import { getImageUrl } from '@/app/lib/api';
+import { 
+  getOneFromCollectionApi, 
+  getFromCollectionApi, 
+  fetchAllCategories, 
+  fetchAllArticles, 
+  fetchStaticMeta,
+  getImageUrl 
+} from '@/app/lib/api';
 
 export const revalidate = 60; // ISR: rebuild this page at most once per minute
 
 export async function generateMetadata(): Promise<Metadata> {
-  const meta = await getStaticMeta('');
+  const meta = await fetchStaticMeta('');
   if (!meta) return { title: 'BrandUntold' };
 
   return {
@@ -23,12 +29,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
   const [heroData, aboutData, featuredArticles, rawCategories, allHeadings, pageMeta] = await Promise.all([
-    getOneFromCollection('herosec'),
-    getOneFromCollection('about_us'),
-    getArticles('articles', { long_description: 0 } as any).then((a: any[]) => a.slice(0, 3)).catch(() => [] as any[]),
-    getCategories(),
-    getFromCollection('all_headings'),
-    getStaticMeta(''),
+    getOneFromCollectionApi('herosec'),
+    getOneFromCollectionApi('about_us'),
+    fetchAllArticles().then((a: any[]) => a.slice(0, 3)).catch(() => [] as any[]),
+    fetchAllCategories(),
+    getFromCollectionApi('all_headings'),
+    fetchStaticMeta(''),
   ]);
   console.log("heroData", heroData)
   // Find the heading for the category section
