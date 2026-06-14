@@ -131,6 +131,7 @@ export default function CategoriesCarousel({ categories }: { categories: Categor
                     alt={cat.title}
                     width={400}
                     height={220}
+                    sizes="(max-width: 768px) 100vw, 400px"
                     className="w-full h-full object-cover block transition-all duration-700 ease-in-out"
                     style={{
                       filter: isActive

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { getImageUrl } from '@/app/lib/api';
+import { getImageUrl, optimizeHtmlImages } from '@/app/lib/api';
 
 export default function HeroSection({ heroData, heroLoading, heroImage }) {
   return (
@@ -34,7 +34,7 @@ export default function HeroSection({ heroData, heroLoading, heroImage }) {
               ) : heroData?.description ? (
                 <div
                   className="tiptap-content"
-                  dangerouslySetInnerHTML={{ __html: heroData.description }}
+                  dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(heroData.description) }}
                 />
               ) : (
                 <p className="tiptap-content">
@@ -76,6 +76,7 @@ export default function HeroSection({ heroData, heroLoading, heroImage }) {
                 height={590}
                 className="portrait-img"
                 priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 520px"
               />
               {/* Gold overlay wash */}
               <div className="portrait-overlay" aria-hidden="true" />

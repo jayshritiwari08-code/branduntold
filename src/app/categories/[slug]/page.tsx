@@ -160,6 +160,7 @@ export default async function CategoryPage({
                     >
                       <div className="aspect-video overflow-hidden relative">
                         <Image width={800} height={450} src={imageUrl} alt={article.title}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                       </div>
                       <div className="p-6">

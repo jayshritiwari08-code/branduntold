@@ -5,7 +5,8 @@ import {
   getOneFromCollectionApi, 
   getFromCollectionApi, 
   fetchStaticMeta,
-  getImageUrl 
+  getImageUrl,
+  optimizeHtmlImages
 } from '@/app/lib/api';
 import AboutClient from './AboutClient';
 
@@ -202,6 +203,7 @@ export default async function About() {
                   alt={about?.heading || 'Jayshree - Storyteller'}
                   width={600}
                   height={750}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />
@@ -220,7 +222,7 @@ export default async function About() {
                   {about?.description1 ? (
                     <div
                       className="tiptap-content"
-                      dangerouslySetInnerHTML={{ __html: about.description1 }}
+                      dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(about.description1) }}
                     />
                   ) : (
                     <p>Content coming soon...</p>
@@ -236,7 +238,7 @@ export default async function About() {
               {about?.description2 ? (
                 <div
                   className="tiptap-content"
-                  dangerouslySetInnerHTML={{ __html: about.description2 }}
+                  dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(about.description2) }}
                 />
               ) : (
                 <p>Content coming soon...</p>

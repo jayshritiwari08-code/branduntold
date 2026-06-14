@@ -59,7 +59,7 @@ export default function Header() {
               width={90}
               className="lg:w-[8rem] h-auto mt-5"
               priority
-              unoptimized
+              sizes="(max-width: 1024px) 90px, 128px"
             />
           </button>
 

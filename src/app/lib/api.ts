@@ -294,3 +294,38 @@ export const fetchStaticMeta = cache(async (slug: string): Promise<any | null> =
     return null;
   }
 });
+
+/**
+ * Utility to parse HTML content (e.g. from editor) and optimize <img> tags.
+ * - Rewrites img src pointing to uploads to use Next.js image optimization endpoint.
+ * - Injects loading="lazy" and decoding="async" for standard HTML images.
+ */
+export function optimizeHtmlImages(html: string): string {
+  if (!html) return html;
+
+  // 1. Rewrite img src to use Next.js image optimization endpoint if it's from CMS or local uploads
+  let optimized = html.replace(/<img([^>]*?)\bsrc=["']([^"']+)["']([^>]*?)>/gi, (match, p1, src, p2) => {
+    // If it's already optimized or is an SVG/gif, don't rewrite src
+    if (src.includes('/_next/image') || src.endsWith('.svg') || src.endsWith('.gif')) {
+      return match;
+    }
+    
+    // Only optimize local uploads or admin.branduntold.in images
+    if (src.startsWith('/uploads/') || src.startsWith('http://admin.branduntold.in') || src.startsWith('https://admin.branduntold.in')) {
+      const absoluteUrl = src.startsWith('/') ? `https://admin.branduntold.in${src}` : src;
+      const optimizedSrc = `/_next/image?url=${encodeURIComponent(absoluteUrl)}&w=828&q=75`;
+      return `<img${p1}src="${optimizedSrc}"${p2}>`;
+    }
+    
+    return match;
+  });
+
+  // 2. Add loading="lazy" if not present
+  optimized = optimized.replace(/<img(?![^>]*\bloading\b)([^>]*?)>/gi, '<img loading="lazy"$1>');
+  
+  // 3. Add decoding="async" if not present
+  optimized = optimized.replace(/<img(?![^>]*\bdecoding\b)([^>]*?)>/gi, '<img decoding="async"$1>');
+  
+  return optimized;
+}
+

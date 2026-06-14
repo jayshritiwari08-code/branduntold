@@ -11,7 +11,8 @@ import {
   fetchAllCategories, 
   fetchAllArticles, 
   fetchStaticMeta,
-  getImageUrl 
+  getImageUrl,
+  optimizeHtmlImages
 } from '@/app/lib/api';
 
 export const revalidate = 60; // ISR: rebuild this page at most once per minute
@@ -84,6 +85,7 @@ export default async function Home() {
                       alt={aboutData?.heading || 'Brand Untold'}
                       width={800}
                       height={900}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                       className="w-full h-full object-fill transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
@@ -92,6 +94,7 @@ export default async function Home() {
                       alt="Brand Untold"
                       width={800}
                       height={900}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                       className="w-full h-full object-fill transition-transform duration-700 group-hover:scale-105"
                     />
                   )}
@@ -115,7 +118,7 @@ export default async function Home() {
                   {aboutData?.short_description ? (
                     <div
                       className="tiptap-content"
-                      dangerouslySetInnerHTML={{ __html: aboutData.short_description }}
+                      dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(aboutData.short_description) }}
                     />
                   ) : (
                     /* Fallback skeleton shown only when aboutData is genuinely missing */

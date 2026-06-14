@@ -10,7 +10,8 @@ import {
   slugify,
   BASE_URL,
   Article,
-  Category
+  Category,
+  optimizeHtmlImages
 } from '@/app/lib/api';
 
 interface BlogPostProps {
@@ -297,7 +298,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                 {/* Optimised rendering of large content by writing HTML output directly without virtual DOM component overhead */}
                 <div
                   className="tiptap-content"
-                  dangerouslySetInnerHTML={{ __html: article.long_description }}
+                  dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(article.long_description) }}
                 />
               </article>
 

@@ -1,7 +1,7 @@
 // src/app/components/herosection.jsx
 import Image from "next/image";
 import Link from "next/link";
-import { getImageUrl } from "@/app/lib/api";
+import { getImageUrl, optimizeHtmlImages } from "@/app/lib/api";
 
 export default function HeroSection({ data }) {
   const { heroData, loading } = data;
@@ -14,6 +14,7 @@ export default function HeroSection({ data }) {
           src={getImageUrl(heroData?.image?.[0], "/home1.jpeg")}
           alt={heroData?.heading || 'Hero Background'}
           fill
+          sizes="100vw"
           className="object-cover   transition-transform duration-1000"
           priority
         />
@@ -42,7 +43,7 @@ export default function HeroSection({ data }) {
             {loading ? (
               <p className="text-grey text-lg">Loading content...</p>
             ) : heroData?.description ? (
-              <div className="tiptap-content text-justify text-white/90" dangerouslySetInnerHTML={{ __html: heroData.description }}></div>
+               <div className="tiptap-content text-justify text-white/90" dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(heroData.description) }}></div>
             ) : (
               <p className="tiptap-content text-white/90">Exploring the narratives that shape brands, founders, and the art of storytelling itself.</p>
             )}
