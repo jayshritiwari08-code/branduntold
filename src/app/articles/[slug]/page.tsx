@@ -250,6 +250,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                   alt={article.title}
                   width={1200}
                   height={675}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 1200px"
                   className="w-full h-full object-cover"
                   priority
                 />

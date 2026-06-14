@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import AOS from 'aos';
-import 'aos/dist/aos.css';
 import { MapPin, CheckCircle, X, Loader2 } from 'lucide-react';
 import type { ContactUsHeading, ServicesData, FooterData, FAQItem } from '../work-with-me/page';
 
