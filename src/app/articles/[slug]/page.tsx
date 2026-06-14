@@ -1,31 +1,66 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import RecentArticlesSlider from './RecentArticlesSlider';
+import dynamic from 'next/dynamic';
 import { Metadata } from 'next';
-import { 
+import {
   fetchArticle,
-  fetchArticleMeta,
   fetchAllCategories,
   fetchAllArticles,
-  getImageUrl
+  getImageUrl,
+  slugify,
+  BASE_URL,
+  Article,
+  Category
 } from '@/app/lib/api';
 
 interface BlogPostProps {
   params: Promise<{ slug: string }>;
 }
 
-// Pure ISR — pages are built on first request and cached.
-// No generateStaticParams = no build-time fetch of long_description for every article.
+// Pure ISR — pages are built on first request and cached for 1 hour.
 export const revalidate = 60;
 export const dynamicParams = true;
 
+// Pre-render only a small set of high-traffic or recent articles during build (minimizes memory & build time)
+export async function generateStaticParams() {
+  const articles = await fetchAllArticles();
+  // Pre-render top 10 articles, the rest will be generated on-demand
+  return articles.slice(0, 10).map((article) => ({
+    slug: article.slug,
+  }));
+}
+
+// Dynamic import for the slider component to defer loading heavy client JS bundle
+const RecentArticlesSlider = dynamic(() => import('./RecentArticlesSlider'), {
+  ssr: true,
+  loading: () => (
+    <div
+      className="rounded-3xl p-6 border border-[#c2a15f]/20 bg-black animate-pulse h-[450px] flex flex-col justify-between"
+      style={{ background: 'linear-gradient(160deg, #141414 0%, #0c0c0c 100%)' }}
+    >
+      <div>
+        <div className="h-4 w-1/4 bg-[#c2a15f]/20 rounded mb-3"></div>
+        <div className="h-6 w-2/3 bg-gray-800 rounded mb-4"></div>
+        <div className="w-16 h-px bg-[#c2a15f]/20 mt-3 mb-6"></div>
+      </div>
+      <div className="flex-1 bg-gray-900/40 rounded-2xl border border-gray-800/50 p-4 flex flex-col justify-between">
+        <div className="aspect-video w-full bg-gray-800/50 rounded-xl"></div>
+        <div className="h-3 w-1/4 bg-[#c2a15f]/10 rounded mt-4"></div>
+        <div className="h-5 w-3/4 bg-gray-800/80 rounded mt-2 mb-2"></div>
+      </div>
+      <div className="h-10 w-full bg-[#c2a15f]/10 rounded-xl mt-6"></div>
+    </div>
+  )
+});
 
 // ─── Metadata ────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: BlogPostProps): Promise<Metadata> {
   const { slug } = await params;
-  // Fetch only meta fields — avoids loading long_description just for <head> tags
-  const article = await fetchArticleMeta(slug);
+
+  // React cache() deduplicates this call with the one in the BlogPost component
+  // so only 1 network/database request is sent in total for the entire page load.
+  const article = await fetchArticle(slug);
 
   if (!article) {
     return {
@@ -34,10 +69,23 @@ export async function generateMetadata({ params }: BlogPostProps): Promise<Metad
     };
   }
 
+  // Meta keywords could be string or array
+  const keywords = Array.isArray(article.meta_keyword)
+    ? article.meta_keyword
+    : typeof article.meta_keyword === 'string'
+      ? article.meta_keyword.split(',').map((k) => k.trim())
+      : [];
+
   return {
     title: article.metatitle || article.title,
     description: article.meta_description || article.description,
-    keywords: article.meta_keyword || [],
+    keywords: keywords,
+    openGraph: {
+      title: article.metatitle || article.title,
+      description: article.meta_description || article.description,
+      images: article.image ? [{ url: getImageUrl(article.image) }] : [],
+      type: 'article',
+    },
   };
 }
 
@@ -46,7 +94,7 @@ export async function generateMetadata({ params }: BlogPostProps): Promise<Metad
 export default async function BlogPost({ params }: BlogPostProps) {
   const { slug } = await params;
 
-  // All three fetches run in parallel — no waterfall, no duplicate article fetch
+  // All three fetches run in parallel — no waterfall, and they use React cache()
   const [article, categories, allArticlesSummary] = await Promise.all([
     fetchArticle(slug),
     fetchAllCategories(),
@@ -62,15 +110,59 @@ export default async function BlogPost({ params }: BlogPostProps) {
   }
 
   // Resolve category
-  const category = categories.find((c: any) => c.tagline === article.tagline) ?? null;
-  const categorySlug = category
-    ? category.heading.trim().toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')
-    : '';
+  const category = categories.find((c: Category) => c.tagline === article.tagline) ?? null;
+  const categorySlug = category ? slugify(category.heading) : '';
 
-  // Recent articles from the same category, max 6, excluding current
+  // Recent articles from the same category, max 6, excluding current, mapped to slider structure
   const recentArticles = allArticlesSummary
-    .filter((a: any) => a.tagline === article.tagline && a.id !== article.id)
-    .slice(0, 6);
+    .filter((a) => a.tagline === article.tagline && a.id !== article.id)
+    .slice(0, 6)
+    .map((a) => ({
+      title: a.title ?? '',
+      date: a.date
+        ? new Date(a.date).toLocaleDateString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+        })
+        : (a.created_at
+          ? new Date(a.created_at).toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+          })
+          : 'Recent'),
+      slug: a.slug ?? '',
+      image: a.image ?? '',
+      excerpt: a.description ?? '',
+    }));
+
+  // Build JSON-LD structured schema markup for search engine optimization
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    'headline': article.title,
+    'description': article.description || article.meta_description,
+    'image': getImageUrl(article.image),
+    'datePublished': article.date || article.created_at,
+    'dateModified': article.updated_at || article.date || article.created_at,
+    'author': {
+      '@type': 'Person',
+      'name': article.author || 'Jayshree',
+    },
+    'publisher': {
+      '@type': 'Organization',
+      'name': 'Brand Untold',
+      'logo': {
+        '@type': 'ImageObject',
+        'url': `${BASE_URL}/logo.png`,
+      },
+    },
+    'mainEntityOfPage': {
+      '@type': 'WebPage',
+      '@id': `${BASE_URL}/articles/${slug}`,
+    },
+  };
 
   return (
     <div
@@ -81,6 +173,11 @@ export default async function BlogPost({ params }: BlogPostProps) {
         backgroundRepeat: 'repeat',
       }}
     >
+      {/* Dynamic JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="absolute inset-0 bg-black/70" />
 
       <div className="relative">
@@ -196,6 +293,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                   .tiptap-content tr:nth-child(even) td { background:rgba(255,255,255,0.02); }
                 `}</style>
 
+                {/* Optimised rendering of large content by writing HTML output directly without virtual DOM component overhead */}
                 <div
                   className="tiptap-content"
                   dangerouslySetInnerHTML={{ __html: article.long_description }}
@@ -224,7 +322,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
               </div>
             </div>
 
-            {/* Sidebar — up to 6 recent articles */}
+            {/* Sidebar — dynamically loaded slider */}
             {recentArticles.length > 0 && (
               <div className="lg:col-span-1">
                 <RecentArticlesSlider
