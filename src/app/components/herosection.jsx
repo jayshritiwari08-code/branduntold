@@ -15,7 +15,7 @@ export default function HeroSection({ data }) {
           alt={heroData?.heading || 'Hero Background'}
           fill
           sizes="100vw"
-          className="object-cover   transition-transform duration-1000"
+          className="object-cover hidden sm:block  transition-transform duration-1000"
           priority
         />
         {/* Overlay gradient: dark on the left for text readability, fading to lighter on the right */}
