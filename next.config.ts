@@ -62,14 +62,15 @@ const nextConfig: NextConfig = {
 
 
   async rewrites() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://admin.branduntold.in';
     return [
       {
         source: '/api/:path*',
-        destination: 'http://admin.branduntold.in/api/:path*',
+        destination: `${apiUrl}/api/:path*`,
       },
       {
         source: '/uploads/:path*',
-        destination: 'http://admin.branduntold.in/uploads/:path*',
+        destination: `${apiUrl}/uploads/:path*`,
       },
     ];
   },
