@@ -34,30 +34,38 @@ export default function RecentArticlesSlider({ articles, categoryTitle, category
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
-    }, 5000);
+    }, 6000); // 6s interval for comfortable reading
     return () => clearInterval(interval);
   }, [articles.length]);
 
   if (articles.length === 0) return null;
 
   return (
-    <div className="sticky top-24">
-      <div className="rounded-3xl p-6 border border-gold/20"
-        style={{
-          background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)"
-        }}
-      >
+    <div
+      className="rounded-3xl p-6 bg-black relative overflow-hidden group/slider transition-all duration-500 hover:border-[#c2a15f]/40"
+      style={{
+        background: 'linear-gradient(160deg, #111111 0%, #070707 100%)',
+        border: '1px solid rgba(194, 161, 95, 0.15)',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.02)'
+      }}
+    >
+      {/* Dynamic golden background glow */}
+      <div className="absolute top-0 right-0 w-24 h-24 bg-[#c2a15f]/5 rounded-full blur-2xl pointer-events-none transition-opacity duration-500 group-hover/slider:opacity-80" />
+
+      <div className="relative">
         <div className="mb-6">
-          <p className="font-sans tracking-[3px] text-gold text-sm mb-2">KEEP READING</p>
-          <h3 className="font-serif text-xl font-bold text-white">
+          <p className="font-sans text-[10px] tracking-[3px] text-[#c2a15f] uppercase font-bold mb-2">
+            KEEP READING
+          </p>
+          <h3 className="font-serif text-xl font-bold text-white leading-tight">
             More from {categoryTitle}
           </h3>
-          <div className="w-16 h-px bg-gold mt-3"></div>
+          <div className="w-12 h-[2px] bg-gradient-to-r from-[#c2a15f] to-transparent mt-3"></div>
         </div>
 
         {/* 3D Slider Container */}
-        <div className="relative perspective-1000" style={{ perspective: '1000px' }}>
-          <div className="relative overflow-hidden" style={{ height: '320px' }}>
+        <div className="relative" style={{ perspective: '1000px' }}>
+          <div className="relative overflow-hidden" style={{ height: '310px' }}>
             {articles.map((article, index) => {
               const offset = (index - currentIndex + articles.length) % articles.length;
               const isActive = offset === 0;
@@ -67,21 +75,23 @@ export default function RecentArticlesSlider({ articles, categoryTitle, category
               let transform = '';
               let opacity = 0;
               let zIndex = 0;
+              let pointerEvents: 'auto' | 'none' = 'none';
 
               if (isActive) {
-                transform = 'translateX(0) translateZ(50px) scale(1)';
+                transform = 'translateX(0) translateZ(40px) scale(1)';
                 opacity = 1;
                 zIndex = 10;
+                pointerEvents = 'auto';
               } else if (isPrev) {
-                transform = 'translateX(-60%) translateZ(-50px) scale(0.85)';
-                opacity = 0.4;
+                transform = 'translateX(-50%) translateZ(-40px) scale(0.85)';
+                opacity = 0.35;
                 zIndex = 5;
               } else if (isNext) {
-                transform = 'translateX(60%) translateZ(-50px) scale(0.85)';
-                opacity = 0.4;
+                transform = 'translateX(50%) translateZ(-40px) scale(0.85)';
+                opacity = 0.35;
                 zIndex = 5;
               } else {
-                transform = 'translateX(0) translateZ(-100px) scale(0.7)';
+                transform = 'translateX(0) translateZ(-80px) scale(0.7)';
                 opacity = 0;
                 zIndex = 0;
               }
@@ -89,18 +99,19 @@ export default function RecentArticlesSlider({ articles, categoryTitle, category
               return (
                 <Link
                   key={article.slug}
-                  href={`/blog/${article.slug}`}
+                  href={`/articles/${article.slug}`}
                   className="absolute inset-0 transition-all duration-700 ease-out cursor-pointer"
                   style={{
                     transform,
                     opacity,
                     zIndex,
+                    pointerEvents,
                   }}
                 >
-                  <div className="w-full h-full rounded-2xl overflow-hidden border border-gold/30 relative"
+                  <div 
+                    className="w-full h-full rounded-2xl overflow-hidden border border-gray-800/80 bg-black/85 relative transition-all duration-300"
                     style={{
-                      background: "linear-gradient(160deg, #141414 0%, #0c0c0c 100%)",
-                      boxShadow: isActive ? '0 25px 70px rgba(212,175,55,0.15)' : 'none'
+                      boxShadow: isActive ? '0 15px 35px rgba(194, 161, 95, 0.08)' : 'none'
                     }}
                   >
                     <div className="aspect-video w-full overflow-hidden relative">
@@ -115,8 +126,8 @@ export default function RecentArticlesSlider({ articles, categoryTitle, category
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer"></div>
                     </div>
                     <div className="p-4">
-                      <p className="font-sans text-xs text-gold mb-1">{article.date}</p>
-                      <h4 className="font-serif text-base font-semibold text-white hover:text-gold transition-colors line-clamp-2">
+                      <p className="font-sans text-[10px] text-[#c2a15f] font-semibold mb-1 uppercase tracking-wider">{article.date}</p>
+                      <h4 className="font-serif text-base font-bold text-white hover:text-[#c2a15f] transition-colors line-clamp-2 leading-snug">
                         {article.title}
                       </h4>
                     </div>
@@ -126,39 +137,45 @@ export default function RecentArticlesSlider({ articles, categoryTitle, category
             })}
           </div>
 
-          {/* Navigation Buttons */}
-          <div className="flex justify-center gap-3 mt-6">
-            <button
-              onClick={prevSlide}
-              className="w-10 h-10 rounded-full bg-gold/10 border border-gold/30 text-gold hover:bg-gold hover:text-black transition-all duration-300 flex items-center justify-center"
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="w-10 h-10 rounded-full bg-gold/10 border border-gold/30 text-gold hover:bg-gold hover:text-black transition-all duration-300 flex items-center justify-center"
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
+          {/* Navigation Controls */}
+          <div className="flex items-center justify-between mt-6">
+            {/* Dots Indicator */}
+            <div className="flex gap-2">
+              {articles.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`h-1.5 rounded-full transition-all duration-500 ${
+                    index === currentIndex ? 'bg-[#c2a15f] w-5' : 'bg-gray-800 w-1.5'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
 
-          {/* Dots Indicator */}
-          <div className="flex justify-center gap-2 mt-4">
-            {articles.map((_, index) => (
+            {/* Prev/Next Buttons */}
+            <div className="flex gap-2.5">
               <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === currentIndex ? 'bg-gold w-6' : 'bg-gold/30'
-                }`}
-              />
-            ))}
+                onClick={prevSlide}
+                className="w-9 h-9 rounded-full bg-gray-900/60 border border-gray-800 text-gray-400 hover:border-[#c2a15f] hover:text-[#c2a15f] transition-all duration-300 flex items-center justify-center cursor-pointer"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="w-9 h-9 rounded-full bg-gray-900/60 border border-gray-800 text-gray-400 hover:border-[#c2a15f] hover:text-[#c2a15f] transition-all duration-300 flex items-center justify-center cursor-pointer"
+                aria-label="Next slide"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
         </div>
 
         <Link
           href={`/categories/${categorySlug}`}
-          className="inline-flex items-center w-full justify-center px-6 py-3 bg-gold text-black font-semibold hover:bg-white transition-all duration-300 rounded-xl text-sm mt-6 group"
+          className="inline-flex items-center w-full justify-center px-6 py-3 bg-[#c2a15f] text-black font-bold hover:bg-white hover:shadow-[0_4px_20px_rgba(194,161,95,0.25)] hover:scale-[1.01] transition-all duration-300 rounded-xl text-sm mt-6 group"
         >
           View All Articles
           <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>

@@ -54,7 +54,6 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', 'date-fns'],
     // Enable CSS optimization
     optimizeCss: true,
-    cpus: 1,
   },
 
   // Enable compressible formats
