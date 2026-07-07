@@ -141,11 +141,7 @@ export default function Footer() {
                   Work With Me
                 </Link>
               </li>
-              <li>
-                <Link href="/contact" className="hover:text-gold transition-colors">
-                  Contact
-                </Link>
-              </li>
+           
             </ul>
           </div>
 
