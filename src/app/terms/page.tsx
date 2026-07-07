@@ -1,8 +1,36 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
+import { fetchStaticMeta } from '@/app/lib/api';
 
-export default function TermsOfService() {
+export const revalidate = 60;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const meta = await fetchStaticMeta('terms');
+  if (!meta) {
+    return {
+      title: 'Terms of Service - Brand Untold',
+      description: 'Terms of Service for Brand Untold.',
+    };
+  }
+  return {
+    title: meta.metatitle,
+    description: meta.meta_description,
+    keywords: meta.meta_keyword,
+  };
+}
+
+export default async function TermsOfService() {
+  const pageMeta = await fetchStaticMeta('terms');
+
   return (
-    <div className="min-h-screen bg-black py-20">
+    <>
+      {pageMeta?.schema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: pageMeta.schema }}
+        />
+      )}
+      <div className="min-h-screen bg-black py-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-white mb-6">
@@ -113,5 +141,6 @@ export default function TermsOfService() {
         </div>
       </div>
     </div>
+    </>
   );
 }

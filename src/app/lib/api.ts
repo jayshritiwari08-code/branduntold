@@ -282,7 +282,8 @@ export const getFromCollectionApi = cache(async (collectionName: string, queryPa
 /** Fetch static metadata by slug */
 export const fetchStaticMeta = cache(async (slug: string): Promise<any | null> => {
   try {
-    const url = buildApiUrl(`/api/data/static_meta?slug=${encodeURIComponent(slug)}`);
+    const targetSlug = slug === '' ? 'home' : slug;
+    const url = buildApiUrl(`/api/data/static_meta?slug=${encodeURIComponent(targetSlug)}`);
     const res = await fetch(url, FETCH_OPTS);
     const json: ApiResponse<any[]> = await res.json();
     if (json.success && Array.isArray(json.data) && json.data.length > 0) {

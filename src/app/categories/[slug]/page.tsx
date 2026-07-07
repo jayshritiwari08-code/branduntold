@@ -44,11 +44,17 @@ export async function generateMetadata({
     return {
       title: `${category.heading} - Brand Untold`,
       description: category.subheading || category.tagline,
+      alternates: {
+        canonical: `/categories/${slug}`,
+      },
     };
   }
   return {
     title: 'Category - Brand Untold',
     description: 'Explore our articles by category.',
+    alternates: {
+      canonical: `/categories/${slug}`,
+    },
   };
 }
 
