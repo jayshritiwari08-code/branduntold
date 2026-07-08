@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
-import { GoogleTagManager } from "@next/third-parties/google";
 import { fetchStaticMeta } from "@/app/lib/api";
 import "./globals.css";
 
@@ -77,7 +76,19 @@ export default function RootLayout({
       lang="en"
       className={`${playfair.variable} ${inter.variable} h-full antialiased`}
     >
-      <GoogleTagManager gtmId="GTM-N95G3726" />
+      <head>
+        {/* Google Tag Manager */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-N95G3726');`,
+          }}
+        />
+        {/* End Google Tag Manager */}
+      </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <noscript>
           <iframe
