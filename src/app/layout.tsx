@@ -84,20 +84,22 @@ export default function RootLayout({
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-N95G3726');`,
+})(window,document,'script','dataLayer','GTM-MFXTKF5J');`,
           }}
         />
         {/* End Google Tag Manager */}
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-N95G3726"
+            src="https://www.googletagmanager.com/ns.html?id=GTM-MFXTKF5J"
             height="0"
             width="0"
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
+        {/* End Google Tag Manager (noscript) */}
         <Providers>
           <Header />
           <main className="flex-grow">{children}</main>
