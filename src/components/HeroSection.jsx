@@ -71,7 +71,8 @@ export default function HeroSection({ heroData, heroLoading, heroImage }) {
             <div className="portrait-frame">
               <Image
                 src={getImageUrl(heroData?.image || heroImage, '/placeholder.jpg')}
-                alt={heroData?.heading || 'Hero portrait'}
+                alt={heroData?.altname || heroData?.heading || 'Hero portrait'}
+                title={heroData?.img_title || heroData?.altname || heroData?.heading || 'Hero portrait'}
                 width={520}
                 height={590}
                 className="portrait-img"

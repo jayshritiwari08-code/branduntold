@@ -113,7 +113,8 @@ export default function FeatureArticleCard({ article, index }) {
           >
             <Image
               src={imageUrl}
-              alt={article.title || "Article image"}
+              alt={article.altname || article.title || "Article image"}
+              title={article.img_title || article.altname || article.title || "Article image"}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover object-center"

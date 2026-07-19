@@ -12,7 +12,8 @@ export default function HeroSection({ data }) {
       <div className="absolute inset-0 z-0">
         <Image
           src={getImageUrl(heroData?.image?.[0], "/home1.jpeg")}
-          alt={heroData?.heading || 'Hero Background'}
+          alt={heroData?.altname || heroData?.heading || 'Hero Background'}
+          title={heroData?.img_title || heroData?.altname || heroData?.heading || 'Hero Background'}
           fill
           sizes="100vw"
           className="object-cover hidden sm:block  transition-transform duration-1000"

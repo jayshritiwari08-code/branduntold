@@ -2,8 +2,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
-import { 
-  fetchAllCategories, 
+import {
+  fetchAllCategories,
   fetchAllArticles,
   slugify,
   getImageUrl
@@ -22,7 +22,7 @@ function formatDate(dateStr: string): string {
   return `${month} ${day}, ${year}`;
 }
 
-export const revalidate = 60; // ISR: revalidate after 60 seconds
+export const revalidate = 0; // ISR: revalidate after 60 seconds
 // export const dynamic = "force-dynamic"; // Removed to allow static generation
 export const dynamicParams = true; // allow ISR for slugs not pre-built
 
@@ -165,7 +165,9 @@ export default async function CategoryPage({
                       }}
                     >
                       <div className="aspect-video overflow-hidden relative">
-                        <Image width={800} height={450} src={imageUrl} alt={article.title}
+                        <Image width={800} height={450} src={imageUrl}
+                          alt={article.altname || article.title}
+                          title={article.img_title || article.altname || article.title}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                       </div>

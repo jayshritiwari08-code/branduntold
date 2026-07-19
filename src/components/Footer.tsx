@@ -36,7 +36,8 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <Image
                 src={logoSrc}
-                alt="BRAND UNTOLD"
+                alt={footerData?.altname || "BRAND UNTOLD"}
+                title={footerData?.img_title || footerData?.altname || "BRAND UNTOLD"}
                 width={120}
                 height={120}
                 className=""

@@ -47,6 +47,8 @@ export interface Article {
   meta_keyword?: string | string[];
   created_at: string;
   updated_at?: string;
+  altname?: string;
+  img_title?: string;
 }
 
 export interface Category {
@@ -169,7 +171,7 @@ export const fetchCategoryBySlug = cache(async (slug: string): Promise<Category[
 export const fetchAllArticles = cache(async (): Promise<Partial<Article>[]> => {
   try {
     const res = await fetch(
-      buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?fields=id,slug,title,description,image,date,author,category,tagline`),
+      buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?fields=id,slug,title,description,image,date,author,category,tagline,altname,img_title`),
       FETCH_OPTS
     );
     const json: ApiResponse<Partial<Article>[]> = await res.json();

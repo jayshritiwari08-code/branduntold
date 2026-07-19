@@ -20,7 +20,7 @@ interface BlogPostProps {
 }
 
 // Pure ISR — pages are built on first request and cached for 1 hour.
-export const revalidate = 60;
+export const revalidate = 0;
 export const dynamicParams = true;
 
 // Pre-render only a small set of high-traffic or recent articles during build (minimizes memory & build time)
@@ -115,8 +115,8 @@ export default async function BlogPost({ params }: BlogPostProps) {
   }
 
   // Resolve category by ID or tagline fallback
-  const category = categories.find((c: Category) => 
-    c.id === article.category || 
+  const category = categories.find((c: Category) =>
+    c.id === article.category ||
     c._id?.toString() === article.category ||
     c.tagline === article.tagline
   ) ?? null;
@@ -148,17 +148,19 @@ export default async function BlogPost({ params }: BlogPostProps) {
       slug: a.slug ?? '',
       image: a.image ?? '',
       excerpt: a.description ?? '',
+      altname: a.altname ?? '',
+      img_title: a.img_title ?? '',
     }));
 
   const rawHtml = article.long_description || '';
-  
+
   // Helper to extract headings (H2, H3, H4) from HTML
   const extractHeadings = (html: string) => {
     const headingRegex = /<h([2-4])([^>]*)>(.*?)<\/h\1>/gi;
     const headingsList: Array<{ level: number; text: string; id: string }> = [];
     let match;
     let index = 0;
-    
+
     while ((match = headingRegex.exec(html)) !== null) {
       const level = parseInt(match[1]);
       const text = match[3].replace(/<[^>]*>/g, '').trim();
@@ -299,7 +301,8 @@ export default async function BlogPost({ params }: BlogPostProps) {
               <div className="aspect-video mb-12 rounded-3xl overflow-hidden border border-[#c2a15f]/30 shadow-2xl relative">
                 <Image
                   src={getImageUrl(article.image)}
-                  alt={article.title}
+                  alt={article.altname || article.title}
+                  title={article.img_title || article.altname || article.title}
                   width={1200}
                   height={675}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 1200px"

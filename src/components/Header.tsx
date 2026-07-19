@@ -8,6 +8,8 @@ export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [logoSrc, setLogoSrc] = useState('/logo.png');
+  const [altname, setAltname] = useState('BRAND UNTOLD');
+  const [imgTitle, setImgTitle] = useState('BRAND UNTOLD');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -26,6 +28,12 @@ export default function Header() {
           const footerData = json.data[0];
           if (footerData.footerlogo) {
             setLogoSrc(footerData.footerlogo);
+          }
+          if (footerData.altname) {
+            setAltname(footerData.altname);
+          }
+          if (footerData.img_title) {
+            setImgTitle(footerData.img_title);
           }
         }
       } catch (err) {
@@ -54,7 +62,8 @@ export default function Header() {
           <button onClick={() => navigate('/')} className="flex cursor-pointer items-center gap-2 sm:gap-3">
             <Image
               src={logoSrc}
-              alt="BRAND UNTOLD"
+              alt={altname}
+              title={imgTitle || altname}
               height={90}
               width={90}
               className="lg:w-[8rem] h-auto mt-5"

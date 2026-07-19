@@ -5,17 +5,17 @@ import FeaturedArticles from './components/feature-article';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { 
-  getOneFromCollectionApi, 
-  getFromCollectionApi, 
-  fetchAllCategories, 
-  fetchAllArticles, 
+import {
+  getOneFromCollectionApi,
+  getFromCollectionApi,
+  fetchAllCategories,
+  fetchAllArticles,
   fetchStaticMeta,
   getImageUrl,
   optimizeHtmlImages
 } from '@/app/lib/api';
 
-export const revalidate = 60; // ISR: rebuild this page at most once per minute
+export const revalidate = 0; // ISR: rebuild this page at most once per minute
 
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await fetchStaticMeta('');
@@ -82,7 +82,8 @@ export default async function Home() {
                   {aboutData?.image ? (
                     <Image
                       src={getImageUrl(aboutData.image, '/about1.jpg')}
-                      alt={aboutData?.heading || 'Brand Untold'}
+                      alt={aboutData?.altname || 'Brand Untold'}
+                      title={aboutData?.img_title || aboutData?.altname || 'Brand Untold'}
                       width={800}
                       height={900}
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
@@ -91,7 +92,8 @@ export default async function Home() {
                   ) : (
                     <Image
                       src="/about1.jpg"
-                      alt="Brand Untold"
+                      alt={aboutData?.altname || 'Brand Untold'}
+                      title={aboutData?.img_title || aboutData?.altname || 'Brand Untold'}
                       width={800}
                       height={900}
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"

@@ -41,7 +41,7 @@ export interface FooterData {
 
 // ─── Optional: page-level revalidation interval (seconds) ────────────────────
 // This acts as the fallback if individual fetches don't specify their own.
-export const revalidate = 60;
+export const revalidate = 0;
 
 // ─── Metadata (also benefits from ISR) ───────────────────────────────────────
 export async function generateMetadata(): Promise<Metadata> {

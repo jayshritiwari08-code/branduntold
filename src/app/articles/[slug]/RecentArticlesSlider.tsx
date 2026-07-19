@@ -12,6 +12,8 @@ interface Article {
   slug: string;
   image: string;
   excerpt: string;
+  altname?: string;
+  img_title?: string;
 }
 
 interface RecentArticlesSliderProps {
@@ -117,7 +119,8 @@ export default function RecentArticlesSlider({ articles, categoryTitle, category
                     <div className="aspect-video w-full overflow-hidden relative">
                       <Image
                         src={getImageUrl(article.image)}
-                        alt={article.title}
+                        alt={article.altname || article.title}
+                        title={article.img_title || article.altname || article.title}
                         width={300}
                         height={169}
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 30vw, 350px"

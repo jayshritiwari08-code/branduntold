@@ -11,6 +11,8 @@ interface RawCategory {
   subheading?: string;
   image?: string;
   tagline?: string;
+  altname?: string;
+  img_title?: string;
 }
 
 interface HeadingData {
@@ -44,6 +46,8 @@ export default function CategoriesCards({ categories = [], heading }: Props) {
     img: getImageUrl(item.image, "/blog-placeholder.jpg"),
     tag: item.tagline ?? "",
     icon: iconForCategory(item.heading),
+    altname: item.altname,
+    img_title: item.img_title,
   }));
 
   return (

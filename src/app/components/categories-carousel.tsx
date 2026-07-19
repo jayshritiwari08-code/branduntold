@@ -19,6 +19,8 @@ interface Category {
   img: string;
   tag: string;
   icon: string;
+  altname?: string;
+  img_title?: string;
 }
 
 export default function CategoriesCarousel({ categories }: { categories: Category[] }) {
@@ -128,7 +130,8 @@ export default function CategoriesCarousel({ categories }: { categories: Categor
                 <div className="relative h-[220px] overflow-hidden">
                   <Image
                     src={cat.img}
-                    alt={cat.title}
+                    alt={cat.altname || cat.title}
+                    title={cat.img_title || cat.altname || cat.title}
                     width={400}
                     height={220}
                     sizes="(max-width: 768px) 100vw, 400px"

@@ -1,16 +1,16 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
-import { 
-  getOneFromCollectionApi, 
-  getFromCollectionApi, 
+import {
+  getOneFromCollectionApi,
+  getFromCollectionApi,
   fetchStaticMeta,
   getImageUrl,
   optimizeHtmlImages
 } from '@/app/lib/api';
 import AboutClient from './AboutClient';
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 // ─── Metadata ────────────────────────────────────────────────────────────────
 
@@ -140,184 +140,185 @@ export default async function About() {
         />
       )}
       <div
-      className="min-h-screen bg-black relative overflow-hidden"
-      style={{
-        backgroundImage: `url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="152" height="152" viewBox="0 0 152 152"%3E%3Cg fill-rule="evenodd"%3E%3Cg id="temple" fill="%23C2A15F" fill-opacity="0.06"%3E%3Cpath d="M152 150v2H0v-2h28v-8H8v-20H0v-2h8V80h42v20h20v42H30v8h90v-8H80v-42h20V80h42v40h8V30h-8v40h-42V50H80V8h40V0h2v8h20v20h8V0h2v150zm-2 0v-28h-8v20h-20v8h28zM82 30v18h18V30H82zm20 18h20v20h18V30h-20V10H82v18h20v20zm0 2v18h18V50h-18zm20-22h18V10h-18v18zm-54 92v-18H50v18h18zm-20-18H28V82H10v38h20v20h38v-18H48v-20zm0-2V82H30v18h18zm-20 22H10v18h18v-18zm54 0v18h38v-20h20V82h-18v20h-20v20H82zm18-20H82v18h18v-18zm2-2h18V82h-18v18zm20 40v-18h18v18h-18zM30 0h-2v8H8v20H0v2h8v40h42V50h20V8H30V0zm20 48h18V30H50v18zm18-20H48v20H28v20H10V30h20V10h38v18zM30 50h18v18H30V50zm-2-40H10v18h18V10z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')`,
-        backgroundSize: 'auto',
-        backgroundRepeat: 'repeat',
-      }}
-    >
-      {/* Client component: initialises AOS */}
-      <AboutClient />
+        className="min-h-screen bg-black relative overflow-hidden"
+        style={{
+          backgroundImage: `url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="152" height="152" viewBox="0 0 152 152"%3E%3Cg fill-rule="evenodd"%3E%3Cg id="temple" fill="%23C2A15F" fill-opacity="0.06"%3E%3Cpath d="M152 150v2H0v-2h28v-8H8v-20H0v-2h8V80h42v20h20v42H30v8h90v-8H80v-42h20V80h42v40h8V30h-8v40h-42V50H80V8h40V0h2v8h20v20h8V0h2v150zm-2 0v-28h-8v20h-20v8h28zM82 30v18h18V30H82zm20 18h20v20h18V30h-20V10H82v18h20v20zm0 2v18h18V50h-18zm20-22h18V10h-18v18zm-54 92v-18H50v18h18zm-20-18H28V82H10v38h20v20h38v-18H48v-20zm0-2V82H30v18h18zm-20 22H10v18h18v-18zm54 0v18h38v-20h20V82h-18v20h-20v20H82zm18-20H82v18h18v-18zm2-2h18V82h-18v18zm20 40v-18h18v18h-18zM30 0h-2v8H8v20H0v2h8v40h42V50h20V8H30V0zm20 48h18V30H50v18zm18-20H48v20H28v20H10V30h20V10h38v18zM30 50h18v18H30V50zm-2-40H10v18h18V10z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')`,
+          backgroundSize: 'auto',
+          backgroundRepeat: 'repeat',
+        }}
+      >
+        {/* Client component: initialises AOS */}
+        <AboutClient />
 
-      <div className="absolute inset-0 bg-black/70" />
+        <div className="absolute inset-0 bg-black/70" />
 
-      <div className="relative">
-        {/* Banner Section */}
-        <section className="relative py-12 md:py-20 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent" />
-          <div className="absolute inset-0 bg-[radial-gradient(#C2A15F_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift" />
+        <div className="relative">
+          {/* Banner Section */}
+          <section className="relative py-12 md:py-20 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(#C2A15F_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift" />
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-            <nav className="mb-8" data-aos="fade-down">
-              <ol className="flex items-center space-x-2 text-sm">
-                <li>
-                  <Link href="/" className="text-grey hover:text-gold transition-colors">Home</Link>
-                </li>
-                <li className="text-gold">/</li>
-                <li className="text-gold font-medium">About</li>
-              </ol>
-            </nav>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+              <nav className="mb-8" data-aos="fade-down">
+                <ol className="flex items-center space-x-2 text-sm">
+                  <li>
+                    <Link href="/" className="text-grey hover:text-gold transition-colors">Home</Link>
+                  </li>
+                  <li className="text-gold">/</li>
+                  <li className="text-gold font-medium">About</li>
+                </ol>
+              </nav>
 
-            <div className="text-center" data-aos="fade-up">
-              <p className="font-sans tracking-[3px] text-gold text-sm mb-4">
-                {aboutUsHeading?.tagline || 'THE STORY BEHIND THE WORDS'}
-              </p>
-              <h1 className="font-serif text-5xl md:text-7xl font-bold text-gold leading-tight mb-6">
-                About <span className="text-gold">Brand Untold</span>
-              </h1>
-              <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
-                {aboutUsHeading?.subheading || 'Uncovering the real stories behind brands and the craft of authentic storytelling'}
-              </p>
+              <div className="text-center" data-aos="fade-up">
+                <p className="font-sans tracking-[3px] text-gold text-sm mb-4">
+                  {aboutUsHeading?.tagline || 'THE STORY BEHIND THE WORDS'}
+                </p>
+                <h1 className="font-serif text-5xl md:text-7xl font-bold text-gold leading-tight mb-6">
+                  About <span className="text-gold">Brand Untold</span>
+                </h1>
+                <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
+                  {aboutUsHeading?.subheading || 'Uncovering the real stories behind brands and the craft of authentic storytelling'}
+                </p>
+                <div
+                  className="w-24 h-px bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-10"
+                  data-aos="fade-up"
+                  data-aos-delay="400"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Main Content */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+            {/* Hero Image + Bio Section */}
+            <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+              {/* Image Side */}
+              <div className="relative group" data-aos="fade-right" data-aos-duration="1000">
+                <div
+                  className="aspect-[4/5] rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative"
+                  style={{ boxShadow: '0 35px 60px rgba(0,0,0,0.8), inset 0 2px 0 rgba(255,255,255,0.05)' }}
+                >
+                  <Image
+                    src={getImageUrl(about?.image, '/about1.jpg')}
+                    alt={about?.altname || about?.heading || 'Jayshree - Storyteller'}
+                    title={about?.img_title || about?.altname || about?.heading || 'Jayshree - Storyteller'}
+                    width={600}
+                    height={750}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />
+                </div>
+                <div className="absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow" data-aos="zoom-in" data-aos-delay="300" />
+                <div className="absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float" data-aos="zoom-in" data-aos-delay="500" />
+              </div>
+
+              {/* Content Side */}
+              <div className="space-y-8" data-aos="fade-left" data-aos-duration="1000">
+                <section data-aos="fade-up" data-aos-delay="200">
+                  <h2 className="font-serif text-3xl md:text-4xl font-bold text-gold mb-6 leading-tight">
+                    {about?.heading || "Hello, I'm Jayshree"}
+                  </h2>
+                  <div className="font-sans text-lg text-gray-300 leading-relaxed mb-4 prose prose-lg prose-invert max-w-none">
+                    {about?.description1 ? (
+                      <div
+                        className="tiptap-content"
+                        dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(about.description1) }}
+                      />
+                    ) : (
+                      <p>Content coming soon...</p>
+                    )}
+                  </div>
+                </section>
+                <div className="w-20 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent" data-aos="fade-up" data-aos-delay="400" />
+              </div>
+            </div>
+
+            <section data-aos="fade-up" data-aos-delay="500">
+              <div className="font-sans text-lg text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
+                {about?.description2 ? (
+                  <div
+                    className="tiptap-content"
+                    dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(about.description2) }}
+                  />
+                ) : (
+                  <p>Content coming soon...</p>
+                )}
+              </div>
+            </section>
+
+            {/* Philosophy Section */}
+            <section className="mb-20 mt-16" data-aos="fade-up">
               <div
-                className="w-24 h-px bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-10"
+                className="rounded-3xl p-10 md:p-12"
+                style={{
+                  background: 'linear-gradient(160deg, #141414 0%, #0c0c0c 100%)',
+                  border: '1px solid rgba(212,175,55,0.12)',
+                  boxShadow: '0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)',
+                }}
+              >
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-gold mb-8 text-center" data-aos="fade-up">
+                  {philosophyHeading?.heading || 'My Writing Philosophy'}
+                </h2>
+
+                <p className="font-sans text-lg text-gray-300 leading-relaxed mb-12 text-center max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                  {philosophyHeading?.subheading || 'I believe in clarity over complexity. In a world of noise, the clearest voice wins.'}
+                </p>
+
+                <div className="grid md:grid-cols-3 gap-8">
+                  {[
+                    { emoji: '✨', title: 'Authenticity First', desc: 'Real stories resonate more than manufactured ones.' },
+                    { emoji: '💡', title: 'Simplicity Matters', desc: 'Complex ideas should be explained simply.' },
+                    { emoji: '🤝', title: 'Connection First', desc: 'Build relationships first, business follows.' },
+                  ].map((item, index) => (
+                    <div
+                      key={index}
+                      className="group text-center p-8 border border-gold/20 rounded-3xl hover:border-gold hover:-translate-y-2 transition-all duration-500 hover:shadow-2xl hover:shadow-gold/10"
+                      data-aos="fade-up"
+                      data-aos-delay={200 + index * 150}
+                      style={{ background: 'rgba(20,20,20,0.6)', backdropFilter: 'blur(10px)' }}
+                    >
+                      <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gold/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                        <span className="text-4xl">{item.emoji}</span>
+                      </div>
+                      <h3 className="font-serif text-2xl font-semibold text-white mb-4 group-hover:text-gold transition-colors">
+                        {item.title}
+                      </h3>
+                      <p className="text-gray-400 leading-relaxed">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* CTA Section */}
+            <section className="text-center py-12" data-aos="zoom-in" data-aos-delay="300">
+              <h2 className="font-serif text-4xl md:text-5xl font-bold text-gold mb-6">
+                {ctaHeading?.heading || "Let's Connect"}
+              </h2>
+              <p className="font-sans text-lg text-gray-300 leading-relaxed mb-10 max-w-2xl mx-auto">
+                {ctaHeading?.subheading || "Whether you're looking to craft your brand story, need help with content strategy, or just want to chat about storytelling, I'd love to hear from you."}
+              </p>
+
+              <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent mx-auto mb-10" data-aos="fade-up" />
+
+              <Link
+                href="/work-with-me"
+                className="px-8 py-3 bg-gradient-to-r from-gold via-yellow-200 to-[#8f6d1d] text-black rounded-lg font-bold hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 text-center group relative overflow-hidden"
                 data-aos="fade-up"
                 data-aos-delay="400"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-          {/* Hero Image + Bio Section */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
-            {/* Image Side */}
-            <div className="relative group" data-aos="fade-right" data-aos-duration="1000">
-              <div
-                className="aspect-[4/5] rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative"
-                style={{ boxShadow: '0 35px 60px rgba(0,0,0,0.8), inset 0 2px 0 rgba(255,255,255,0.05)' }}
+                style={{ boxShadow: '0 10px 30px rgba(212, 175, 55, 0.3)' }}
               >
-                <Image
-                  src={getImageUrl(about?.image, '/about1.jpg')}
-                  alt={about?.heading || 'Jayshree - Storyteller'}
-                  width={600}
-                  height={750}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />
-              </div>
-              <div className="absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow" data-aos="zoom-in" data-aos-delay="300" />
-              <div className="absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float" data-aos="zoom-in" data-aos-delay="500" />
-            </div>
-
-            {/* Content Side */}
-            <div className="space-y-8" data-aos="fade-left" data-aos-duration="1000">
-              <section data-aos="fade-up" data-aos-delay="200">
-                <h2 className="font-serif text-3xl md:text-4xl font-bold text-gold mb-6 leading-tight">
-                  {about?.heading || "Hello, I'm Jayshree"}
-                </h2>
-                <div className="font-sans text-lg text-gray-300 leading-relaxed mb-4 prose prose-lg prose-invert max-w-none">
-                  {about?.description1 ? (
-                    <div
-                      className="tiptap-content"
-                      dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(about.description1) }}
-                    />
-                  ) : (
-                    <p>Content coming soon...</p>
-                  )}
-                </div>
-              </section>
-              <div className="w-20 h-px bg-gradient-to-r from-gold via-gold/50 to-transparent" data-aos="fade-up" data-aos-delay="400" />
-            </div>
+                Work With Us
+                <span className="ml-3 group-hover:translate-x-2 transition-transform">→</span>
+              </Link>
+            </section>
           </div>
-
-          <section data-aos="fade-up" data-aos-delay="500">
-            <div className="font-sans text-lg text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
-              {about?.description2 ? (
-                <div
-                  className="tiptap-content"
-                  dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(about.description2) }}
-                />
-              ) : (
-                <p>Content coming soon...</p>
-              )}
-            </div>
-          </section>
-
-          {/* Philosophy Section */}
-          <section className="mb-20 mt-16" data-aos="fade-up">
-            <div
-              className="rounded-3xl p-10 md:p-12"
-              style={{
-                background: 'linear-gradient(160deg, #141414 0%, #0c0c0c 100%)',
-                border: '1px solid rgba(212,175,55,0.12)',
-                boxShadow: '0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)',
-              }}
-            >
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-gold mb-8 text-center" data-aos="fade-up">
-                {philosophyHeading?.heading || 'My Writing Philosophy'}
-              </h2>
-
-              <p className="font-sans text-lg text-gray-300 leading-relaxed mb-12 text-center max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
-                {philosophyHeading?.subheading || 'I believe in clarity over complexity. In a world of noise, the clearest voice wins.'}
-              </p>
-
-              <div className="grid md:grid-cols-3 gap-8">
-                {[
-                  { emoji: '✨', title: 'Authenticity First', desc: 'Real stories resonate more than manufactured ones.' },
-                  { emoji: '💡', title: 'Simplicity Matters', desc: 'Complex ideas should be explained simply.' },
-                  { emoji: '🤝', title: 'Connection First', desc: 'Build relationships first, business follows.' },
-                ].map((item, index) => (
-                  <div
-                    key={index}
-                    className="group text-center p-8 border border-gold/20 rounded-3xl hover:border-gold hover:-translate-y-2 transition-all duration-500 hover:shadow-2xl hover:shadow-gold/10"
-                    data-aos="fade-up"
-                    data-aos-delay={200 + index * 150}
-                    style={{ background: 'rgba(20,20,20,0.6)', backdropFilter: 'blur(10px)' }}
-                  >
-                    <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gold/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                      <span className="text-4xl">{item.emoji}</span>
-                    </div>
-                    <h3 className="font-serif text-2xl font-semibold text-white mb-4 group-hover:text-gold transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-gray-400 leading-relaxed">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* CTA Section */}
-          <section className="text-center py-12" data-aos="zoom-in" data-aos-delay="300">
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-gold mb-6">
-              {ctaHeading?.heading || "Let's Connect"}
-            </h2>
-            <p className="font-sans text-lg text-gray-300 leading-relaxed mb-10 max-w-2xl mx-auto">
-              {ctaHeading?.subheading || "Whether you're looking to craft your brand story, need help with content strategy, or just want to chat about storytelling, I'd love to hear from you."}
-            </p>
-
-            <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent mx-auto mb-10" data-aos="fade-up" />
-
-            <Link
-              href="/work-with-me"
-              className="px-8 py-3 bg-gradient-to-r from-gold via-yellow-200 to-[#8f6d1d] text-black rounded-lg font-bold hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 text-center group relative overflow-hidden"
-              data-aos="fade-up"
-              data-aos-delay="400"
-              style={{ boxShadow: '0 10px 30px rgba(212, 175, 55, 0.3)' }}
-            >
-              Work With Us
-              <span className="ml-3 group-hover:translate-x-2 transition-transform">→</span>
-            </Link>
-          </section>
         </div>
-      </div>
 
-      {/* Tiptap Content Styles */}
-      <style>{TIPTAP_STYLES}</style>
-    </div>
+        {/* Tiptap Content Styles */}
+        <style>{TIPTAP_STYLES}</style>
+      </div>
     </>
   );
 }

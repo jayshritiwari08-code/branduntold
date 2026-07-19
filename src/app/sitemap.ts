@@ -2,13 +2,13 @@ import { MetadataRoute } from 'next';
 import { fetchAllArticles, fetchAllCategories, slugify, BASE_URL } from '@/app/lib/api';
 
 // Revalidate the sitemap dynamically every 60 seconds in production (ISR)
-export const revalidate = 60;
+export const revalidate = 0;
 
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Use the production domain name instead of localhost:3000
   const productionUrl = 'https://www.branduntold.in';
-  const baseUrl = (BASE_URL && !BASE_URL.includes('localhost')) 
+  const baseUrl = (BASE_URL && !BASE_URL.includes('localhost'))
     ? (BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL)
     : productionUrl;
 
