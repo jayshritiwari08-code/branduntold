@@ -1,7 +1,7 @@
 // Server component — no API call on the client.
 // Data is passed in from the parent page (fetched server-side via ISR).
 import CategoriesCarousel from "./categories-carousel";
-import { getImageUrl } from "@/app/lib/api";
+import { getImageUrl, slugify } from "@/app/lib/api";
 
 const GOLD = "#C9A84C";
 
@@ -24,10 +24,6 @@ interface HeadingData {
 interface Props {
   categories: RawCategory[];
   heading?: HeadingData | null;
-}
-
-function slugify(heading: string) {
-  return heading.trim().toLowerCase().replace(/ & /g, "-").replace(/\s+/g, "-");
 }
 
 function iconForCategory(name: string) {

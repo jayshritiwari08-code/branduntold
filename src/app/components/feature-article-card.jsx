@@ -93,11 +93,10 @@ export default function FeatureArticleCard({ article, index }) {
           flexDirection: "column",
         }}
       >
-        {/* Image */}
         <div
           style={{
             position: "relative",
-            height: isLarge ? "300px" : "280px",
+            aspectRatio: "16 / 9",
             overflow: "hidden",
             flexShrink: 0,
           }}
@@ -116,8 +115,8 @@ export default function FeatureArticleCard({ article, index }) {
               alt={article.altname || article.title || "Article image"}
               title={article.img_title || article.altname || article.title || "Article image"}
               fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover object-center"
+              sizes="(max-width: 500px) 100vw, 50vw"
+              className="object-contain object-top"
               style={{ display: "block" }}
             />
           </div>

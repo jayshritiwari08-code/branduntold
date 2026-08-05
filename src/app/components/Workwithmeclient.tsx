@@ -348,7 +348,7 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                                         <MapPin size={24} />
                                     </div>
                                     <div>
-                                        <h3 className="font-serif text-2xl text-gold mb-1">Our Studio</h3>
+                                        <h3 className="font-serif text-2xl text-gold mb-1">Locate Us</h3>
                                         <p className="text-grey text-sm leading-relaxed max-w-xs">
                                             {footerData.address ?? 'Visit us at our creative studio to discuss your brand narrative.'}
                                         </p>

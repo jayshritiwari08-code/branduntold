@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   staticPageGenerationTimeout: 300,
   images: {
     unoptimized: false, // Enable Next.js image optimization
+    dangerouslyAllowLocalIP: true,
 
     remotePatterns: [
       {
