@@ -127,17 +127,15 @@ export default function CategoriesCarousel({ categories }: { categories: Categor
                 }}
               >
                 {/* Image */}
-                <div
-                  className="relative overflow-hidden"
-                  style={{ aspectRatio: "16 / 9" }}
-                >
+                <div className="relative h-[220px] overflow-hidden">
                   <Image
                     src={cat.img}
                     alt={cat.altname || cat.title}
                     title={cat.img_title || cat.altname || cat.title}
-                    fill
+                    width={400}
+                    height={220}
                     sizes="(max-width: 768px) 100vw, 400px"
-                    className="object-contain object-top block transition-all duration-700 ease-in-out"
+                    className="w-full h-full object-cover block transition-all duration-700 ease-in-out"
                     style={{
                       filter: isActive
                         ? "brightness(0.85)"
