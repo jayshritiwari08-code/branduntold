@@ -61,6 +61,9 @@ export interface Category {
   image?: string;
   created_at: string;
   updated_at?: string;
+  metatitle?: string;
+  meta_description?: string;
+  meta_keyword?: string | string[];
 }
 
 export interface HeroData {
