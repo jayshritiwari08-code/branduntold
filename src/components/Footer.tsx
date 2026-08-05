@@ -139,7 +139,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/work-with-me" className="hover:text-gold transition-colors">
-                  Work With Me
+                  Work With Us
                 </Link>
               </li>
            
@@ -166,8 +166,14 @@ export default function Footer() {
               )}
               <div className="flex items-center gap-3">
                 <Mail size={18} className="text-gold" />
-                <a href={`mailto:${footerData?.email || 'hello@branduntold.com'}`} className="hover:text-gold transition-colors">
-                  {footerData?.email || 'hello@branduntold.com'}
+                <a href={`mailto:${footerData?.email || 'branduntold@gmail.com'}`} className="hover:text-gold transition-colors">
+                  {footerData?.email || 'branduntold@gmail.com'}
+                </a>
+              </div>
+              <div className="flex items-center gap-3 mt-2">
+                <Phone size={18} className="text-gold" />
+                <a href={`tel:${footerData?.phone || '+919999999999'}`} className="hover:text-gold transition-colors">
+                  {footerData?.phone || '+91 99999 99999'}
                 </a>
               </div>
             </div>
@@ -179,7 +185,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-grey">
           <p>
-            &copy; {new Date().getFullYear()} BRAND UNTOLD. All rights reserved.
+            &copy; {new Date().getFullYear()} Brand Untold &middot; India &middot; branduntold@gmail.com
           </p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <Link href="/privacy" className="hover:text-gold transition-colors">

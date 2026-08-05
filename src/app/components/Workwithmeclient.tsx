@@ -125,7 +125,7 @@ const DEFAULT_SERVICES = [
 export default function WorkWithMeClient({ contactUsHeading, servicesData, footerData, faqData }: Props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    console.log("faqData", faqData)
+    console.log("footerData", footerData)
     useEffect(() => {
         AOS.init({ duration: 800, easing: 'ease-out-cubic', once: true, offset: 50 });
     }, []);
@@ -189,7 +189,7 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                             <ol className="flex items-center space-x-2 text-sm">
                                 <li><Link href="/" className="text-grey hover:text-gold transition-colors">Home</Link></li>
                                 <li className="text-gold">/</li>
-                                <li className="text-gold font-medium">Work With Me</li>
+                                <li className="text-gold font-medium">Work With Us</li>
                             </ol>
                         </nav>
 
@@ -198,7 +198,7 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                                 {contactUsHeading?.tagline ?? "LET'S CREATE SOMETHING MEANINGFUL"}
                             </p>
                             <h1 className="font-serif text-5xl md:text-7xl font-bold text-gold leading-tight mb-6">
-                                Work With <span className="text-gold">Me</span>
+                                Work With <span className="text-gold">Us</span>
                             </h1>
                             <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
                                 {contactUsHeading?.subheading ??
@@ -262,8 +262,8 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                             <h2 className="font-serif text-3xl text-gold mb-3">Let's Tell Your Story</h2>
                             <p className="text-grey">
                                 Fill out the form below or email me directly at{' '}
-                                <a href={`mailto:${footerData?.email ?? 'hello@branduntold.com'}`} className="text-gold hover:underline transition-colors">
-                                    {footerData?.email ?? 'hello@branduntold.com'}
+                                <a href={`mailto:${footerData?.email ?? 'branduntold@gmail.com'}`} className="text-gold hover:underline transition-colors">
+                                    {footerData?.email ?? 'branduntold@gmail.com'}
                                 </a>
                             </p>
                         </div>

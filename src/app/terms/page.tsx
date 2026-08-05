@@ -127,7 +127,7 @@ export default async function TermsOfService() {
                   If you have any questions about these Terms of Service, please contact us at:
                 </p>
                 <p className="text-grey mt-2">
-                  Email: legal@branduntold.com<br />
+                  Email: branduntold@gmail.com<br />
                   Phone: +1 (555) 123-4567
                 </p>
               </section>

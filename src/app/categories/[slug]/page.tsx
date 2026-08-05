@@ -42,8 +42,9 @@ export async function generateMetadata({
 
   if (category) {
     return {
-      title: `${category.heading} - Brand Untold`,
-      description: category.subheading || category.tagline,
+      title: category.metatitle || `${category.heading} - Brand Untold`,
+      description: category.meta_description || category.subheading || category.tagline,
+      keywords: category.meta_keyword,
       alternates: {
         canonical: `/categories/${slug}`,
       },

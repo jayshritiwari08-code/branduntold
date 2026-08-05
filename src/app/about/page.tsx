@@ -200,8 +200,8 @@ export default async function About() {
                 >
                   <Image
                     src={getImageUrl(about?.image, '/about1.jpg')}
-                    alt={about?.altname || about?.heading || 'Jayshree - Storyteller'}
-                    title={about?.img_title || about?.altname || about?.heading || 'Jayshree - Storyteller'}
+                    alt={about?.altname || about?.heading || 'Jayshri Tiwari, Co-Founder of Brand Untold — Indian editorial platform for founder stories'}
+                    title={about?.img_title || about?.altname || about?.heading || 'Jayshri Tiwari, Co-Founder of Brand Untold — Indian editorial platform for founder stories'}
                     width={600}
                     height={750}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
@@ -242,7 +242,7 @@ export default async function About() {
                     dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(about.description2) }}
                   />
                 ) : (
-                  <p>Content coming soon...</p>
+                  <p>There were no formal meetings, no rigid agendas, no hierarchy deciding whose voice mattered more. Just two minds exchanging ideas with sincerity — questioning without ego, disagreeing without dismissing, building something meaningful from a distance. Somewhere along the journey, Brand Untold was born.</p>
                 )}
               </div>
             </section>
@@ -267,9 +267,9 @@ export default async function About() {
 
                 <div className="grid md:grid-cols-3 gap-8">
                   {[
-                    { emoji: '✨', title: 'Authenticity First', desc: 'Real stories resonate more than manufactured ones.' },
-                    { emoji: '💡', title: 'Simplicity Matters', desc: 'Complex ideas should be explained simply.' },
-                    { emoji: '🤝', title: 'Connection First', desc: 'Build relationships first, business follows.' },
+                    { emoji: '✨', title: 'Editorial Integrity', desc: "We don't write promotional features. We write honest stories." },
+                    { emoji: '🔍', title: 'Depth Over Volume', desc: 'One deeply researched story is worth more than ten surface-level posts.' },
+                    { emoji: '🌱', title: 'Stories Before Success', desc: "We tell the story before it's obvious — not after everyone already knows it." },
                   ].map((item, index) => (
                     <div
                       key={index}

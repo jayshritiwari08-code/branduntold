@@ -141,7 +141,7 @@ export default async function PrivacyPolicy() {
                   If you have any questions about this Privacy Policy, please contact us at:
                 </p>
                 <p className="text-grey mt-2">
-                  Email: privacy@branduntold.com<br />
+                  Email: branduntold@gmail.com<br />
                   Phone: +1 (555) 123-4567
                 </p>
               </section>

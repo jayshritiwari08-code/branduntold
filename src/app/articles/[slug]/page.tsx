@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: BlogPostProps): Promise<Metad
   // React cache() deduplicates this call with the one in the BlogPost component
   // so only 1 network/database request is sent in total for the entire page load.
   const article = await fetchArticle(slug);
-
+console.log("article",article)
   if (!article) {
     return {
       title: 'Article Not Found - Brand Untold',
