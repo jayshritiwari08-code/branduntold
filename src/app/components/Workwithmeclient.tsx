@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import AOS from 'aos';
-import { MapPin, CheckCircle, X, Loader2 } from 'lucide-react';
+import { MapPin, CheckCircle, X, Loader2, Plus, Minus } from 'lucide-react';
 import type { ContactUsHeading, ServicesData, FooterData, FAQItem } from '../work-with-me/page';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -125,6 +125,7 @@ const DEFAULT_SERVICES = [
 export default function WorkWithMeClient({ contactUsHeading, servicesData, footerData, faqData }: Props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
     console.log("footerData", footerData)
     useEffect(() => {
         AOS.init({ duration: 800, easing: 'ease-out-cubic', once: true, offset: 50 });
@@ -319,14 +320,39 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                      {/* FAQ */}
                 {faqData && faqData.length > 0 && (
                     <section className="my-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8" data-aos="fade-up" data-aos-delay="300">
-                        <h2 className="font-serif text-3xl text-gold mb-10 text-center">Frequently Asked Questions</h2>
+                        <h2 className="font-serif text-4xl text-gold mb-10 text-center tracking-wide">Frequently Asked Questions</h2>
                         <div className="space-y-4">
-                            {faqData.map((item) => (
-                                <details key={item.id} className="group bg-black/30 border border-gold/20 rounded-xl p-4">
-                                    <summary className="cursor-pointer font-medium text-white group-open:text-gold">{item.question}</summary>
-                                    <p className="mt-2 text-gray-300">{item.ans}</p>
-                                </details>
-                            ))}
+                            {faqData.map((item, index) => {
+                                const isOpen = openFaqIndex === index;
+                                return (
+                                    <div 
+                                        key={item.id} 
+                                        className="bg-[#0b0b0b] border border-gold/15 hover:border-gold/30 rounded-2xl transition-all duration-300 overflow-hidden shadow-lg shadow-black/40"
+                                    >
+                                        <button
+                                            onClick={() => setOpenFaqIndex(isOpen ? null : index)}
+                                            className="w-full text-left px-6 py-5 flex justify-between items-center cursor-pointer font-medium text-white hover:text-gold transition-colors focus:outline-none"
+                                            aria-expanded={isOpen}
+                                        >
+                                            <span className="text-lg font-serif tracking-wide pr-6">{item.question}</span>
+                                            <span className="text-gold shrink-0 p-1.5 rounded-full bg-gold/5 border border-gold/10 transition-transform duration-300">
+                                                {isOpen ? <Minus size={18} /> : <Plus size={18} />}
+                                            </span>
+                                        </button>
+                                        <div
+                                            className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                                                isOpen 
+                                                    ? 'max-h-[500px] opacity-100 border-t border-gold/10 bg-black/20' 
+                                                    : 'max-h-0 opacity-0 pointer-events-none'
+                                            }`}
+                                        >
+                                            <div className="px-6 py-5 text-gray-300 leading-relaxed text-sm md:text-[15px]">
+                                                {item.ans}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </section>
                 )}

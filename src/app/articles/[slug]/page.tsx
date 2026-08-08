@@ -83,7 +83,7 @@ console.log("article",article)
     description: article.meta_description || article.description,
     keywords: keywords,
     alternates: {
-      canonical: `/articles/${slug}`,
+      canonical: article.canonical || `/articles/${slug}`,
     },
     openGraph: {
       title: article.metatitle || article.title,

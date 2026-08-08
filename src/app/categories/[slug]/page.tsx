@@ -46,7 +46,7 @@ export async function generateMetadata({
       description: category.meta_description || category.subheading || category.tagline,
       keywords: category.meta_keyword,
       alternates: {
-        canonical: `/categories/${slug}`,
+        canonical: category.canonical || `/categories/${slug}`,
       },
     };
   }

@@ -10,12 +10,18 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title: 'Terms of Service - Brand Untold',
       description: 'Terms of Service for Brand Untold.',
+      alternates: {
+        canonical: '/terms',
+      },
     };
   }
   return {
     title: meta.metatitle,
     description: meta.meta_description,
     keywords: meta.meta_keyword,
+    alternates: {
+      canonical: meta.canonical || '/terms',
+    },
   };
 }
 

@@ -57,7 +57,7 @@ export async function generateMetadata(): Promise<Metadata> {
       ],
     },
     alternates: {
-      canonical: "/",
+      canonical: meta?.canonical || "/",
     },
     robots: {
       index: true,

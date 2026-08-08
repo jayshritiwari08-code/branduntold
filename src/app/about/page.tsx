@@ -20,12 +20,18 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title: 'About BrandUntold',
       description: 'Learn about BrandUntold and our passion for storytelling.',
+      alternates: {
+        canonical: '/about',
+      },
     };
   }
   return {
     title: meta.metatitle,
     description: meta.meta_description,
     keywords: meta.meta_keyword,
+    alternates: {
+      canonical: meta.canonical || '/about',
+    },
   };
 }
 

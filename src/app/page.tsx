@@ -25,6 +25,9 @@ export async function generateMetadata(): Promise<Metadata> {
     title: meta.metatitle,
     description: meta.meta_description,
     keywords: meta.meta_keyword,
+    alternates: {
+      canonical: meta.canonical || '/',
+    },
   };
 }
 

@@ -50,12 +50,18 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title: 'Work With Me',
       description: "Let's craft your brand's story together.",
+      alternates: {
+        canonical: '/work-with-me',
+      },
     };
   }
   return {
     title: meta.metatitle,
     description: meta.meta_description,
     keywords: meta.meta_keyword,
+    alternates: {
+      canonical: meta.canonical || '/work-with-me',
+    },
   };
 }
 

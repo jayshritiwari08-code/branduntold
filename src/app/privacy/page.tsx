@@ -10,12 +10,18 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title: 'Privacy Policy - Brand Untold',
       description: 'Privacy Policy for Brand Untold.',
+      alternates: {
+        canonical: '/privacy',
+      },
     };
   }
   return {
     title: meta.metatitle,
     description: meta.meta_description,
     keywords: meta.meta_keyword,
+    alternates: {
+      canonical: meta.canonical || '/privacy',
+    },
   };
 }
 

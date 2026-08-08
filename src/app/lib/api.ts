@@ -49,6 +49,7 @@ export interface Article {
   updated_at?: string;
   altname?: string;
   img_title?: string;
+  canonical?: string;
 }
 
 export interface Category {
@@ -64,6 +65,9 @@ export interface Category {
   metatitle?: string;
   meta_description?: string;
   meta_keyword?: string | string[];
+  altname?: string;
+  img_title?: string;
+  canonical?: string;
 }
 
 export interface HeroData {
@@ -132,7 +136,7 @@ export const fetchArticle = cache(async (slug: string): Promise<Article | null> 
 export const fetchArticleMeta = cache(async (slug: string): Promise<Partial<Article> | null> => {
   try {
     const res = await fetch(
-      buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?slug=${encodeURIComponent(slug)}&fields=id,slug,title,description,metatitle,meta_description,meta_keyword`),
+      buildApiUrl(`/api/data/${ARTICLES_COLLECTION}?slug=${encodeURIComponent(slug)}&fields=id,slug,title,description,metatitle,meta_description,meta_keyword,canonical`),
       FETCH_OPTS
     );
     const json: ApiResponse<Partial<Article>[]> = await res.json();
