@@ -237,13 +237,13 @@ export default async function BlogPost({ params }: BlogPostProps) {
 
       <div className="relative">
         {/* Banner */}
-        <section className="relative py-12 md:py-20 overflow-hidden">
+        <section className="relative pt-24 pb-12 md:py-20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-[#c2a15f]/10 to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(#d4af37_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift" />
 
           <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative">
             <nav className="mb-8">
-              <ol className="flex items-center space-x-2 text-sm">
+              <ol className="flex flex-wrap items-center gap-2 text-sm">
                 <li>
                   <Link href="/" className="text-grey hover:text-[#c2a15f] transition-colors">
                     Home
@@ -263,7 +263,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                   </>
                 )}
                 <li className="text-[#c2a15f]">/</li>
-                <li className="text-[#c2a15f] font-medium truncate max-w-[200px]">
+                <li className="text-[#c2a15f] font-medium truncate max-w-[150px] sm:max-w-[200px]">
                   {article.title}
                 </li>
               </ol>
@@ -273,12 +273,12 @@ export default async function BlogPost({ params }: BlogPostProps) {
               <p className="font-sans tracking-[3px] text-[#c2a15f] text-sm mb-4 uppercase">
                 {article.tagline}
               </p>
-              <h1 className="font-serif text-4xl md:text-6xl font-bold text-[#c2a15f] leading-tight mb-6">
+              <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold text-[#c2a15f] leading-tight mb-6">
                 {article.title}
               </h1>
-              <div className="flex items-center justify-center gap-4 text-sm text-grey">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-sm text-grey">
                 <span>By {article.author || 'Jayshree'}</span>
-                <span>•</span>
+                <span className="hidden sm:inline">•</span>
                 <span>
                   {new Date(article.date || article.created_at).toLocaleDateString('en-US', {
                     month: 'long',
@@ -314,7 +314,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
 
               {/* Article Body */}
               <article
-                className="rounded-3xl p-8 md:p-12"
+                className="rounded-3xl p-5 sm:p-8 md:p-12"
                 style={{
                   background: 'linear-gradient(160deg, #141414 0%, #0c0c0c 100%)',
                   border: '1px solid rgba(212,175,55,0.12)',
@@ -323,12 +323,13 @@ export default async function BlogPost({ params }: BlogPostProps) {
                 }}
               >
                 <style>{`
-                  .tiptap-content { color:#d1d5db; font-size:1.125rem; line-height:1.85; }
+                  .tiptap-content { color:#d1d5db; font-size:1.125rem; line-height:1.85; word-wrap: break-word; word-break: break-word; overflow-wrap: break-word; }
+                  .tiptap-content *:not(pre):not(code) { white-space: normal !important; }
                   .tiptap-content p { margin-bottom:1.5rem; color:#d1d5db; font-size:1.05rem; line-height:1.9; }
-                  .tiptap-content h1 { font-family:Georgia,serif; font-size:2.25rem; font-weight:700; color:#c2a15f; margin-top:2.5rem; margin-bottom:1rem; line-height:1.25; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:0.5rem; }
-                  .tiptap-content h2 { font-family:Georgia,serif; font-size:1.75rem; font-weight:700; color:#c2a15f; margin-top:2.25rem; margin-bottom:0.875rem; line-height:1.3; }
-                  .tiptap-content h3 { font-family:Georgia,serif; font-size:1.375rem; font-weight:600; color:#c2a15f; margin-top:2rem; margin-bottom:0.75rem; line-height:1.4; }
-                  .tiptap-content h4 { font-family:Georgia,serif; font-size:1.15rem; font-weight:600; color:#c2a15f; margin-top:1.75rem; margin-bottom:0.5rem; }
+                  .tiptap-content h1 { font-family:Georgia,serif; font-size:1.85rem; sm:font-size:2.25rem; font-weight:700; color:#c2a15f; margin-top:2.5rem; margin-bottom:1rem; line-height:1.25; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:0.5rem; }
+                  .tiptap-content h2 { font-family:Georgia,serif; font-size:1.5rem; sm:font-size:1.75rem; font-weight:700; color:#c2a15f; margin-top:2.25rem; margin-bottom:0.875rem; line-height:1.3; }
+                  .tiptap-content h3 { font-family:Georgia,serif; font-size:1.25rem; sm:font-size:1.375rem; font-weight:600; color:#c2a15f; margin-top:2rem; margin-bottom:0.75rem; line-height:1.4; }
+                  .tiptap-content h4 { font-family:Georgia,serif; font-size:1.1rem; sm:font-size:1.15rem; font-weight:600; color:#c2a15f; margin-top:1.75rem; margin-bottom:0.5rem; }
                   .tiptap-content strong { color:#c2a15f; font-weight:700; }
                   .tiptap-content em { color:#b0b8c4; font-style:italic; }
                   .tiptap-content ul { list-style-type:disc; padding-left:1.75rem; margin-bottom:1.5rem; }
@@ -342,10 +343,10 @@ export default async function BlogPost({ params }: BlogPostProps) {
                   .tiptap-content pre { background:rgba(0,0,0,0.5); border:1px solid rgba(212,175,55,0.15); border-radius:0.75rem; padding:1.25rem 1.5rem; overflow-x:auto; margin:1.5rem 0; }
                   .tiptap-content pre code { background:none; border:none; padding:0; color:#d1d5db; font-size:0.9rem; }
                   .tiptap-content hr { border:none; border-top:1px solid rgba(212,175,55,0.2); margin:2.5rem 0; }
-                  .tiptap-content img { border-radius:0.75rem; max-width:100%; margin:1.5rem 0; }
-                  .tiptap-content table { width:100%; border-collapse:collapse; margin:1.5rem 0; }
-                  .tiptap-content th { background:rgba(212,175,55,0.1); color:#c2a15f; font-weight:600; padding:0.75rem 1rem; text-align:left; border:1px solid rgba(212,175,55,0.2); }
-                  .tiptap-content td { padding:0.75rem 1rem; border:1px solid rgba(255,255,255,0.07); color:#d1d5db; }
+                  .tiptap-content img { border-radius:0.75rem; width:100% !important; max-width:100%; height:auto !important; margin:1.5rem 0; }
+                  .tiptap-content table { width:100%; border-collapse:collapse; margin:1.5rem 0; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+                  .tiptap-content th { background:rgba(212,175,55,0.1); color:#c2a15f; font-weight:600; padding:0.75rem 1rem; text-align:left; border:1px solid rgba(212,175,55,0.2); white-space: nowrap !important; }
+                  .tiptap-content td { padding:0.75rem 1rem; border:1px solid rgba(255,255,255,0.07); color:#d1d5db; white-space: nowrap !important; }
                   .tiptap-content tr:nth-child(even) td { background:rgba(255,255,255,0.02); }
                 `}</style>
 
@@ -358,11 +359,11 @@ export default async function BlogPost({ params }: BlogPostProps) {
 
               {/* Author Bio */}
               <div
-                className="mt-12 p-8 rounded-3xl border border-[#c2a15f]/20"
+                className="mt-12 p-6 sm:p-8 rounded-3xl border border-[#c2a15f]/20"
                 style={{ background: 'linear-gradient(160deg, #141414 0%, #0c0c0c 100%)' }}
               >
-                <div className="flex items-start gap-6">
-                  <div className="w-20 h-20 rounded-full bg-[#c2a15f]/10 flex items-center justify-center text-[#c2a15f] border-2 border-[#c2a15f]/30">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6">
+                  <div className="w-20 h-20 shrink-0 rounded-full bg-[#c2a15f]/10 flex items-center justify-center text-[#c2a15f] border-2 border-[#c2a15f]/30">
                     <span className="text-2xl">✨</span>
                   </div>
                   <div>
@@ -394,7 +395,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
 
                 {/* Table of Contents - Sticky wrapper */}
                 {headings.length > 0 && (
-                  <div className="lg:sticky lg:top-28 h-fit">
+                  <div className="hidden lg:block lg:sticky lg:top-28 h-fit">
                     <TableOfContents headings={headings} />
                   </div>
                 )}

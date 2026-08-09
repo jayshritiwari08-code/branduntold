@@ -66,9 +66,9 @@ export default function Header() {
               title={imgTitle || altname}
               height={90}
               width={90}
-              className="lg:w-[8rem] h-auto mt-5"
+              className="w-16 sm:w-20 lg:w-[8rem] h-auto lg:mt-5"
               priority
-              sizes="(max-width: 1024px) 90px, 128px"
+              sizes="(max-width: 640px) 64px, (max-width: 1024px) 80px, 128px"
             />
           </button>
 
