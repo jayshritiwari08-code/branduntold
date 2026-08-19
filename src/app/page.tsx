@@ -87,20 +87,18 @@ export default async function Home() {
                       src={getImageUrl(aboutData.image, '/about1.jpg')}
                       alt={aboutData?.altname || 'Brand Untold'}
                       title={aboutData?.img_title || aboutData?.altname || 'Brand Untold'}
-                      width={800}
-                      height={900}
+                      fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
-                      className="w-full h-full object-fill transition-transform duration-700 group-hover:scale-105"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
                     <Image
                       src="/about1.jpg"
                       alt={aboutData?.altname || 'Brand Untold'}
                       title={aboutData?.img_title || aboutData?.altname || 'Brand Untold'}
-                      width={800}
-                      height={900}
+                      fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
-                      className="w-full h-full object-fill transition-transform duration-700 group-hover:scale-105"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />

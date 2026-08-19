@@ -180,7 +180,7 @@ export default async function About() {
                   {aboutUsHeading?.tagline || 'THE STORY BEHIND THE WORDS'}
                 </p>
                 <h1 className="font-serif text-5xl md:text-7xl font-bold text-gold leading-tight mb-6">
-                  About <span className="text-gold">Brand Untold</span>
+                  {aboutUsHeading?.heading || 'About1 BrandUntold'}
                 </h1>
                 <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
                   {aboutUsHeading?.subheading || 'Uncovering the real stories behind brands and the craft of authentic storytelling'}
@@ -201,17 +201,17 @@ export default async function About() {
               {/* Image Side */}
               <div className="relative group" data-aos="fade-right" data-aos-duration="1000">
                 <div
-                  className="aspect-[4/5] rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative"
+                  className="rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative"
                   style={{ boxShadow: '0 35px 60px rgba(0,0,0,0.8), inset 0 2px 0 rgba(255,255,255,0.05)' }}
                 >
                   <Image
                     src={getImageUrl(about?.image, '/about1.jpg')}
                     alt={about?.altname || about?.heading || 'Jayshri Tiwari, Co-Founder of Brand Untold — Indian editorial platform for founder stories'}
                     title={about?.img_title || about?.altname || about?.heading || 'Jayshri Tiwari, Co-Founder of Brand Untold — Indian editorial platform for founder stories'}
-                    width={600}
-                    height={750}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    width={750}
+                    height={500}
+                    // sizes="(max-width: 750px) 100vw, (max-width: 1200px) 50vw, 600px"
+                    className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />
                 </div>
