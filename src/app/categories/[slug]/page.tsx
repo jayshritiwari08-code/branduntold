@@ -129,7 +129,7 @@ export default async function CategoryPage({
             </nav>
             <div className="text-center">
               <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">{category.tagline}</p>
-              <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 leading-tight text-gold">{category.heading}</h1>
+              <h1 className="font-serif text-5xl md:text-7xl font-semibold mb-6 leading-tight text-gold">{category.heading}</h1>
               {category.subheading && (
                 <p className="font-sans text-xl text-grey max-w-2xl mx-auto">{category.subheading}</p>
               )}
