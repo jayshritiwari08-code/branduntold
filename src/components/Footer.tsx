@@ -24,7 +24,13 @@ export default function Footer() {
     fetchFooterData();
   }, []);
 
-  const logoSrc = footerData?.footerlogo || '/logo.png';
+  let rawLogo = footerData?.footerlogo || '/logo.png';
+  if (Array.isArray(rawLogo)) {
+    rawLogo = rawLogo[0] || '/logo.png';
+  }
+  const logoSrc = typeof rawLogo === 'string' && rawLogo.startsWith('http')
+    ? rawLogo
+    : `https://admin.branduntold.in${typeof rawLogo === 'string' && rawLogo.startsWith('/') ? '' : '/'}${rawLogo}`;
 
   return (
     <footer className="bg-black  border-t border-gold mt-auto" suppressHydrationWarning>

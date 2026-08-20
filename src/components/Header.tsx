@@ -27,7 +27,10 @@ export default function Header() {
         if (json.success && json.data && json.data.length > 0) {
           const footerData = json.data[0];
           if (footerData.footerlogo) {
-            setLogoSrc(footerData.footerlogo);
+            let logo = Array.isArray(footerData.footerlogo) ? footerData.footerlogo[0] : footerData.footerlogo;
+            if (typeof logo === 'string') {
+              setLogoSrc(logo.startsWith('http') ? logo : `https://admin.branduntold.in${logo.startsWith('/') ? '' : '/'}${logo}`);
+            }
           }
           if (footerData.altname) {
             setAltname(footerData.altname);

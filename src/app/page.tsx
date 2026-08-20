@@ -81,24 +81,26 @@ export default async function Home() {
 
               {/* Image Side */}
               <div className="relative group" data-aos="fade-right">
-                <div className="aspect-[3.5/4] rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative">
+                <div className="rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative">
                   {aboutData?.image ? (
                     <Image
                       src={getImageUrl(aboutData.image, '/about1.jpg')}
                       alt={aboutData?.altname || 'Brand Untold'}
                       title={aboutData?.img_title || aboutData?.altname || 'Brand Untold'}
-                      fill
+                      width={750}
+                      height={500}
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
                     <Image
                       src="/about1.jpg"
                       alt={aboutData?.altname || 'Brand Untold'}
                       title={aboutData?.img_title || aboutData?.altname || 'Brand Untold'}
-                      fill
+                      width={750}
+                      height={500}
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
                     />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />
