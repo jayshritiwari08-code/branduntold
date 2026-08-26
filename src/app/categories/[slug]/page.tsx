@@ -22,7 +22,7 @@ function formatDate(dateStr: string): string {
   return `${month} ${day}, ${year}`;
 }
 
-export const revalidate = 0; // ISR: revalidate after 60 seconds
+export const revalidate = 60; // ISR: revalidate after 60 seconds
 // export const dynamic = "force-dynamic"; // Removed to allow static generation
 export const dynamicParams = true; // allow ISR for slugs not pre-built
 

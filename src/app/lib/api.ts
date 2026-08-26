@@ -337,6 +337,13 @@ export function optimizeHtmlImages(html: string): string {
   
   // 3. Add decoding="async" if not present
   optimized = optimized.replace(/<img(?![^>]*\bdecoding\b)([^>]*?)>/gi, '<img decoding="async"$1>');
+
+  // 4. Wrap tables in responsive scroll wrapper (avoid double wrapping if already wrapped)
+  if (!optimized.includes('table-scroll-wrapper')) {
+    optimized = optimized.replace(/<table\b[\s\S]*?<\/table>/gi, (match) => {
+      return `<div class="table-scroll-wrapper my-6 overflow-x-auto rounded-2xl border border-[#c2a15f]/20 bg-black/50 p-2 shadow-inner">${match}</div>`;
+    });
+  }
   
   return optimized;
 }

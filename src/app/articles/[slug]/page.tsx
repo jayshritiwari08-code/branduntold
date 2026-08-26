@@ -19,8 +19,8 @@ interface BlogPostProps {
   params: Promise<{ slug: string }>;
 }
 
-// Pure ISR — pages are built on first request and cached for 1 hour.
-export const revalidate = 0;
+// Pure ISR — pages are built on first request and cached for 60 seconds.
+export const revalidate = 60;
 export const dynamicParams = true;
 
 // Pre-render only a small set of high-traffic or recent articles during build (minimizes memory & build time)
@@ -173,6 +173,14 @@ export default async function BlogPost({ params }: BlogPostProps) {
     return headingsList;
   };
 
+  // Wrap tables with a scroll container to ensure reliable horizontal scrolling on mobile
+  const wrapTablesForMobile = (html: string) => {
+    return html.replace(
+      /<table(\s[^>]*)?>[\s\S]*?<\/table>/gi,
+      (table) => `<div class="tiptap-table-scroll">${table}</div>`
+    );
+  };
+
   // Helper to inject unique IDs into the heading tags
   const injectHeadingIds = (html: string) => {
     const headingRegex = /<h([2-4])([^>]*)>(.*?)<\/h\1>/gi;
@@ -189,7 +197,10 @@ export default async function BlogPost({ params }: BlogPostProps) {
   };
 
   const headings = extractHeadings(rawHtml);
-  const processedHtml = injectHeadingIds(rawHtml);
+
+  const processedHtml = wrapTablesForMobile(
+    injectHeadingIds(rawHtml)
+  );
   const hasSidebar = recentArticles.length > 0 || headings.length > 0;
 
   // Build JSON-LD structured schema markup for search engine optimization
@@ -298,7 +309,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
           >
             <div className={hasSidebar ? 'lg:col-span-2' : 'lg:col-span-1'}>
               {/* Featured Image */}
-              <div className="aspect-video mb-12 rounded-3xl overflow-hidden border border-[#c2a15f]/30 shadow-2xl relative">
+              <div className="aspect-video mb-8 sm:mb-12 rounded-3xl overflow-hidden border border-[#c2a15f]/30 shadow-2xl relative">
                 <Image
                   src={getImageUrl(article.image)}
                   alt={article.altname || article.title}
@@ -312,6 +323,13 @@ export default async function BlogPost({ params }: BlogPostProps) {
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />
               </div>
 
+              {/* Mobile Table of Contents (Collapsible for mobile & tablet devices) */}
+              {headings.length > 0 && (
+                <div className="lg:hidden mb-8">
+                  <TableOfContents headings={headings} isMobile />
+                </div>
+              )}
+
               {/* Article Body */}
               <article
                 className="rounded-3xl p-5 sm:p-8 md:p-12"
@@ -323,31 +341,152 @@ export default async function BlogPost({ params }: BlogPostProps) {
                 }}
               >
                 <style>{`
-                  .tiptap-content { color:#d1d5db; font-size:1.125rem; line-height:1.85; word-wrap: break-word; word-break: break-word; overflow-wrap: break-word; }
-                  .tiptap-content *:not(pre):not(code) { white-space: normal !important; }
-                  .tiptap-content p { margin-bottom:1.5rem; color:#d1d5db; font-size:1.05rem; line-height:1.9; }
-                  .tiptap-content h1 { font-family:Georgia,serif; font-size:1.85rem; sm:font-size:2.25rem; font-weight:700; color:#c2a15f; margin-top:2.5rem; margin-bottom:1rem; line-height:1.25; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:0.5rem; }
-                  .tiptap-content h2 { font-family:Georgia,serif; font-size:1.5rem; sm:font-size:1.75rem; font-weight:700; color:#c2a15f; margin-top:2.25rem; margin-bottom:0.875rem; line-height:1.3; }
-                  .tiptap-content h3 { font-family:Georgia,serif; font-size:1.25rem; sm:font-size:1.375rem; font-weight:600; color:#c2a15f; margin-top:2rem; margin-bottom:0.75rem; line-height:1.4; }
-                  .tiptap-content h4 { font-family:Georgia,serif; font-size:1.1rem; sm:font-size:1.15rem; font-weight:600; color:#c2a15f; margin-top:1.75rem; margin-bottom:0.5rem; }
+                  .tiptap-content { color:#d1d5db; font-size:1.0625rem; sm:font-size:1.125rem; line-height:1.85; }
+                  .tiptap-content p { margin-bottom:1.5rem; color:#d1d5db; font-size:1rem; sm:font-size:1.05rem; line-height:1.9; word-break: break-word; overflow-wrap: break-word; }
+                  .tiptap-content h1 { font-family:Georgia,serif; font-size:1.75rem; sm:font-size:2.25rem; font-weight:700; color:#c2a15f; margin-top:2.5rem; margin-bottom:1rem; line-height:1.25; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:0.5rem; word-break: break-word; }
+                  .tiptap-content h2 { font-family:Georgia,serif; font-size:1.4rem; sm:font-size:1.75rem; font-weight:700; color:#c2a15f; margin-top:2.25rem; margin-bottom:0.875rem; line-height:1.3; word-break: break-word; }
+                  .tiptap-content h3 { font-family:Georgia,serif; font-size:1.2rem; sm:font-size:1.375rem; font-weight:600; color:#c2a15f; margin-top:2rem; margin-bottom:0.75rem; line-height:1.4; word-break: break-word; }
+                  .tiptap-content h4 { font-family:Georgia,serif; font-size:1.05rem; sm:font-size:1.15rem; font-weight:600; color:#c2a15f; margin-top:1.75rem; margin-bottom:0.5rem; word-break: break-word; }
                   .tiptap-content strong { color:#c2a15f; font-weight:700; }
                   .tiptap-content em { color:#b0b8c4; font-style:italic; }
-                  .tiptap-content ul { list-style-type:disc; padding-left:1.75rem; margin-bottom:1.5rem; }
-                  .tiptap-content ol { list-style-type:decimal; padding-left:1.75rem; margin-bottom:1.5rem; }
+                  .tiptap-content ul { list-style-type:disc; padding-left:1.5rem; sm:padding-left:1.75rem; margin-bottom:1.5rem; }
+                  .tiptap-content ol { list-style-type:decimal; padding-left:1.5rem; sm:padding-left:1.75rem; margin-bottom:1.5rem; }
                   .tiptap-content li { margin-bottom:0.6rem; color:#d1d5db; line-height:1.75; }
                   .tiptap-content li p { margin-bottom:0.25rem; }
-                  .tiptap-content blockquote { border-left:3px solid #c2a15f; padding:0.75rem 1.5rem; margin:2rem 0; background:rgba(212,175,55,0.05); border-radius:0 0.5rem 0.5rem 0; color:#b8bcc4; font-style:italic; font-size:1.1rem; }
+                  .tiptap-content blockquote { border-left:3px solid #c2a15f; padding:0.75rem 1.25rem; sm:padding:0.75rem 1.5rem; margin:2rem 0; background:rgba(212,175,55,0.05); border-radius:0 0.5rem 0.5rem 0; color:#b8bcc4; font-style:italic; font-size:1.05rem; sm:font-size:1.1rem; }
                   .tiptap-content a { color:#c2a15f; text-decoration:underline; text-underline-offset:3px; transition:color 0.2s; }
                   .tiptap-content a:hover { color:#d4af37; }
                   .tiptap-content code { background:rgba(212,175,55,0.08); color:#c2a15f; padding:0.15rem 0.45rem; border-radius:0.25rem; font-family:'Courier New',monospace; font-size:0.9em; border:1px solid rgba(212,175,55,0.15); }
-                  .tiptap-content pre { background:rgba(0,0,0,0.5); border:1px solid rgba(212,175,55,0.15); border-radius:0.75rem; padding:1.25rem 1.5rem; overflow-x:auto; margin:1.5rem 0; }
+                  .tiptap-content pre { background:rgba(0,0,0,0.5); border:1px solid rgba(212,175,55,0.15); border-radius:0.75rem; padding:1rem 1.25rem; sm:padding:1.25rem 1.5rem; overflow-x:auto; margin:1.5rem 0; -webkit-overflow-scrolling: touch; }
                   .tiptap-content pre code { background:none; border:none; padding:0; color:#d1d5db; font-size:0.9rem; }
                   .tiptap-content hr { border:none; border-top:1px solid rgba(212,175,55,0.2); margin:2.5rem 0; }
                   .tiptap-content img { border-radius:0.75rem; width:100% !important; max-width:100%; height:auto !important; margin:1.5rem 0; }
-                  .tiptap-content table { width:100%; border-collapse:collapse; margin:1.5rem 0; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-                  .tiptap-content th { background:rgba(212,175,55,0.1); color:#c2a15f; font-weight:600; padding:0.75rem 1rem; text-align:left; border:1px solid rgba(212,175,55,0.2); white-space: nowrap !important; }
-                  .tiptap-content td { padding:0.75rem 1rem; border:1px solid rgba(255,255,255,0.07); color:#d1d5db; white-space: nowrap !important; }
-                  .tiptap-content tr:nth-child(even) td { background:rgba(255,255,255,0.02); }
+                  
+                  /* Table styling: Same layout as desktop with smooth horizontal scroll on mobile */
+                  /* ================================
+   TIPTAP RESPONSIVE TABLE
+   ================================ */
+
+.tiptap-content .tiptap-table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  margin: 1.5rem 0;
+  border-radius: 0.75rem;
+
+  /* Better scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(194, 161, 95, 0.5) rgba(255, 255, 255, 0.05);
+}
+
+/* Chrome / Edge / Safari */
+.tiptap-content .tiptap-table-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tiptap-content .tiptap-table-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
+}
+
+.tiptap-content .tiptap-table-scroll::-webkit-scrollbar-thumb {
+  background: rgba(194, 161, 95, 0.5);
+  border-radius: 999px;
+}
+
+.tiptap-content .tiptap-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(194, 161, 95, 0.8);
+}
+
+/* Table itself */
+.tiptap-content .tiptap-table-scroll table {
+  width: max-content !important;
+  min-width: 600px !important;
+  max-width: none !important;
+
+  border-collapse: collapse !important;
+  border-spacing: 0;
+  margin: 0 !important;
+
+  table-layout: auto !important;
+}
+
+/* Cells */
+.tiptap-content .tiptap-table-scroll th,
+.tiptap-content .tiptap-table-scroll td {
+  min-width: 150px;
+  padding: 0.75rem 1rem !important;
+
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+
+  color: #d1d5db !important;
+  font-size: 0.875rem !important;
+  line-height: 1.6 !important;
+
+  text-align: left !important;
+  vertical-align: top !important;
+
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Header */
+.tiptap-content .tiptap-table-scroll th {
+  background: rgba(212, 175, 55, 0.15) !important;
+  color: #c2a15f !important;
+
+  font-family: Georgia, serif !important;
+  font-weight: 700 !important;
+}
+
+/* Alternating rows */
+.tiptap-content .tiptap-table-scroll tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Hover */
+.tiptap-content .tiptap-table-scroll tr:hover td {
+  background: rgba(212, 175, 55, 0.04) !important;
+}
+
+/* Mobile */
+@media (max-width: 639px) {
+  .tiptap-content .tiptap-table-scroll {
+    margin-left: 0;
+    margin-right: 0;
+
+    /* Gives clear indication that table can scroll */
+    padding-bottom: 4px;
+  }
+
+  .tiptap-content .tiptap-table-scroll table {
+    min-width: 650px !important;
+  }
+
+  .tiptap-content .tiptap-table-scroll th,
+  .tiptap-content .tiptap-table-scroll td {
+    min-width: 150px;
+    padding: 0.7rem 0.85rem !important;
+    font-size: 0.8rem !important;
+    line-height: 1.5 !important;
+  }
+}
+
+/* Desktop */
+@media (min-width: 640px) {
+  .tiptap-content .tiptap-table-scroll th,
+  .tiptap-content .tiptap-table-scroll td {
+    min-width: 160px;
+    padding: 1rem 1.25rem !important;
+    font-size: 0.95rem !important;
+  }
+}
+                  .tiptap-content tr:nth-child(even) td { background: rgba(255,255,255,0.02) !important; }
+                  .tiptap-content tr:hover td { background: rgba(212,175,55,0.04) !important; }
                 `}</style>
 
                 {/* Optimised rendering of large content by writing HTML output directly without virtual DOM component overhead */}

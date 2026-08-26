@@ -15,7 +15,7 @@ import {
   optimizeHtmlImages
 } from '@/app/lib/api';
 
-export const revalidate = 0; // ISR: rebuild this page at most once per minute
+export const revalidate = 60; // ISR: rebuild this page at most once per minute
 
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await fetchStaticMeta('');
@@ -73,8 +73,8 @@ export default async function Home() {
         </div>
 
         {/* About Preview */}
-        <section className="relative py-24 bg-black overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(#C2A15F_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift" />
+        <section className="relative sm:py-24 py-10 bg-black overflow-hidden">
+          <div className="absolute sm:block hidden inset-0 bg-[radial-gradient(#C2A15F_0.8px,transparent_1px)] bg-[length:50px_50px] opacity-5 animate-slow-drift" />
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -106,12 +106,12 @@ export default async function Home() {
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />
                 </div>
                 <div
-                  className="absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow"
+                  className="hidden sm:block absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow"
                   data-aos="zoom-in"
                   data-aos-delay="400"
                 />
                 <div
-                  className="absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float"
+                  className="hidden sm:block absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float"
                   data-aos="zoom-in"
                   data-aos-delay="600"
                 />

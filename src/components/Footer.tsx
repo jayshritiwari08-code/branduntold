@@ -28,9 +28,16 @@ export default function Footer() {
   if (Array.isArray(rawLogo)) {
     rawLogo = rawLogo[0] || '/logo.png';
   }
-  const logoSrc = typeof rawLogo === 'string' && rawLogo.startsWith('http')
-    ? rawLogo
-    : `https://admin.branduntold.in${typeof rawLogo === 'string' && rawLogo.startsWith('/') ? '' : '/'}${rawLogo}`;
+  let logoSrc = '/logo.png';
+  if (typeof rawLogo === 'string' && rawLogo) {
+    if (rawLogo.startsWith('http')) {
+      logoSrc = rawLogo;
+    } else if (rawLogo.startsWith('/uploads/') || rawLogo.startsWith('uploads/')) {
+      logoSrc = `https://admin.branduntold.in${rawLogo.startsWith('/') ? '' : '/'}${rawLogo}`;
+    } else {
+      logoSrc = rawLogo.startsWith('/') ? rawLogo : `/${rawLogo}`;
+    }
+  }
 
   return (
     <footer className="bg-black  border-t border-gold mt-auto" suppressHydrationWarning>

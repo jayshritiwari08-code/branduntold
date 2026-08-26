@@ -10,7 +10,7 @@ import {
 } from '@/app/lib/api';
 import AboutClient from './AboutClient';
 
-export const revalidate = 0;
+export const revalidate = 60; // ISR: revalidate at most once every 60 seconds
 
 // ─── Metadata ────────────────────────────────────────────────────────────────
 
@@ -113,11 +113,47 @@ const TIPTAP_STYLES = `
     margin-bottom: 1.25rem;
   }
   .tiptap-content pre code { background: transparent; border: none; padding: 0; color: #e5e7eb; font-size: 0.875rem; }
-  .tiptap-content img { max-width: 100%; height: auto; border-radius: 8px; margin: 1.25rem 0; border: 1px solid rgba(212, 175, 55, 0.15); }
-  .tiptap-content table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.9375rem; }
-  .tiptap-content th { background: rgba(212, 175, 55, 0.1); color: #C2A15F; font-weight: 600; text-align: left; padding: 0.625rem 1rem; border: 1px solid rgba(212, 175, 55, 0.2); }
-  .tiptap-content td { color: #d1d5db; padding: 0.5rem 1rem; border: 1px solid rgba(212, 175, 55, 0.1); }
-  .tiptap-content tr:hover td { background: rgba(212, 175, 55, 0.03); }
+  .table-scroll-wrapper { 
+    overflow-x: auto !important; 
+    -webkit-overflow-scrolling: touch !important; 
+    max-width: 100% !important; 
+    margin: 1.75rem 0 !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(194, 161, 95, 0.4) transparent;
+  }
+  .table-scroll-wrapper::-webkit-scrollbar { height: 6px; }
+  .table-scroll-wrapper::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 4px; }
+  .table-scroll-wrapper::-webkit-scrollbar-thumb { background: rgba(194, 161, 95, 0.4); border-radius: 4px; }
+  .tiptap-content table { 
+    width: 100% !important; 
+    min-width: 600px !important; 
+    border-collapse: collapse !important; 
+    margin: 0 !important; 
+    display: table !important; 
+    table-layout: auto !important;
+  }
+  .tiptap-content th, .tiptap-content td { 
+    padding: 1rem 1.25rem !important; 
+    border: 1px solid rgba(212, 175, 55, 0.2) !important; 
+    color: #d1d5db; 
+    font-size: 0.95rem; 
+    line-height: 1.6; 
+    word-break: normal !important; 
+    overflow-wrap: normal !important; 
+    word-wrap: normal !important; 
+    white-space: normal !important; 
+    vertical-align: top; 
+    text-align: left; 
+    min-width: 160px; 
+  }
+  .tiptap-content th { 
+    background: rgba(212, 175, 55, 0.15) !important; 
+    color: #C2A15F; 
+    font-weight: 700; 
+    font-family: var(--font-playfair), Georgia, serif; 
+  }
+  .tiptap-content tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+  .tiptap-content tr:hover td { background: rgba(212, 175, 55, 0.04); }
   .tiptap-content > *:first-child { margin-top: 0; }
 `;
 
@@ -215,8 +251,8 @@ export default async function About() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />
                 </div>
-                <div className="absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow" data-aos="zoom-in" data-aos-delay="300" />
-                <div className="absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float" data-aos="zoom-in" data-aos-delay="500" />
+                <div className="hidden sm:block absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow" data-aos="zoom-in" data-aos-delay="300" />
+                <div className="hidden sm:block absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float" data-aos="zoom-in" data-aos-delay="500" />
               </div>
 
               {/* Content Side */}

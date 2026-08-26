@@ -44,7 +44,7 @@ export default function HeroSection({ data }) {
             {loading ? (
               <p className="text-grey text-lg">Loading content...</p>
             ) : heroData?.description ? (
-               <div className="tiptap-content text-justify text-white/90" dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(heroData.description) }}></div>
+              <div className="tiptap-content text-justify text-white/90" dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(heroData.description) }}></div>
             ) : (
               <p className="tiptap-content text-white/90">Exploring the narratives that shape brands, founders, and the art of storytelling itself.</p>
             )}
