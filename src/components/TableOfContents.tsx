@@ -131,7 +131,7 @@ export default function TableOfContents({ headings, isMobile = false }: TableOfC
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="font-serif text-sm sm:text-base font-bold text-white group-hover:text-[#c2a15f] transition-colors">
+                <span className="text-sm sm:text-base font-bold text-white group-hover:text-[#c2a15f] transition-colors">
                   Table of Contents
                 </span>
                 <span className="text-[11px] font-mono text-[#c2a15f] font-semibold px-2 py-0.5 rounded-full bg-[#c2a15f]/10 border border-[#c2a15f]/20">
@@ -210,7 +210,7 @@ export default function TableOfContents({ headings, isMobile = false }: TableOfC
       <div className="absolute top-0 right-0 w-24 h-24 bg-[#c2a15f]/5 rounded-full blur-2xl pointer-events-none transition-opacity duration-500 group-hover/toc:opacity-80" />
 
       <div className="relative animate-fade-in">
-        <h3 className="font-serif text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
           <span className="text-[#c2a15f] text-sm animate-[spin_8s_linear_infinite] inline-block">✦</span>
           On This Page
         </h3>

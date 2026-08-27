@@ -73,7 +73,7 @@ function ThankYouModal({ onClose }: { onClose: () => void }) {
                 <p className="font-sans tracking-[4px] text-gold text-xs mb-3 uppercase" style={{ letterSpacing: '0.25em' }}>
                     Message Received
                 </p>
-                <h2 className="font-serif text-3xl text-white mb-4 leading-snug" style={{ fontWeight: 600 }}>
+                <h2 className="text-3xl text-white mb-4 leading-snug" style={{ fontWeight: 600 }}>
                     Thank You for<br />Reaching Out
                 </h2>
                 <p className="text-gray-400 text-sm leading-relaxed mb-8 max-w-xs mx-auto">
@@ -233,7 +233,7 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                             <p className="font-sans tracking-[4px] text-gold text-xs sm:text-sm font-semibold uppercase mb-4">
                                 {contactUsHeading?.tagline ?? "LET'S CREATE SOMETHING MEANINGFUL"}
                             </p>
-                            <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold text-gold leading-tight mb-5 tracking-tight">
+                            <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold text-gold leading-tight mb-5 tracking-tight">
                                 Work With <span className="text-white">Us</span>
                             </h1>
                             <p className="font-sans text-base sm:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
@@ -264,7 +264,7 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                             <span className="font-sans text-xs uppercase tracking-[3px] text-gold font-semibold mb-2 block">
                                 OUR EXPERTISE
                             </span>
-                            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-gold tracking-tight">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gold tracking-tight">
                                 {servicesData?.heading ?? 'Crafted Services'}
                             </h2>
                             <div className="w-20 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent mx-auto mt-4" />
@@ -295,13 +295,13 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                                             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold/20 via-gold/10 to-transparent border border-gold/30 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-black group-hover:scale-105 transition-all duration-500 shadow-md">
                                                 {getServiceIcon(service.title, index)}
                                             </div>
-                                            <span className="font-serif text-xs tracking-widest text-gold/40 group-hover:text-gold/80 font-bold px-3 py-1 rounded-full bg-white/[0.03] border border-white/5 group-hover:border-gold/20 transition-all">
+                                            <span className="text-xs tracking-widest text-gold/40 group-hover:text-gold/80 font-bold px-3 py-1 rounded-full bg-white/[0.03] border border-white/5 group-hover:border-gold/20 transition-all">
                                                 {String(index + 1).padStart(2, '0')}
                                             </span>
                                         </div>
 
                                         {/* Title */}
-                                        <h3 className="font-serif text-xl sm:text-2xl font-bold text-white group-hover:text-gold transition-colors duration-300 mb-3 leading-snug">
+                                        <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-gold transition-colors duration-300 mb-3 leading-snug">
                                             {service.title}
                                         </h3>
 
@@ -336,7 +336,7 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                             <span className="font-sans text-xs uppercase tracking-[3px] text-gold font-semibold mb-2 block">
                                 GET IN TOUCH
                             </span>
-                            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white mb-3">Let's Tell Your Story</h2>
+                            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">Let's Tell Your Story</h2>
                             <p className="text-gray-400 text-sm sm:text-base font-sans">
                                 Fill out the form below or email me directly at{' '}
                                 <a href={`mailto:${footerData?.email ?? 'branduntold@gmail.com'}`} className="text-gold font-medium hover:underline transition-colors">
@@ -400,7 +400,7 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                                 <span className="font-sans text-xs uppercase tracking-[3px] text-gold font-semibold mb-2 block">
                                     NEED CLARITY?
                                 </span>
-                                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-gold tracking-tight">
+                                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gold tracking-tight">
                                     Frequently Asked Questions
                                 </h2>
                                 <div className="w-20 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent mx-auto mt-4" />
@@ -419,7 +419,7 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                                                 className="w-full text-left px-6 py-5 flex justify-between items-center cursor-pointer font-medium text-white hover:text-gold transition-colors focus:outline-none"
                                                 aria-expanded={isOpen}
                                             >
-                                                <span className="text-base sm:text-lg font-serif tracking-wide pr-6">{item.question}</span>
+                                                <span className="text-base sm:text-lg tracking-wide pr-6">{item.question}</span>
                                                 <span className="text-gold shrink-0 p-1.5 rounded-full bg-gold/10 border border-gold/20 transition-transform duration-300">
                                                     {isOpen ? <Minus size={16} /> : <Plus size={16} />}
                                                 </span>
@@ -459,7 +459,7 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                                         <MapPin size={22} />
                                     </div>
                                     <div>
-                                        <h3 className="font-serif text-2xl text-gold mb-1 font-bold">Locate Us</h3>
+                                        <h3 className="text-2xl text-gold mb-1 font-bold">Locate Us</h3>
                                         <p className="text-gray-400 text-sm leading-relaxed max-w-xs font-sans">
                                             {footerData.address ?? 'Visit us at our creative studio to discuss your brand narrative.'}
                                         </p>

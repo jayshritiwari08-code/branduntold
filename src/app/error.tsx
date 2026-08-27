@@ -40,10 +40,7 @@ export default function GlobalError({
           </svg>
         </div>
 
-        <h1
-          className="text-2xl sm:text-3xl font-bold text-gold"
-          style={{ fontFamily: 'var(--font-playfair)' }}
-        >
+        <h1 className="text-2xl sm:text-3xl font-bold text-gold">
           Something went wrong
         </h1>
 

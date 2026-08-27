@@ -284,7 +284,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
               <p className="font-sans tracking-[3px] text-[#c2a15f] text-sm mb-4 uppercase">
                 {article.tagline}
               </p>
-              <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold text-[#c2a15f] leading-tight mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-[#c2a15f] leading-tight mb-6">
                 {article.title}
               </h1>
               <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-sm text-grey">
@@ -343,10 +343,10 @@ export default async function BlogPost({ params }: BlogPostProps) {
                 <style>{`
                   .tiptap-content { color:#d1d5db; font-size:1.0625rem; sm:font-size:1.125rem; line-height:1.85; }
                   .tiptap-content p { margin-bottom:1.5rem; color:#d1d5db; font-size:1rem; sm:font-size:1.05rem; line-height:1.9; word-break: break-word; overflow-wrap: break-word; }
-                  .tiptap-content h1 { font-family:Georgia,serif; font-size:1.75rem; sm:font-size:2.25rem; font-weight:700; color:#c2a15f; margin-top:2.5rem; margin-bottom:1rem; line-height:1.25; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:0.5rem; word-break: break-word; }
-                  .tiptap-content h2 { font-family:Georgia,serif; font-size:1.4rem; sm:font-size:1.75rem; font-weight:700; color:#c2a15f; margin-top:2.25rem; margin-bottom:0.875rem; line-height:1.3; word-break: break-word; }
-                  .tiptap-content h3 { font-family:Georgia,serif; font-size:1.2rem; sm:font-size:1.375rem; font-weight:600; color:#c2a15f; margin-top:2rem; margin-bottom:0.75rem; line-height:1.4; word-break: break-word; }
-                  .tiptap-content h4 { font-family:Georgia,serif; font-size:1.05rem; sm:font-size:1.15rem; font-weight:600; color:#c2a15f; margin-top:1.75rem; margin-bottom:0.5rem; word-break: break-word; }
+                  .tiptap-content h1 { font-family:'Mona Sans',sans-serif !important; font-size:1.75rem; sm:font-size:2.25rem; font-weight:700; color:#c2a15f; margin-top:2.5rem; margin-bottom:1rem; line-height:1.25; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:0.5rem; word-break: break-word; }
+                  .tiptap-content h2 { font-family:'Mona Sans',sans-serif !important; font-size:1.4rem; sm:font-size:1.75rem; font-weight:700; color:#c2a15f; margin-top:2.25rem; margin-bottom:0.875rem; line-height:1.3; word-break: break-word; }
+                  .tiptap-content h3 { font-family:'Mona Sans',sans-serif !important; font-size:1.2rem; sm:font-size:1.375rem; font-weight:600; color:#c2a15f; margin-top:2rem; margin-bottom:0.75rem; line-height:1.4; word-break: break-word; }
+                  .tiptap-content h4 { font-family:'Mona Sans',sans-serif !important; font-size:1.05rem; sm:font-size:1.15rem; font-weight:600; color:#c2a15f; margin-top:1.75rem; margin-bottom:0.5rem; word-break: break-word; }
                   .tiptap-content strong { color:#c2a15f; font-weight:700; }
                   .tiptap-content em { color:#b0b8c4; font-style:italic; }
                   .tiptap-content ul { list-style-type:disc; padding-left:1.5rem; sm:padding-left:1.75rem; margin-bottom:1.5rem; }
@@ -506,7 +506,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                     <span className="text-2xl">✨</span>
                   </div>
                   <div>
-                    <h3 className="font-serif text-2xl font-semibold text-[#c2a15f] mb-2">
+                    <h3 className="text-2xl font-semibold text-[#c2a15f] mb-2">
                       Written by {article.author || 'Jayshree'}
                     </h3>
                     <p className="font-sans text-gray-400 leading-relaxed">

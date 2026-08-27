@@ -45,7 +45,7 @@ const TIPTAP_STYLES = `
   }
   .tiptap-content h1,
   .tiptap-content h2 {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Mona Sans', sans-serif !important;
     color: #C2A15F;
     font-weight: 700;
     letter-spacing: -0.02em;
@@ -57,7 +57,7 @@ const TIPTAP_STYLES = `
   .tiptap-content h2 { font-size: 1.875rem; }
   .tiptap-content h3,
   .tiptap-content h4 {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Mona Sans', sans-serif !important;
     color: #f3f4f6;
     font-weight: 600;
     line-height: 1.35;
@@ -150,7 +150,7 @@ const TIPTAP_STYLES = `
     background: rgba(212, 175, 55, 0.15) !important; 
     color: #C2A15F; 
     font-weight: 700; 
-    font-family: var(--font-playfair), Georgia, serif; 
+    font-family: 'Mona Sans', sans-serif !important; 
   }
   .tiptap-content tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
   .tiptap-content tr:hover td { background: rgba(212, 175, 55, 0.04); }
@@ -215,7 +215,7 @@ export default async function About() {
                 <p className="font-sans tracking-[3px] text-gold text-sm mb-4">
                   {aboutUsHeading?.tagline || 'THE STORY BEHIND THE WORDS'}
                 </p>
-                <h1 className="font-serif text-5xl md:text-7xl font-bold text-gold leading-tight mb-6">
+                <h1 className="text-5xl md:text-7xl font-bold text-gold leading-tight mb-6">
                   {aboutUsHeading?.heading || 'About1 BrandUntold'}
                 </h1>
                 <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
@@ -258,7 +258,7 @@ export default async function About() {
               {/* Content Side */}
               <div className="space-y-8" data-aos="fade-left" data-aos-duration="1000">
                 <section data-aos="fade-up" data-aos-delay="200">
-                  <h2 className="font-serif text-3xl md:text-4xl font-bold text-gold mb-6 leading-tight">
+                  <h2 className="text-3xl md:text-4xl font-bold text-gold mb-6 leading-tight">
                     {about?.heading || "Hello, I'm Jayshree"}
                   </h2>
                   <div className="font-sans text-lg text-gray-300 leading-relaxed mb-4 prose prose-lg prose-invert max-w-none">
@@ -299,7 +299,7 @@ export default async function About() {
                   boxShadow: '0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)',
                 }}
               >
-                <h2 className="font-serif text-3xl md:text-4xl font-bold text-gold mb-8 text-center" data-aos="fade-up">
+                <h2 className="text-3xl md:text-4xl font-bold text-gold mb-8 text-center" data-aos="fade-up">
                   {philosophyHeading?.heading || 'My Writing Philosophy'}
                 </h2>
 
@@ -323,7 +323,7 @@ export default async function About() {
                       <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gold/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                         <span className="text-4xl">{item.emoji}</span>
                       </div>
-                      <h3 className="font-serif text-2xl font-semibold text-white mb-4 group-hover:text-gold transition-colors">
+                      <h3 className="text-2xl font-semibold text-white mb-4 group-hover:text-gold transition-colors">
                         {item.title}
                       </h3>
                       <p className="text-gray-400 leading-relaxed">{item.desc}</p>
@@ -335,7 +335,7 @@ export default async function About() {
 
             {/* CTA Section */}
             <section className="text-center py-12" data-aos="zoom-in" data-aos-delay="300">
-              <h2 className="font-serif text-4xl md:text-5xl font-bold text-gold mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold text-gold mb-6">
                 {ctaHeading?.heading || "Let's Connect"}
               </h2>
               <p className="font-sans text-lg text-gray-300 leading-relaxed mb-10 max-w-2xl mx-auto">

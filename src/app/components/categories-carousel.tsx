@@ -287,7 +287,6 @@ export default function CategoriesCarousel({ categories }: { categories: Categor
                       <h3
                         className="m-0 text-base sm:text-lg md:text-xl font-bold truncate transition-colors duration-300"
                         style={{
-                          fontFamily: "var(--font-playfair)",
                           color: isActive ? GOLD : "#555",
                         }}
                       >

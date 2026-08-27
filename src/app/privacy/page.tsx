@@ -39,7 +39,7 @@ export default async function PrivacyPolicy() {
       <div className="min-h-screen bg-black py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-white mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Privacy Policy
             </h1>
             <p className="text-grey text-lg">
@@ -47,10 +47,10 @@ export default async function PrivacyPolicy() {
             </p>
           </div>
 
-          <div className="prose prose-lg prose-invert max-w-none prose-headings:font-serif prose-headings:text-gold prose-p:text-grey">
+          <div className="prose prose-lg prose-invert max-w-none prose-headings:text-gold prose-p:text-grey">
             <div className="space-y-8">
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">1. Information We Collect</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">1. Information We Collect</h2>
                 <p className="text-grey">
                   We collect information you provide directly to us when you visit our website, subscribe to our newsletter,
                   or contact us. This may include:
@@ -63,7 +63,7 @@ export default async function PrivacyPolicy() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">2. Automatic Data Collection</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">2. Automatic Data Collection</h2>
                 <p className="text-grey">
                   When you visit our website, we automatically collect certain information, including:
                 </p>
@@ -77,7 +77,7 @@ export default async function PrivacyPolicy() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">3. How We Use Your Information</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">3. How We Use Your Information</h2>
                 <p className="text-grey">
                   We use the information we collect to:
                 </p>
@@ -91,7 +91,7 @@ export default async function PrivacyPolicy() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">4. Cookies</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">4. Cookies</h2>
                 <p className="text-grey">
                   We use cookies and similar tracking technologies to track activity on our website and hold certain information.
                   Cookies are files with a small amount of data which may include an anonymous unique identifier.
@@ -99,7 +99,7 @@ export default async function PrivacyPolicy() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">5. Third-Party Services</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">5. Third-Party Services</h2>
                 <p className="text-grey">
                   We may use third-party services that collect information used to identify you. These services include:
                 </p>
@@ -111,7 +111,7 @@ export default async function PrivacyPolicy() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">6. Data Security</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">6. Data Security</h2>
                 <p className="text-grey">
                   We take the security of your personal information seriously and implement a variety of security measures
                   to maintain the safety of your personal information when you enter, submit, or access your personal information.
@@ -119,7 +119,7 @@ export default async function PrivacyPolicy() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">7. Your Rights</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">7. Your Rights</h2>
                 <p className="text-grey">
                   You have the right to:
                 </p>
@@ -134,7 +134,7 @@ export default async function PrivacyPolicy() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">8. Changes to This Policy</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">8. Changes to This Policy</h2>
                 <p className="text-grey">
                   We may update this privacy policy from time to time. We will notify you of any changes by posting the new
                   privacy policy on this page and updating the "Last updated" date.
@@ -142,7 +142,7 @@ export default async function PrivacyPolicy() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">9. Contact Us</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">9. Contact Us</h2>
                 <p className="text-grey">
                   If you have any questions about this Privacy Policy, please contact us at:
                 </p>

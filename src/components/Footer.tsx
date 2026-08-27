@@ -121,7 +121,7 @@ export default function Footer() {
 
           {/* Categories */}
           <div className="lg:col-span-2">
-            <h4 className="font-serif text-gold text-lg mb-5">Categories</h4>
+            <h4 className="text-gold text-lg mb-5 font-semibold">Categories</h4>
             <ul className="space-y-3 text-grey">
               <li>
                 <Link href="/categories/founder-stories" className="hover:text-gold transition-colors">
@@ -143,7 +143,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div className="lg:col-span-2">
-            <h4 className="font-serif text-gold text-lg mb-5">Quick Links</h4>
+            <h4 className="text-gold text-lg mb-5 font-semibold">Quick Links</h4>
             <ul className="space-y-3 text-grey">
               <li>
                 <Link href="/about" className="hover:text-gold transition-colors">
@@ -161,7 +161,7 @@ export default function Footer() {
 
           {/* Contact + Map */}
           <div className="lg:col-span-3">
-            <h4 className="font-serif text-gold text-lg mb-5">Visit Us</h4>
+            <h4 className="text-gold text-lg mb-5 font-semibold">Visit Us</h4>
             
             <div className="text-sm text-grey space-y-5">
               {(footerData?.map || footerData?.address) && (

@@ -59,7 +59,7 @@ export default function RecentArticlesSlider({ articles, categoryTitle, category
           <p className="font-sans text-[10px] tracking-[3px] text-[#c2a15f] uppercase font-bold mb-2">
             KEEP READING
           </p>
-          <h3 className="font-serif text-xl font-bold text-white leading-tight">
+          <h3 className="text-xl font-bold text-white leading-tight">
             More from {categoryTitle}
           </h3>
           <div className="w-12 h-[2px] bg-gradient-to-r from-[#c2a15f] to-transparent mt-3"></div>
@@ -130,7 +130,7 @@ export default function RecentArticlesSlider({ articles, categoryTitle, category
                     </div>
                     <div className="p-4">
                       <p className="font-sans text-[10px] text-[#c2a15f] font-semibold mb-1 uppercase tracking-wider">{article.date}</p>
-                      <h4 className="font-serif text-base font-bold text-white hover:text-[#c2a15f] transition-colors line-clamp-2 leading-snug">
+                      <h4 className="text-base font-bold text-white hover:text-[#c2a15f] transition-colors line-clamp-2 leading-snug">
                         {article.title}
                       </h4>
                     </div>

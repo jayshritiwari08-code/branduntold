@@ -172,7 +172,6 @@ export default function FeatureArticleCard({ article, index }) {
 
           <h3
             style={{
-              fontFamily: "'Playfair Display', serif",
               fontSize: isLarge ? "1.3rem" : "1.1rem",
               fontWeight: 700,
               color: "#ffffff",

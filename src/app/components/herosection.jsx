@@ -35,7 +35,7 @@ export default function HeroSection({ data }) {
           <p className="font-sans text-gold text-lg mb-4 tracking-wide">
             {loading ? 'Loading...' : heroData?.tagline || 'Beyond12 the Brand'}
           </p>
-          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
             {loading ? 'Loading...' : heroData?.heading || 'The Story Behind Every Brand'}
           </h1>
 

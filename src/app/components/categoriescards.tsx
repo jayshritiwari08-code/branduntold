@@ -49,20 +49,18 @@ export default function CategoriesCards({ categories = [], heading }: Props) {
   return (
     <section
       className="bg-[#0a0a0a] min-h-[500px] sm:min-h-[600px] md:min-h-[700px] py-10 sm:py-16 md:py-20 px-3 sm:px-6 select-none overflow-hidden"
-      style={{ fontFamily: "var(--font-playfair)" }}
     >
       {/* Header */}
       <div className="max-w-3xl mx-auto mb-8 sm:mb-12 text-center px-2">
         <h2
           className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-3 leading-tight"
-          style={{ color: GOLD, fontFamily: "var(--font-playfair)" }}
+          style={{ color: GOLD }}
           data-aos="fade-up"
         >
           {heading?.tagline?.trim() || "What We Do"}
         </h2>
         <h3
           className="text-white text-lg sm:text-2xl md:text-3xl font-semibold mb-3 sm:mb-5 leading-snug"
-          style={{ fontFamily: "var(--font-playfair)" }}
           data-aos="fade-up"
           data-aos-delay="100"
         >

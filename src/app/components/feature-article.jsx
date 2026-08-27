@@ -31,7 +31,6 @@ export default function FeaturedArticles({ articles = [] }) {
           </p>
           <h2
             style={{
-              fontFamily: "'Playfair Display', serif",
               fontSize: "clamp(2rem, 5vw, 3.2rem)",
               fontWeight: 700,
               color: "#ffffff",

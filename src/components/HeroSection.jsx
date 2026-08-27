@@ -112,7 +112,6 @@ export default function HeroSection({ heroData, heroLoading, heroImage }) {
           background: var(--bg);
           overflow: hidden;
           padding: 6rem 0 7rem;
-          font-family: 'Georgia', 'Times New Roman', serif;
         }
 
         /* ─── Dot-grid background ────────────── */
