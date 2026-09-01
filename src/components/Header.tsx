@@ -20,6 +20,17 @@ export default function Header() {
   };
 
   useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
     const fetchFooterData = async () => {
       try {
         const res = await fetch('/api/data/footer');
@@ -27,7 +38,16 @@ export default function Header() {
         if (json.success && json.data && json.data.length > 0) {
           const footerData = json.data[0];
           if (footerData.footerlogo) {
-            setLogoSrc(footerData.footerlogo);
+            let logo = Array.isArray(footerData.footerlogo) ? footerData.footerlogo[0] : footerData.footerlogo;
+            if (typeof logo === 'string' && logo) {
+              if (logo.startsWith('http')) {
+                setLogoSrc(logo);
+              } else if (logo.startsWith('/uploads/') || logo.startsWith('uploads/')) {
+                setLogoSrc(`https://admin.branduntold.in${logo.startsWith('/') ? '' : '/'}${logo}`);
+              } else {
+                setLogoSrc(logo.startsWith('/') ? logo : `/${logo}`);
+              }
+            }
           }
           if (footerData.altname) {
             setAltname(footerData.altname);
@@ -55,7 +75,7 @@ export default function Header() {
 
   return (
     <header className="bg-black border-b border-gray-800 sticky top-0 z-50">
-      <nav className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
+      <nav className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20 md:h-24">
 
           {/* Logo */}
@@ -74,17 +94,17 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-4 sm:space-x-6 lg:space-x-10">
-            <button onClick={() => navigate('/')} className="text-gold hover:text-white transition-colors font-medium text-sm sm:text-base">
+            <button onClick={() => navigate('/')} className="text-gold hover:text-white transition-colors font-medium text-sm sm:text-base cursor-pointer">
               Home
             </button>
-            <button onClick={() => navigate('/about')} className="text-gold hover:text-white transition-colors font-medium text-sm sm:text-base">
+            <button onClick={() => navigate('/about')} className="text-gold hover:text-white transition-colors font-medium text-sm sm:text-base cursor-pointer">
               About Us
             </button>
 
             {/* Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
-                className="text-gold hover:text-white transition-colors flex items-center gap-1 font-medium text-sm sm:text-base"
+                className="text-gold hover:text-white transition-colors flex items-center gap-1 font-medium text-sm sm:text-base cursor-pointer"
                 onClick={() => setIsDropdownOpen((prev) => !prev)}
               >
                 Stories & Writing
@@ -101,13 +121,13 @@ export default function Header() {
               {isDropdownOpen && (
                 <div className="absolute left-0 mt-2 w-56 bg-gray-900 border border-gray-800 rounded-lg shadow-xl">
                   <div className="py-2">
-                    <button onClick={() => navigate('/categories/founder-stories')} className="w-full text-left block px-4 py-3 text-white hover:text-gold hover:bg-gray-800 transition-colors text-sm">
+                    <button onClick={() => navigate('/categories/founder-stories')} className="w-full text-left block px-4 py-3 text-white hover:text-gold hover:bg-gray-800 transition-colors text-sm cursor-pointer">
                       Founder Stories
                     </button>
-                    <button onClick={() => navigate('/categories/story-breakdowns')} className="w-full text-left block px-4 py-3 text-white hover:text-gold hover:bg-gray-800 transition-colors text-sm">
+                    <button onClick={() => navigate('/categories/story-breakdowns')} className="w-full text-left block px-4 py-3 text-white hover:text-gold hover:bg-gray-800 transition-colors text-sm cursor-pointer">
                       Story Breakdowns
                     </button>
-                    <button onClick={() => navigate('/categories/writing-branding')} className="w-full text-left block px-4 py-3 text-white hover:text-gold hover:bg-gray-800 transition-colors text-sm">
+                    <button onClick={() => navigate('/categories/writing-branding')} className="w-full text-left block px-4 py-3 text-white hover:text-gold hover:bg-gray-800 transition-colors text-sm cursor-pointer">
                       Writing & Branding
                     </button>
                   </div>
@@ -115,14 +135,14 @@ export default function Header() {
               )}
             </div>
 
-            <button onClick={() => navigate('/work-with-me')} className="text-gold hover:text-white transition-colors font-medium text-sm sm:text-base">
+            <button onClick={() => navigate('/work-with-me')} className="text-gold hover:text-white transition-colors font-medium text-sm sm:text-base cursor-pointer">
               Work With Us
             </button>
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden flex items-center gap-2 text-gold hover:text-white transition-colors"
+            className="lg:hidden flex items-center justify-center p-2 text-gold hover:text-white transition-colors cursor-pointer"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -138,31 +158,31 @@ export default function Header() {
 
         {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-20 left-0 w-full h-screen bg-black/95 backdrop-blur-sm border-b border-gray-800 shadow-2xl animate-in slide-in-from-top duration-300">
-            <div className="px-2.5 py-4 space-y-2">
-              <button onClick={() => navigate('/')} className="w-full text-left block px-4 py-3 text-gold hover:text-white hover:bg-gray-900 rounded-lg transition-colors font-medium">
+          <div className="lg:hidden fixed top-16 sm:top-20 inset-x-0 bottom-0 bg-black/95 backdrop-blur-md border-b border-gray-800 shadow-2xl overflow-y-auto z-50 animate-in slide-in-from-top-2 duration-300">
+            <div className="px-4 py-4 space-y-2 pb-24">
+              <button onClick={() => navigate('/')} className="w-full text-left block px-4 py-3 text-gold hover:text-white hover:bg-gray-900 rounded-lg transition-colors font-medium cursor-pointer">
                 Home
               </button>
-              <button onClick={() => navigate('/about')} className="w-full text-left block px-4 py-3 text-gold hover:text-white hover:bg-gray-900 rounded-lg transition-colors font-medium">
+              <button onClick={() => navigate('/about')} className="w-full text-left block px-4 py-3 text-gold hover:text-white hover:bg-gray-900 rounded-lg transition-colors font-medium cursor-pointer">
                 About Us
               </button>
               <div className="border-t border-gray-800 my-2"></div>
               <div className="px-4 py-2">
                 <p className="text-sm text-gold/70 font-medium mb-2">Stories & Writing</p>
                 <div className="space-y-1">
-                  <button onClick={() => navigate('/categories/founder-stories')} className="w-full text-left block px-4 py-2 text-white hover:text-gold hover:bg-gray-900 rounded-lg transition-colors text-sm">
+                  <button onClick={() => navigate('/categories/founder-stories')} className="w-full text-left block px-4 py-2 text-white hover:text-gold hover:bg-gray-900 rounded-lg transition-colors text-sm cursor-pointer">
                     Founder Stories
                   </button>
-                  <button onClick={() => navigate('/categories/story-breakdowns')} className="w-full text-left block px-4 py-2 text-white hover:text-gold hover:bg-gray-900 rounded-lg transition-colors text-sm">
+                  <button onClick={() => navigate('/categories/story-breakdowns')} className="w-full text-left block px-4 py-2 text-white hover:text-gold hover:bg-gray-900 rounded-lg transition-colors text-sm cursor-pointer">
                     Story Breakdowns
                   </button>
-                  <button onClick={() => navigate('/categories/writing-branding')} className="w-full text-left block px-4 py-2 text-white hover:text-gold hover:bg-gray-900 rounded-lg transition-colors text-sm">
+                  <button onClick={() => navigate('/categories/writing-branding')} className="w-full text-left block px-4 py-2 text-white hover:text-gold hover:bg-gray-900 rounded-lg transition-colors text-sm cursor-pointer">
                     Writing & Branding
                   </button>
                 </div>
               </div>
               <div className="border-t border-gray-800 my-2"></div>
-              <button onClick={() => navigate('/work-with-me')} className="w-full text-left block px-4 py-3 text-gold hover:text-white hover:bg-gray-900 rounded-lg transition-colors font-medium">
+              <button onClick={() => navigate('/work-with-me')} className="w-full text-left block px-4 py-3 text-gold hover:text-white hover:bg-gray-900 rounded-lg transition-colors font-medium cursor-pointer">
                 Work With Us
               </button>
             </div>

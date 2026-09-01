@@ -2,7 +2,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'playfair-display': ['Playfair Display', 'serif'],
+        'playfair-display': ['Mona Sans', 'Inter', 'sans-serif'],
+        'serif': ['Mona Sans', 'Inter', 'sans-serif'],
+        'sans': ['Mona Sans', 'Inter', 'sans-serif'],
       },
     }
   }

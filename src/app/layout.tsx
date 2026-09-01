@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
-import { fetchStaticMeta } from "@/app/lib/api";
+import { fetchStaticMeta, getOneFromCollectionApi } from "@/app/lib/api";
 import "./globals.css";
 
 import Header from "@/components/Header";
@@ -21,7 +21,19 @@ const inter = Inter({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const meta = await fetchStaticMeta('');
+  const [meta, footerData] = await Promise.all([
+    fetchStaticMeta(''),
+    getOneFromCollectionApi('footer'),
+  ]);
+
+  let dynamicLogo = footerData?.footerlogo || footerData?.favicon;
+  if (Array.isArray(dynamicLogo)) {
+    dynamicLogo = dynamicLogo[0];
+  }
+  const logoUrl = dynamicLogo
+    ? (dynamicLogo.startsWith('http') ? dynamicLogo : `https://admin.branduntold.in${dynamicLogo.startsWith('/') ? '' : '/'}${dynamicLogo}`)
+    : "https://admin.branduntold.in/uploads/1779986882643-l8lu45m8gxf.png";
+
   const defaultTitle = meta?.metatitle || "The Story Behind | Storytelling Platform";
   const defaultDesc = meta?.meta_description || "A clean, minimal, content-focused platform for high-quality articles and stories about founders, brands, and storytelling.";
   const keywords = Array.isArray(meta?.meta_keyword)
@@ -36,9 +48,9 @@ export async function generateMetadata(): Promise<Metadata> {
     description: defaultDesc,
     keywords: keywords,
     icons: {
-      icon: "https://www.branduntold.in/uploads/1779986882643-l8lu45m8gxf.png",
-      shortcut: "https://www.branduntold.in/uploads/1779986882643-l8lu45m8gxf.png",
-      apple: "https://www.branduntold.in/uploads/1779986882643-l8lu45m8gxf.png",
+      icon: logoUrl,
+      shortcut: logoUrl,
+      apple: logoUrl,
     },
     openGraph: {
       title: defaultTitle,
@@ -49,7 +61,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       images: [
         {
-          url: "https://www.branduntold.in/uploads/1779986882643-l8lu45m8gxf.png",
+          url: logoUrl,
           width: 500,
           height: 500,
           alt: "Brand Untold Logo",

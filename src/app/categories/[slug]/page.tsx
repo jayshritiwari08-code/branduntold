@@ -22,7 +22,7 @@ function formatDate(dateStr: string): string {
   return `${month} ${day}, ${year}`;
 }
 
-export const revalidate = 0; // ISR: revalidate after 60 seconds
+export const revalidate = 60; // ISR: revalidate after 60 seconds
 // export const dynamic = "force-dynamic"; // Removed to allow static generation
 export const dynamicParams = true; // allow ISR for slugs not pre-built
 
@@ -77,7 +77,7 @@ export default async function CategoryPage({
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-3xl text-white font-serif mb-4">Category not found</h1>
+          <h1 className="text-3xl text-white mb-4">Category not found</h1>
           <Link href="/" className="text-gold hover:text-white transition-colors font-sans text-sm tracking-widest uppercase">
             ← Back to Home
           </Link>
@@ -129,7 +129,7 @@ export default async function CategoryPage({
             </nav>
             <div className="text-center">
               <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">{category.tagline}</p>
-              <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 leading-tight text-gold">{category.heading}</h1>
+              <h1 className="text-5xl md:text-7xl font-semibold mb-6 leading-tight text-gold">{category.heading}</h1>
               {category.subheading && (
                 <p className="font-sans text-xl text-grey max-w-2xl mx-auto">{category.subheading}</p>
               )}
@@ -177,7 +177,7 @@ export default async function CategoryPage({
                           {formattedDate && <p className="font-sans text-sm text-gold">{formattedDate}</p>}
                           {article.author && <p className="font-sans text-xs text-gray-500">{article.author}</p>}
                         </div>
-                        <h2 className="font-serif text-2xl font-semibold text-white mb-3 group-hover:text-gold transition-colors leading-snug">
+                        <h2 className="text-2xl font-semibold text-white mb-3 group-hover:text-gold transition-colors leading-snug">
                           {article.title}
                         </h2>
                         <p className="font-sans text-gray-400 mb-6 leading-relaxed line-clamp-3 text-sm">

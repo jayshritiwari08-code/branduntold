@@ -44,10 +44,10 @@ export default function FeatureArticleCard({ article, index }) {
   const imageUrl = getImageUrl(article.image, "/blog-placeholder.jpg");
   const formattedDate = article.date
     ? new Date(article.date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      })
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
     : null;
 
   return (
@@ -172,7 +172,6 @@ export default function FeatureArticleCard({ article, index }) {
 
           <h3
             style={{
-              fontFamily: "'Playfair Display', serif",
               fontSize: isLarge ? "1.3rem" : "1.1rem",
               fontWeight: 700,
               color: "#ffffff",

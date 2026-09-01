@@ -38,7 +38,7 @@ export default function BlogPostError({ error, reset }: ErrorProps) {
 
         <div className="space-y-2">
           <p className="font-sans tracking-[3px] text-[#c2a15f] text-sm uppercase">ERROR ENCOUNTERED</p>
-          <h2 className="font-serif text-3xl font-bold text-white leading-tight">
+          <h2 className="text-3xl font-bold text-white leading-tight">
             Failed to load article
           </h2>
           <p className="text-gray-400 text-sm leading-relaxed">

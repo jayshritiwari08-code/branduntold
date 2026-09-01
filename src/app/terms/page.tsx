@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 import { fetchStaticMeta } from '@/app/lib/api';
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await fetchStaticMeta('terms');
@@ -39,7 +39,7 @@ export default async function TermsOfService() {
       <div className="min-h-screen bg-black py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-white mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Terms of Service
             </h1>
             <p className="text-grey text-lg">
@@ -47,10 +47,10 @@ export default async function TermsOfService() {
             </p>
           </div>
 
-          <div className="prose prose-lg prose-invert max-w-none prose-headings:font-serif prose-headings:text-gold prose-p:text-grey">
+          <div className="prose prose-lg prose-invert max-w-none prose-headings:text-gold prose-p:text-grey">
             <div className="space-y-8">
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">1. Acceptance of Terms</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">1. Acceptance of Terms</h2>
                 <p className="text-grey">
                   By accessing and using Brand Untold ("the Website"), you agree to be bound by these Terms of Service and
                   all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from
@@ -59,7 +59,7 @@ export default async function TermsOfService() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">2. Use License</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">2. Use License</h2>
                 <p className="text-grey">
                   Permission is granted to temporarily view the materials (information or software) on Brand Untold's website
                   for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title,
@@ -75,7 +75,7 @@ export default async function TermsOfService() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">3. Disclaimer</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">3. Disclaimer</h2>
                 <p className="text-grey">
                   The materials on Brand Untold's website are provided on an "as is" basis. Brand Untold makes no warranties,
                   expressed or implied, and hereby disclaims and negates all other warranties including, without limitation,
@@ -85,7 +85,7 @@ export default async function TermsOfService() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">4. Price Accuracy</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">4. Price Accuracy</h2>
                 <p className="text-grey">
                   We make every effort to ensure that the prices displayed on Brand Untold are accurate and up-to-date.
                   However, prices can change frequently and we cannot guarantee the accuracy of prices at any given time.
@@ -94,7 +94,7 @@ export default async function TermsOfService() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">5. Revisions and Errata</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">5. Revisions and Errata</h2>
                 <p className="text-grey">
                   The materials appearing on Brand Untold's website could include technical, typographical, or photographic errors.
                   Brand Untold does not warrant that any of the materials on its website are accurate, complete, or current.
@@ -103,7 +103,7 @@ export default async function TermsOfService() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">6. Links</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">6. Links</h2>
                 <p className="text-grey">
                   Brand Untold has not reviewed all of the sites linked to its website and is not responsible for the contents
                   of any such linked site. The inclusion of any link does not imply endorsement by Brand Untold of the site.
@@ -112,7 +112,7 @@ export default async function TermsOfService() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">7. Modifications</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">7. Modifications</h2>
                 <p className="text-grey">
                   Brand Untold may revise these terms of service for its website at any time without notice. By using this
                   website you are agreeing to be bound by the then current version of these terms of service.
@@ -120,7 +120,7 @@ export default async function TermsOfService() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">8. Governing Law</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">8. Governing Law</h2>
                 <p className="text-grey">
                   These terms and conditions are governed by and construed in accordance with the laws of the United States
                   and you irrevocably submit to the exclusive jurisdiction of the courts in that State or location.
@@ -128,7 +128,7 @@ export default async function TermsOfService() {
               </section>
 
               <section>
-                <h2 className="font-serif text-3xl text-gold mb-4">9. Contact Us</h2>
+                <h2 className="text-3xl text-gold mb-4 font-bold">9. Contact Us</h2>
                 <p className="text-grey">
                   If you have any questions about these Terms of Service, please contact us at:
                 </p>

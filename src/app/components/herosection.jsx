@@ -35,7 +35,7 @@ export default function HeroSection({ data }) {
           <p className="font-sans text-gold text-lg mb-4 tracking-wide">
             {loading ? 'Loading...' : heroData?.tagline || 'Beyond12 the Brand'}
           </p>
-          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
             {loading ? 'Loading...' : heroData?.heading || 'The Story Behind Every Brand'}
           </h1>
 
@@ -44,7 +44,7 @@ export default function HeroSection({ data }) {
             {loading ? (
               <p className="text-grey text-lg">Loading content...</p>
             ) : heroData?.description ? (
-               <div className="tiptap-content text-justify text-white/90" dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(heroData.description) }}></div>
+              <div className="tiptap-content text-justify text-white/90" dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(heroData.description) }}></div>
             ) : (
               <p className="tiptap-content text-white/90">Exploring the narratives that shape brands, founders, and the art of storytelling itself.</p>
             )}

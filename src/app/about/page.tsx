@@ -10,7 +10,7 @@ import {
 } from '@/app/lib/api';
 import AboutClient from './AboutClient';
 
-export const revalidate = 0;
+export const revalidate = 60; // ISR: revalidate at most once every 60 seconds
 
 // ─── Metadata ────────────────────────────────────────────────────────────────
 
@@ -45,7 +45,7 @@ const TIPTAP_STYLES = `
   }
   .tiptap-content h1,
   .tiptap-content h2 {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Mona Sans', sans-serif !important;
     color: #C2A15F;
     font-weight: 700;
     letter-spacing: -0.02em;
@@ -57,7 +57,7 @@ const TIPTAP_STYLES = `
   .tiptap-content h2 { font-size: 1.875rem; }
   .tiptap-content h3,
   .tiptap-content h4 {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Mona Sans', sans-serif !important;
     color: #f3f4f6;
     font-weight: 600;
     line-height: 1.35;
@@ -113,11 +113,47 @@ const TIPTAP_STYLES = `
     margin-bottom: 1.25rem;
   }
   .tiptap-content pre code { background: transparent; border: none; padding: 0; color: #e5e7eb; font-size: 0.875rem; }
-  .tiptap-content img { max-width: 100%; height: auto; border-radius: 8px; margin: 1.25rem 0; border: 1px solid rgba(212, 175, 55, 0.15); }
-  .tiptap-content table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.9375rem; }
-  .tiptap-content th { background: rgba(212, 175, 55, 0.1); color: #C2A15F; font-weight: 600; text-align: left; padding: 0.625rem 1rem; border: 1px solid rgba(212, 175, 55, 0.2); }
-  .tiptap-content td { color: #d1d5db; padding: 0.5rem 1rem; border: 1px solid rgba(212, 175, 55, 0.1); }
-  .tiptap-content tr:hover td { background: rgba(212, 175, 55, 0.03); }
+  .table-scroll-wrapper { 
+    overflow-x: auto !important; 
+    -webkit-overflow-scrolling: touch !important; 
+    max-width: 100% !important; 
+    margin: 1.75rem 0 !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(194, 161, 95, 0.4) transparent;
+  }
+  .table-scroll-wrapper::-webkit-scrollbar { height: 6px; }
+  .table-scroll-wrapper::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 4px; }
+  .table-scroll-wrapper::-webkit-scrollbar-thumb { background: rgba(194, 161, 95, 0.4); border-radius: 4px; }
+  .tiptap-content table { 
+    width: 100% !important; 
+    min-width: 600px !important; 
+    border-collapse: collapse !important; 
+    margin: 0 !important; 
+    display: table !important; 
+    table-layout: auto !important;
+  }
+  .tiptap-content th, .tiptap-content td { 
+    padding: 1rem 1.25rem !important; 
+    border: 1px solid rgba(212, 175, 55, 0.2) !important; 
+    color: #d1d5db; 
+    font-size: 0.95rem; 
+    line-height: 1.6; 
+    word-break: normal !important; 
+    overflow-wrap: normal !important; 
+    word-wrap: normal !important; 
+    white-space: normal !important; 
+    vertical-align: top; 
+    text-align: left; 
+    min-width: 160px; 
+  }
+  .tiptap-content th { 
+    background: rgba(212, 175, 55, 0.15) !important; 
+    color: #C2A15F; 
+    font-weight: 700; 
+    font-family: 'Mona Sans', sans-serif !important; 
+  }
+  .tiptap-content tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+  .tiptap-content tr:hover td { background: rgba(212, 175, 55, 0.04); }
   .tiptap-content > *:first-child { margin-top: 0; }
 `;
 
@@ -179,8 +215,8 @@ export default async function About() {
                 <p className="font-sans tracking-[3px] text-gold text-sm mb-4">
                   {aboutUsHeading?.tagline || 'THE STORY BEHIND THE WORDS'}
                 </p>
-                <h1 className="font-serif text-5xl md:text-7xl font-bold text-gold leading-tight mb-6">
-                  About <span className="text-gold">Brand Untold</span>
+                <h1 className="text-5xl md:text-7xl font-bold text-gold leading-tight mb-6">
+                  {aboutUsHeading?.heading || 'About1 BrandUntold'}
                 </h1>
                 <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
                   {aboutUsHeading?.subheading || 'Uncovering the real stories behind brands and the craft of authentic storytelling'}
@@ -201,28 +237,28 @@ export default async function About() {
               {/* Image Side */}
               <div className="relative group" data-aos="fade-right" data-aos-duration="1000">
                 <div
-                  className="aspect-[4/5] rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative"
+                  className="rounded-3xl overflow-hidden border border-gold/30 shadow-2xl relative"
                   style={{ boxShadow: '0 35px 60px rgba(0,0,0,0.8), inset 0 2px 0 rgba(255,255,255,0.05)' }}
                 >
                   <Image
                     src={getImageUrl(about?.image, '/about1.jpg')}
                     alt={about?.altname || about?.heading || 'Jayshri Tiwari, Co-Founder of Brand Untold — Indian editorial platform for founder stories'}
                     title={about?.img_title || about?.altname || about?.heading || 'Jayshri Tiwari, Co-Founder of Brand Untold — Indian editorial platform for founder stories'}
-                    width={600}
-                    height={750}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    width={750}
+                    height={500}
+                    // sizes="(max-width: 750px) 100vw, (max-width: 1200px) 50vw, 600px"
+                    className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />
                 </div>
-                <div className="absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow" data-aos="zoom-in" data-aos-delay="300" />
-                <div className="absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float" data-aos="zoom-in" data-aos-delay="500" />
+                <div className="hidden sm:block absolute -bottom-6 -right-6 w-44 h-44 border-2 border-gold rounded-full opacity-20 animate-pulse-slow" data-aos="zoom-in" data-aos-delay="300" />
+                <div className="hidden sm:block absolute -top-8 -left-8 w-36 h-36 border border-gold/40 rounded-3xl -rotate-12 animate-float" data-aos="zoom-in" data-aos-delay="500" />
               </div>
 
               {/* Content Side */}
               <div className="space-y-8" data-aos="fade-left" data-aos-duration="1000">
                 <section data-aos="fade-up" data-aos-delay="200">
-                  <h2 className="font-serif text-3xl md:text-4xl font-bold text-gold mb-6 leading-tight">
+                  <h2 className="text-3xl md:text-4xl font-bold text-gold mb-6 leading-tight">
                     {about?.heading || "Hello, I'm Jayshree"}
                   </h2>
                   <div className="font-sans text-lg text-gray-300 leading-relaxed mb-4 prose prose-lg prose-invert max-w-none">
@@ -263,7 +299,7 @@ export default async function About() {
                   boxShadow: '0 25px 70px rgba(0,0,0,0.7), 0 4px 24px rgba(212,175,55,0.04), inset 0 1px 0 rgba(255,255,255,0.03)',
                 }}
               >
-                <h2 className="font-serif text-3xl md:text-4xl font-bold text-gold mb-8 text-center" data-aos="fade-up">
+                <h2 className="text-3xl md:text-4xl font-bold text-gold mb-8 text-center" data-aos="fade-up">
                   {philosophyHeading?.heading || 'My Writing Philosophy'}
                 </h2>
 
@@ -287,7 +323,7 @@ export default async function About() {
                       <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gold/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                         <span className="text-4xl">{item.emoji}</span>
                       </div>
-                      <h3 className="font-serif text-2xl font-semibold text-white mb-4 group-hover:text-gold transition-colors">
+                      <h3 className="text-2xl font-semibold text-white mb-4 group-hover:text-gold transition-colors">
                         {item.title}
                       </h3>
                       <p className="text-gray-400 leading-relaxed">{item.desc}</p>
@@ -299,7 +335,7 @@ export default async function About() {
 
             {/* CTA Section */}
             <section className="text-center py-12" data-aos="zoom-in" data-aos-delay="300">
-              <h2 className="font-serif text-4xl md:text-5xl font-bold text-gold mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold text-gold mb-6">
                 {ctaHeading?.heading || "Let's Connect"}
               </h2>
               <p className="font-sans text-lg text-gray-300 leading-relaxed mb-10 max-w-2xl mx-auto">

@@ -15,7 +15,7 @@ export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ||
 
 export const ARTICLES_COLLECTION = 'articles'; // matches CMS collection name
 export const CATEGORIES_COLLECTION = 'category';
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://admin.branduntold.in';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 /**
  * Shared fetch options – Next.js ISR revalidation.
@@ -78,6 +78,8 @@ export interface HeroData {
   image: string;
   created_at: string;
   updated_at: string;
+  altname?: string;
+  img_title?: string;
 }
 
 /**
@@ -321,8 +323,8 @@ export function optimizeHtmlImages(html: string): string {
     }
     
     // Only optimize local uploads or admin.branduntold.in images
-    if (src.startsWith('/uploads/') || src.startsWith('http://admin.branduntold.in') || src.startsWith('https://admin.branduntold.in')) {
-      const absoluteUrl = src.startsWith('/') ? `https://admin.branduntold.in${src}` : src;
+    if (src.startsWith('/uploads/') || src.startsWith('http://admin.branduntold.in') || src.startsWith('https://admin.branduntold.in') || src.startsWith('http://localhost:3001')) {
+      const absoluteUrl = src.startsWith('/') ? `${API_URL}${src}` : src;
       const optimizedSrc = `/_next/image?url=${encodeURIComponent(absoluteUrl)}&w=828&q=75`;
       return `<img${p1}src="${optimizedSrc}"${p2}>`;
     }
@@ -335,6 +337,13 @@ export function optimizeHtmlImages(html: string): string {
   
   // 3. Add decoding="async" if not present
   optimized = optimized.replace(/<img(?![^>]*\bdecoding\b)([^>]*?)>/gi, '<img decoding="async"$1>');
+
+  // 4. Wrap tables in responsive scroll wrapper (avoid double wrapping if already wrapped)
+  if (!optimized.includes('table-scroll-wrapper')) {
+    optimized = optimized.replace(/<table\b[\s\S]*?<\/table>/gi, (match) => {
+      return `<div class="table-scroll-wrapper my-6 overflow-x-auto rounded-2xl border border-[#c2a15f]/20 bg-black/50 p-2 shadow-inner">${match}</div>`;
+    });
+  }
   
   return optimized;
 }

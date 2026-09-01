@@ -55,7 +55,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center px-4">
-          <h1 className="text-3xl text-white font-serif mb-4">Content not found</h1>
+          <h1 className="text-3xl text-white mb-4">Content not found</h1>
           <p className="text-gray-400 mb-6">We couldn't find the requested article or category.</p>
           <Link href="/" className="text-gold hover:text-white transition-colors font-sans text-sm tracking-widest uppercase">
             ← Back to Home
@@ -108,7 +108,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             {/* Banner Content */}
             <div className="text-center">
               <p className="font-sans tracking-[3px] text-gold text-sm mb-4 uppercase">{pageTagline}</p>
-              <h1 className="font-serif text-5xl md:text-7xl font-bold text-white leading-tight mb-6">
+              <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight mb-6">
                 {pageHeading}
               </h1>
               <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
@@ -142,7 +142,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 </div>
                 <div className="p-6">
                   <p className="font-sans text-sm text-gold mb-2">{new Date(article.date || article.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-                  <h2 className="font-serif text-2xl font-semibold text-white mb-3 group-hover:text-gold transition-colors">
+                  <h2 className="text-2xl font-semibold text-white mb-3 group-hover:text-gold transition-colors">
                     {article.title}
                   </h2>
                   <p className="font-sans text-gray-400 mb-6 leading-relaxed line-clamp-3">

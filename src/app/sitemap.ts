@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { fetchAllArticles, fetchAllCategories, slugify, BASE_URL } from '@/app/lib/api';
 
 // Revalidate the sitemap dynamically every 60 seconds in production (ISR)
-export const revalidate = 0;
+export const revalidate = 60;
 
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
