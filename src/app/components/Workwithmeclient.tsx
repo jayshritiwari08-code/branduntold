@@ -157,12 +157,37 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
         }
     };
 
+    // Safe array parser for CMS fields that might be arrays, JSON strings, or comma-separated strings
+    const parseArrayField = (val: any): string[] => {
+        if (!val) return [];
+        if (Array.isArray(val)) return val.map(String).filter(Boolean);
+        if (typeof val === 'string') {
+            const trimmed = val.trim();
+            if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+                try {
+                    const parsed = JSON.parse(trimmed);
+                    if (Array.isArray(parsed)) return parsed.map(String).filter(Boolean);
+                } catch {
+                    // ignore JSON parse error
+                }
+            }
+            if (trimmed.includes(',')) {
+                return trimmed.split(',').map(s => s.trim()).filter(Boolean);
+            }
+            return trimmed ? [trimmed] : [];
+        }
+        return [];
+    };
+
     // Resolve service cards — use CMS data or fall back to defaults
+    const headings = parseArrayField(servicesData?.card_heading);
+    const descriptions = parseArrayField(servicesData?.cards_description);
+
     const serviceCards =
-        servicesData?.card_heading && servicesData.card_heading.length > 0
-            ? servicesData.card_heading.map((title, i) => ({
+        headings.length > 0
+            ? headings.map((title, i) => ({
                 title,
-                desc: servicesData.cards_description?.[i] ?? 'Service description',
+                desc: descriptions[i] ?? 'Service description',
             }))
             : DEFAULT_SERVICES;
 
