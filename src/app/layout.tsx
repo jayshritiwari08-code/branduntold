@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import { fetchStaticMeta, getOneFromCollectionApi } from "@/app/lib/api";
+import "@fontsource/mona-sans/400.css";
+import "@fontsource/mona-sans/500.css";
+import "@fontsource/mona-sans/600.css";
+import "@fontsource/mona-sans/700.css";
+import "@fontsource/mona-sans/800.css";
 import "./globals.css";
 
 import Header from "@/components/Header";

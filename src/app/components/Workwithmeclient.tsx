@@ -234,7 +234,7 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                                 {contactUsHeading?.tagline ?? "LET'S CREATE SOMETHING MEANINGFUL"}
                             </p>
                             <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold text-gold leading-tight mb-5 tracking-tight">
-                                Work With <span className="text-white">Us</span>
+                                Work With Us
                             </h1>
                             <p className="font-sans text-base sm:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
                                 {contactUsHeading?.subheading ??
@@ -431,7 +431,7 @@ export default function WorkWithMeClient({ contactUsHeading, servicesData, foote
                                                         : 'max-h-0 opacity-0 pointer-events-none'
                                                 }`}
                                             >
-                                                <div className="px-6 py-5 text-gray-300 leading-relaxed text-sm sm:text-base font-sans">
+                                                <div className="px-6 py-5 text-gray-300 leading-relaxed text-sm sm:text-base font-sans whitespace-pre-line">
                                                     {item.ans}
                                                 </div>
                                             </div>
