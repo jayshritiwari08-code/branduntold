@@ -41,18 +41,33 @@ export async function generateMetadata({
   const category = categories.find((c: any) => slugify(c.heading) === slug);
 
   if (category) {
+    const title = category.metatitle || `${category.heading} | Brand Untold`;
+    const desc = category.meta_description || category.subheading || category.tagline || 'Explore in-depth articles on brand storytelling and founder journeys.';
+    const keywords = Array.isArray(category.meta_keyword)
+      ? category.meta_keyword
+      : typeof category.meta_keyword === 'string'
+        ? category.meta_keyword.split(',').map((k: string) => k.trim())
+        : [category.heading.toLowerCase(), 'brand stories', 'brand untold'];
+
     return {
-      title: category.metatitle || `${category.heading} - Brand Untold`,
-      description: category.meta_description || category.subheading || category.tagline,
-      keywords: category.meta_keyword,
+      title,
+      description: desc,
+      keywords,
       alternates: {
         canonical: category.canonical || `/categories/${slug}`,
+      },
+      openGraph: {
+        title,
+        description: desc,
+        url: `https://www.branduntold.in/categories/${slug}`,
+        siteName: 'Brand Untold',
+        type: 'website',
       },
     };
   }
   return {
-    title: 'Category - Brand Untold',
-    description: 'Explore our articles by category.',
+    title: 'Category | Brand Untold',
+    description: 'Explore our articles and stories by category on Brand Untold.',
     alternates: {
       canonical: `/categories/${slug}`,
     },

@@ -46,21 +46,27 @@ export const revalidate = 60;
 // ─── Metadata (also benefits from ISR) ───────────────────────────────────────
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await fetchStaticMeta('work-with-me');
-  if (!meta) {
-    return {
-      title: 'Work With Me',
-      description: "Let's craft your brand's story together.",
-      alternates: {
-        canonical: '/work-with-me',
-      },
-    };
-  }
+  const title = meta?.metatitle || 'Work With Us | Brand Untold';
+  const desc = meta?.meta_description || "Let's craft your brand's story together. Brand Untold offers brand storytelling, content strategy, editorial writing, and SEO copywriting services.";
+  const keywords = Array.isArray(meta?.meta_keyword)
+    ? meta.meta_keyword
+    : typeof meta?.meta_keyword === 'string'
+      ? meta.meta_keyword.split(',').map((k: string) => k.trim())
+      : ['work with us', 'brand storytelling services', 'content strategy', 'hire brand writer'];
+
   return {
-    title: meta.metatitle,
-    description: meta.meta_description,
-    keywords: meta.meta_keyword,
+    title,
+    description: desc,
+    keywords,
     alternates: {
-      canonical: meta.canonical || '/work-with-me',
+      canonical: meta?.canonical || '/work-with-me',
+    },
+    openGraph: {
+      title,
+      description: desc,
+      url: 'https://www.branduntold.in/work-with-me',
+      siteName: 'Brand Untold',
+      type: 'website',
     },
   };
 }

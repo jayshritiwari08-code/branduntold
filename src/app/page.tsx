@@ -19,14 +19,27 @@ export const revalidate = 60; // ISR: rebuild this page at most once per minute
 
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await fetchStaticMeta('');
-  if (!meta) return { title: 'BrandUntold' };
+  const title = meta?.metatitle || 'Brand Untold | The Story Behind Every Indian Brand';
+  const desc = meta?.meta_description || 'Brand Untold explores the real decisions, struggles, and human moments behind Indian brands and founders — written for people who think beyond the highlight reel.';
+  const keywords = Array.isArray(meta?.meta_keyword)
+    ? meta.meta_keyword
+    : typeof meta?.meta_keyword === 'string'
+      ? meta.meta_keyword.split(',').map((k: string) => k.trim())
+      : ['brand stories', 'founder stories', 'storytelling platform', 'brand untold', 'startup stories'];
 
   return {
-    title: meta.metatitle,
-    description: meta.meta_description,
-    keywords: meta.meta_keyword,
+    title,
+    description: desc,
+    keywords,
     alternates: {
-      canonical: meta.canonical || '/',
+      canonical: meta?.canonical || '/',
+    },
+    openGraph: {
+      title,
+      description: desc,
+      url: 'https://www.branduntold.in',
+      siteName: 'Brand Untold',
+      type: 'website',
     },
   };
 }

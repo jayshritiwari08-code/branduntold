@@ -59,37 +59,54 @@ const RecentArticlesSlider = dynamic(() => import('./RecentArticlesSlider'), {
 
 export async function generateMetadata({ params }: BlogPostProps): Promise<Metadata> {
   const { slug } = await params;
-
-  // React cache() deduplicates this call with the one in the BlogPost component
-  // so only 1 network/database request is sent in total for the entire page load.
   const article = await fetchArticle(slug);
-console.log("article",article)
+
   if (!article) {
     return {
-      title: 'Article Not Found - Brand Untold',
+      title: 'Article Not Found | Brand Untold',
       description: 'The requested article could not be found.',
     };
   }
 
-  // Meta keywords could be string or array
+  const title = article.metatitle
+    ? (article.metatitle.includes('Brand Untold') ? article.metatitle : `${article.metatitle} | Brand Untold`)
+    : `${article.title} | Brand Untold`;
+
+  const description = article.meta_description || article.description || `Read the full story of ${article.title} on Brand Untold.`;
+
   const keywords = Array.isArray(article.meta_keyword)
     ? article.meta_keyword
     : typeof article.meta_keyword === 'string'
       ? article.meta_keyword.split(',').map((k) => k.trim())
-      : [];
+      : ['brand stories', 'founder stories', 'storytelling'];
+
+  const imageUrl = article.image ? getImageUrl(article.image) : 'https://www.branduntold.in/logo.png';
 
   return {
-    title: article.metatitle || article.title,
-    description: article.meta_description || article.description,
-    keywords: keywords,
+    title,
+    description,
+    keywords,
     alternates: {
       canonical: article.canonical || `/articles/${slug}`,
     },
     openGraph: {
-      title: article.metatitle || article.title,
-      description: article.meta_description || article.description,
-      images: article.image ? [{ url: getImageUrl(article.image) }] : [],
+      title,
+      description,
+      url: `https://www.branduntold.in/articles/${slug}`,
+      siteName: 'Brand Untold',
       type: 'article',
+      images: [
+        {
+          url: imageUrl,
+          alt: article.altname || article.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
     },
   };
 }
@@ -214,7 +231,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
     'dateModified': article.updated_at || article.date || article.created_at,
     'author': {
       '@type': 'Person',
-      'name': article.author || 'Jayshree',
+      'name': article.author || 'Jayshri Tiwari',
     },
     'publisher': {
       '@type': 'Organization',
@@ -265,7 +282,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                     <li className="text-[#c2a15f]">/</li>
                     <li>
                       <Link
-                        href={`/articles/${categorySlug}`}
+                        href={`/categories/${categorySlug}`}
                         className="text-grey hover:text-[#c2a15f] transition-colors"
                       >
                         {category.heading || 'Category'}
@@ -288,7 +305,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                 {article.title}
               </h1>
               <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-sm text-grey">
-                <span>By {article.author || 'Jayshree'}</span>
+                <span>By {article.author || 'Jayshri Tiwari'}</span>
                 <span className="hidden sm:inline">•</span>
                 <span>
                   {new Date(article.date || article.created_at).toLocaleDateString('en-US', {
@@ -303,13 +320,13 @@ export default async function BlogPost({ params }: BlogPostProps) {
         </section>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-20 w-full overflow-hidden">
           <div
-            className={`grid ${hasSidebar ? 'lg:grid-cols-3' : 'lg:grid-cols-1'} gap-8`}
+            className={`grid ${hasSidebar ? 'lg:grid-cols-3' : 'lg:grid-cols-1'} gap-8 w-full max-w-full min-w-0`}
           >
-            <div className={hasSidebar ? 'lg:col-span-2' : 'lg:col-span-1'}>
+            <div className={`${hasSidebar ? 'lg:col-span-2' : 'lg:col-span-1'} w-full max-w-full min-w-0`}>
               {/* Featured Image */}
-              <div className="aspect-video mb-8 sm:mb-12 rounded-3xl overflow-hidden border border-[#c2a15f]/30 shadow-2xl relative">
+              <div className="aspect-video mb-8 sm:mb-12 rounded-2xl sm:rounded-3xl overflow-hidden border border-[#c2a15f]/30 shadow-2xl relative w-full">
                 <Image
                   src={getImageUrl(article.image)}
                   alt={article.altname || article.title}
@@ -325,14 +342,14 @@ export default async function BlogPost({ params }: BlogPostProps) {
 
               {/* Mobile Table of Contents (Collapsible for mobile & tablet devices) */}
               {headings.length > 0 && (
-                <div className="lg:hidden mb-8">
+                <div className="lg:hidden mb-8 w-full max-w-full min-w-0">
                   <TableOfContents headings={headings} isMobile />
                 </div>
               )}
 
               {/* Article Body */}
               <article
-                className="rounded-3xl p-5 sm:p-8 md:p-12"
+                className="rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-12 w-full max-w-full min-w-0 overflow-hidden box-border"
                 style={{
                   background: 'linear-gradient(160deg, #141414 0%, #0c0c0c 100%)',
                   border: '1px solid rgba(212,175,55,0.12)',
@@ -341,26 +358,148 @@ export default async function BlogPost({ params }: BlogPostProps) {
                 }}
               >
                 <style>{`
-                  .tiptap-content { color:#d1d5db; font-size:1.0625rem; sm:font-size:1.125rem; line-height:1.85; }
-                  .tiptap-content p { margin-bottom:1.5rem; color:#d1d5db; font-size:1rem; sm:font-size:1.05rem; line-height:1.9; word-break: break-word; overflow-wrap: break-word; }
-                  .tiptap-content h1 { font-family:'Mona Sans',sans-serif !important; font-size:1.75rem; sm:font-size:2.25rem; font-weight:700; color:#c2a15f; margin-top:2.5rem; margin-bottom:1rem; line-height:1.25; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:0.5rem; word-break: break-word; }
-                  .tiptap-content h2 { font-family:'Mona Sans',sans-serif !important; font-size:1.4rem; sm:font-size:1.75rem; font-weight:700; color:#c2a15f; margin-top:2.25rem; margin-bottom:0.875rem; line-height:1.3; word-break: break-word; }
-                  .tiptap-content h3 { font-family:'Mona Sans',sans-serif !important; font-size:1.2rem; sm:font-size:1.375rem; font-weight:600; color:#c2a15f; margin-top:2rem; margin-bottom:0.75rem; line-height:1.4; word-break: break-word; }
-                  .tiptap-content h4 { font-family:'Mona Sans',sans-serif !important; font-size:1.05rem; sm:font-size:1.15rem; font-weight:600; color:#c2a15f; margin-top:1.75rem; margin-bottom:0.5rem; word-break: break-word; }
+                  .tiptap-content { 
+                    color:#d1d5db; 
+                    font-size:1rem; 
+                    line-height:1.85; 
+                    width: 100%; 
+                    max-width: 100%; 
+                    min-width: 0; 
+                    overflow-wrap: break-word; 
+                    word-break: break-word; 
+                  }
+                  @media (min-width: 640px) {
+                    .tiptap-content { font-size:1.0625rem; }
+                  }
+                  .tiptap-content * { 
+                    max-width: 100%; 
+                    box-sizing: border-box; 
+                  }
+                  .tiptap-content p { 
+                    margin-bottom:1.35rem; 
+                    color:#d1d5db; 
+                    font-size:0.95rem; 
+                    line-height:1.85; 
+                    word-break: break-word; 
+                    overflow-wrap: break-word; 
+                  }
+                  @media (min-width: 640px) {
+                    .tiptap-content p { font-size:1.05rem; margin-bottom:1.5rem; line-height:1.9; }
+                  }
+                  .tiptap-content h1 { 
+                    font-family:'Mona Sans',sans-serif !important; 
+                    font-size:1.5rem; 
+                    font-weight:700; 
+                    color:#c2a15f; 
+                    margin-top:2rem; 
+                    margin-bottom:0.75rem; 
+                    line-height:1.25; 
+                    border-bottom:1px solid rgba(212,175,55,0.2); 
+                    padding-bottom:0.5rem; 
+                    word-break: break-word; 
+                    overflow-wrap: break-word;
+                  }
+                  @media (min-width: 640px) {
+                    .tiptap-content h1 { font-size:2.25rem; margin-top:2.5rem; margin-bottom:1rem; }
+                  }
+                  .tiptap-content h2 { 
+                    font-family:'Mona Sans',sans-serif !important; 
+                    font-size:1.25rem; 
+                    font-weight:700; 
+                    color:#c2a15f; 
+                    margin-top:1.75rem; 
+                    margin-bottom:0.75rem; 
+                    line-height:1.3; 
+                    word-break: break-word; 
+                    overflow-wrap: break-word;
+                  }
+                  @media (min-width: 640px) {
+                    .tiptap-content h2 { font-size:1.75rem; margin-top:2.25rem; margin-bottom:0.875rem; }
+                  }
+                  .tiptap-content h3 { 
+                    font-family:'Mona Sans',sans-serif !important; 
+                    font-size:1.1rem; 
+                    font-weight:600; 
+                    color:#c2a15f; 
+                    margin-top:1.5rem; 
+                    margin-bottom:0.6rem; 
+                    line-height:1.4; 
+                    word-break: break-word; 
+                    overflow-wrap: break-word;
+                  }
+                  @media (min-width: 640px) {
+                    .tiptap-content h3 { font-size:1.375rem; margin-top:2rem; margin-bottom:0.75rem; }
+                  }
+                  .tiptap-content h4 { 
+                    font-family:'Mona Sans',sans-serif !important; 
+                    font-size:1rem; 
+                    font-weight:600; 
+                    color:#c2a15f; 
+                    margin-top:1.25rem; 
+                    margin-bottom:0.5rem; 
+                    word-break: break-word; 
+                    overflow-wrap: break-word;
+                  }
+                  @media (min-width: 640px) {
+                    .tiptap-content h4 { font-size:1.15rem; margin-top:1.75rem; }
+                  }
                   .tiptap-content strong { color:#c2a15f; font-weight:700; }
                   .tiptap-content em { color:#b0b8c4; font-style:italic; }
-                  .tiptap-content ul { list-style-type:disc; padding-left:1.5rem; sm:padding-left:1.75rem; margin-bottom:1.5rem; }
-                  .tiptap-content ol { list-style-type:decimal; padding-left:1.5rem; sm:padding-left:1.75rem; margin-bottom:1.5rem; }
-                  .tiptap-content li { margin-bottom:0.6rem; color:#d1d5db; line-height:1.75; }
+                  .tiptap-content ul { list-style-type:disc; padding-left:1.25rem; margin-bottom:1.35rem; }
+                  @media (min-width: 640px) {
+                    .tiptap-content ul { padding-left:1.75rem; margin-bottom:1.5rem; }
+                  }
+                  .tiptap-content ol { list-style-type:decimal; padding-left:1.25rem; margin-bottom:1.35rem; }
+                  @media (min-width: 640px) {
+                    .tiptap-content ol { padding-left:1.75rem; margin-bottom:1.5rem; }
+                  }
+                  .tiptap-content li { margin-bottom:0.5rem; color:#d1d5db; line-height:1.75; }
                   .tiptap-content li p { margin-bottom:0.25rem; }
-                  .tiptap-content blockquote { border-left:3px solid #c2a15f; padding:0.75rem 1.25rem; sm:padding:0.75rem 1.5rem; margin:2rem 0; background:rgba(212,175,55,0.05); border-radius:0 0.5rem 0.5rem 0; color:#b8bcc4; font-style:italic; font-size:1.05rem; sm:font-size:1.1rem; }
-                  .tiptap-content a { color:#c2a15f; text-decoration:underline; text-underline-offset:3px; transition:color 0.2s; }
+                  .tiptap-content blockquote { 
+                    border-left:3px solid #c2a15f; 
+                    padding:0.6rem 1rem; 
+                    margin:1.5rem 0; 
+                    background:rgba(212,175,55,0.05); 
+                    border-radius:0 0.5rem 0.5rem 0; 
+                    color:#b8bcc4; 
+                    font-style:italic; 
+                    font-size:0.95rem; 
+                    word-break: break-word;
+                    overflow-wrap: break-word;
+                  }
+                  @media (min-width: 640px) {
+                    .tiptap-content blockquote { padding:0.75rem 1.5rem; margin:2rem 0; font-size:1.1rem; }
+                  }
+                  .tiptap-content a { 
+                    color:#c2a15f; 
+                    text-decoration:underline; 
+                    text-underline-offset:3px; 
+                    transition:color 0.2s; 
+                    word-break: break-word !important; 
+                    overflow-wrap: anywhere !important; 
+                  }
                   .tiptap-content a:hover { color:#d4af37; }
-                  .tiptap-content code { background:rgba(212,175,55,0.08); color:#c2a15f; padding:0.15rem 0.45rem; border-radius:0.25rem; font-family:'Courier New',monospace; font-size:0.9em; border:1px solid rgba(212,175,55,0.15); }
-                  .tiptap-content pre { background:rgba(0,0,0,0.5); border:1px solid rgba(212,175,55,0.15); border-radius:0.75rem; padding:1rem 1.25rem; sm:padding:1.25rem 1.5rem; overflow-x:auto; margin:1.5rem 0; -webkit-overflow-scrolling: touch; }
+                  .tiptap-content code { background:rgba(212,175,55,0.08); color:#c2a15f; padding:0.15rem 0.45rem; border-radius:0.25rem; font-family:'Courier New',monospace; font-size:0.9em; border:1px solid rgba(212,175,55,0.15); word-break: break-word; }
+                  .tiptap-content pre { background:rgba(0,0,0,0.5); border:1px solid rgba(212,175,55,0.15); border-radius:0.75rem; padding:0.875rem 1rem; overflow-x:auto; max-width:100%; margin:1.25rem 0; -webkit-overflow-scrolling: touch; }
+                  @media (min-width: 640px) {
+                    .tiptap-content pre { padding:1.25rem 1.5rem; margin:1.5rem 0; }
+                  }
                   .tiptap-content pre code { background:none; border:none; padding:0; color:#d1d5db; font-size:0.9rem; }
-                  .tiptap-content hr { border:none; border-top:1px solid rgba(212,175,55,0.2); margin:2.5rem 0; }
-                  .tiptap-content img { border-radius:0.75rem; width:100% !important; max-width:100%; height:auto !important; margin:1.5rem 0; }
+                  .tiptap-content hr { border:none; border-top:1px solid rgba(212,175,55,0.2); margin:2rem 0; }
+                  
+                  /* Image styling: Force block display and 100% max width without horizontal margin leaks */
+                  .tiptap-content img { 
+                    border-radius:0.75rem; 
+                    display: block !important;
+                    width:100% !important; 
+                    max-width:100% !important; 
+                    height:auto !important; 
+                    margin:1.5rem 0 !important; 
+                    margin-left: 0 !important;
+                    margin-right: 0 !important;
+                    box-sizing: border-box !important;
+                    object-fit: contain;
+                  }
                   
                   /* Table styling: Same layout as desktop with smooth horizontal scroll on mobile */
                   /* ================================
@@ -492,7 +631,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                 {/* Optimised rendering of large content by writing HTML output directly without virtual DOM component overhead */}
                 <div
                   className="tiptap-content"
-                  dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(processedHtml) }}
+                  dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(processedHtml, article.altname || article.title || 'Brand Untold editorial story') }}
                 />
               </article>
 
@@ -507,7 +646,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                   </div>
                   <div>
                     <h3 className="text-2xl font-semibold text-[#c2a15f] mb-2">
-                      Written by {article.author || 'Jayshree'}
+                      Written by {article.author || 'Jayshri Tiwari'}
                     </h3>
                     <p className="font-sans text-gray-400 leading-relaxed">
                       {article.author_bio ||

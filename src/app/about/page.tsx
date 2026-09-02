@@ -16,21 +16,27 @@ export const revalidate = 60; // ISR: revalidate at most once every 60 seconds
 
 export async function generateMetadata(): Promise<Metadata> {
   const meta = await fetchStaticMeta('about');
-  if (!meta) {
-    return {
-      title: 'About BrandUntold',
-      description: 'Learn about BrandUntold and our passion for storytelling.',
-      alternates: {
-        canonical: '/about',
-      },
-    };
-  }
+  const title = meta?.metatitle || 'About Brand Untold | The Story Behind the Platform';
+  const desc = meta?.meta_description || 'Brand Untold is an Indian editorial platform telling the untold stories of founders, creators, and brands — the decisions, the doubts, and the human moments that shaped everything.';
+  const keywords = Array.isArray(meta?.meta_keyword)
+    ? meta.meta_keyword
+    : typeof meta?.meta_keyword === 'string'
+      ? meta.meta_keyword.split(',').map((k: string) => k.trim())
+      : ['about brand untold', 'jayshri tiwari', 'brand storytelling', 'editorial platform'];
+
   return {
-    title: meta.metatitle,
-    description: meta.meta_description,
-    keywords: meta.meta_keyword,
+    title,
+    description: desc,
+    keywords,
     alternates: {
-      canonical: meta.canonical || '/about',
+      canonical: meta?.canonical || '/about',
+    },
+    openGraph: {
+      title,
+      description: desc,
+      url: 'https://www.branduntold.in/about',
+      siteName: 'Brand Untold',
+      type: 'website',
     },
   };
 }
@@ -216,7 +222,7 @@ export default async function About() {
                   {aboutUsHeading?.tagline || 'THE STORY BEHIND THE WORDS'}
                 </p>
                 <h1 className="text-5xl md:text-7xl font-bold text-gold leading-tight mb-6">
-                  {aboutUsHeading?.heading || 'About1 BrandUntold'}
+                  {aboutUsHeading?.heading || 'About Brand Untold'}
                 </h1>
                 <p className="font-sans text-xl text-grey max-w-2xl mx-auto">
                   {aboutUsHeading?.subheading || 'Uncovering the real stories behind brands and the craft of authentic storytelling'}
@@ -246,7 +252,6 @@ export default async function About() {
                     title={about?.img_title || about?.altname || about?.heading || 'Jayshri Tiwari, Co-Founder of Brand Untold — Indian editorial platform for founder stories'}
                     width={750}
                     height={500}
-                    // sizes="(max-width: 750px) 100vw, (max-width: 1200px) 50vw, 600px"
                     className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-shimmer" />
@@ -259,13 +264,13 @@ export default async function About() {
               <div className="space-y-8" data-aos="fade-left" data-aos-duration="1000">
                 <section data-aos="fade-up" data-aos-delay="200">
                   <h2 className="text-3xl md:text-4xl font-bold text-gold mb-6 leading-tight">
-                    {about?.heading || "Hello, I'm Jayshree"}
+                    {about?.heading || "Hello, I'm Jayshri"}
                   </h2>
                   <div className="font-sans text-lg text-gray-300 leading-relaxed mb-4 prose prose-lg prose-invert max-w-none">
                     {about?.description1 ? (
                       <div
                         className="tiptap-content"
-                        dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(about.description1) }}
+                        dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(about.description1, about?.altname || 'Jayshri Tiwari, Co-Founder of Brand Untold') }}
                       />
                     ) : (
                       <p>Content coming soon...</p>
@@ -281,7 +286,7 @@ export default async function About() {
                 {about?.description2 ? (
                   <div
                     className="tiptap-content"
-                    dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(about.description2) }}
+                    dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(about.description2, 'Brand Untold Editorial Platform and Vision') }}
                   />
                 ) : (
                   <p>There were no formal meetings, no rigid agendas, no hierarchy deciding whose voice mattered more. Just two minds exchanging ideas with sincerity — questioning without ego, disagreeing without dismissing, building something meaningful from a distance. Somewhere along the journey, Brand Untold was born.</p>
@@ -300,18 +305,18 @@ export default async function About() {
                 }}
               >
                 <h2 className="text-3xl md:text-4xl font-bold text-gold mb-8 text-center" data-aos="fade-up">
-                  {philosophyHeading?.heading || 'My Writing Philosophy'}
+                  {philosophyHeading?.heading || 'Our Editorial Philosophy'}
                 </h2>
 
                 <p className="font-sans text-lg text-gray-300 leading-relaxed mb-12 text-center max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
-                  {philosophyHeading?.subheading || 'I believe in clarity over complexity. In a world of noise, the clearest voice wins.'}
+                  {philosophyHeading?.subheading || 'We believe in depth, truth, and substance over noise. The clearest, most honest voice always endures.'}
                 </p>
 
                 <div className="grid md:grid-cols-3 gap-8">
                   {[
-                    { emoji: '✨', title: 'Editorial Integrity', desc: "We don't write promotional features. We write honest stories." },
-                    { emoji: '🔍', title: 'Depth Over Volume', desc: 'One deeply researched story is worth more than ten surface-level posts.' },
-                    { emoji: '🌱', title: 'Stories Before Success', desc: "We tell the story before it's obvious — not after everyone already knows it." },
+                    { title: 'Editorial Integrity', desc: "We don't write promotional features. We write honest stories." },
+                    { title: 'Depth Over Volume', desc: 'One deeply researched story is worth more than ten surface-level posts.' },
+                    { title: 'Stories Before Success', desc: "We tell the story before it's obvious — not after everyone already knows it." },
                   ].map((item, index) => (
                     <div
                       key={index}
@@ -320,13 +325,13 @@ export default async function About() {
                       data-aos-delay={200 + index * 150}
                       style={{ background: 'rgba(20,20,20,0.6)', backdropFilter: 'blur(10px)' }}
                     >
-                      <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gold/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                        <span className="text-4xl">{item.emoji}</span>
+                      <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gold/10 border border-gold/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-gold group-hover:text-black text-gold transition-all duration-500 font-mono font-bold text-lg">
+                        0{index + 1}
                       </div>
                       <h3 className="text-2xl font-semibold text-white mb-4 group-hover:text-gold transition-colors">
                         {item.title}
                       </h3>
-                      <p className="text-gray-400 leading-relaxed">{item.desc}</p>
+                      <p className="text-gray-400 leading-relaxed font-sans text-sm sm:text-base">{item.desc}</p>
                     </div>
                   ))}
                 </div>

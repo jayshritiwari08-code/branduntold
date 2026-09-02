@@ -312,7 +312,7 @@ export const fetchStaticMeta = cache(async (slug: string): Promise<any | null> =
  * - Rewrites img src pointing to uploads to use Next.js image optimization endpoint.
  * - Injects loading="lazy" and decoding="async" for standard HTML images.
  */
-export function optimizeHtmlImages(html: string): string {
+export function optimizeHtmlImages(html: string, defaultAlt: string = 'Brand Untold editorial image'): string {
   if (!html) return html;
 
   // 1. Rewrite img src to use Next.js image optimization endpoint if it's from CMS or local uploads
@@ -338,7 +338,15 @@ export function optimizeHtmlImages(html: string): string {
   // 3. Add decoding="async" if not present
   optimized = optimized.replace(/<img(?![^>]*\bdecoding\b)([^>]*?)>/gi, '<img decoding="async"$1>');
 
-  // 4. Wrap tables in responsive scroll wrapper (avoid double wrapping if already wrapped)
+  // 4. Ensure alt attribute is present on every <img> tag for SEO
+  optimized = optimized.replace(/<img(?![^>]*\balt\b)([^>]*?)>/gi, `<img alt="${defaultAlt}"$1>`);
+  // If alt attribute is present but empty (alt=""), replace with defaultAlt
+  optimized = optimized.replace(/<img([^>]*?)\balt=["']\s*["']([^>]*?)>/gi, `<img$1alt="${defaultAlt}"$2>`);
+
+  // 5. Ensure title attribute is present on every <img> tag for SEO
+  optimized = optimized.replace(/<img(?![^>]*\btitle\b)([^>]*?)>/gi, `<img title="${defaultAlt}"$1>`);
+
+  // 6. Wrap tables in responsive scroll wrapper (avoid double wrapping if already wrapped)
   if (!optimized.includes('table-scroll-wrapper')) {
     optimized = optimized.replace(/<table\b[\s\S]*?<\/table>/gi, (match) => {
       return `<div class="table-scroll-wrapper my-6 overflow-x-auto rounded-2xl border border-[#c2a15f]/20 bg-black/50 p-2 shadow-inner">${match}</div>`;

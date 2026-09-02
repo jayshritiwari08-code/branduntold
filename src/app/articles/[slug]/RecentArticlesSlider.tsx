@@ -44,17 +44,18 @@ export default function RecentArticlesSlider({ articles, categoryTitle, category
 
   return (
     <div
-      className="rounded-3xl p-6 bg-black relative overflow-hidden group/slider transition-all duration-500 hover:border-[#c2a15f]/40"
+      className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 bg-black relative overflow-hidden group/slider transition-all duration-500 hover:border-[#c2a15f]/40 w-full max-w-full min-w-0"
       style={{
         background: 'linear-gradient(160deg, #111111 0%, #070707 100%)',
         border: '1px solid rgba(194, 161, 95, 0.15)',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.02)'
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.02)',
+        contain: 'paint',
       }}
     >
       {/* Dynamic golden background glow */}
       <div className="absolute top-0 right-0 w-24 h-24 bg-[#c2a15f]/5 rounded-full blur-2xl pointer-events-none transition-opacity duration-500 group-hover/slider:opacity-80" />
 
-      <div className="relative">
+      <div className="relative w-full max-w-full min-w-0">
         <div className="mb-6">
           <p className="font-sans text-[10px] tracking-[3px] text-[#c2a15f] uppercase font-bold mb-2">
             KEEP READING
@@ -66,8 +67,8 @@ export default function RecentArticlesSlider({ articles, categoryTitle, category
         </div>
 
         {/* 3D Slider Container */}
-        <div className="relative" style={{ perspective: '1000px' }}>
-          <div className="relative overflow-hidden" style={{ height: '310px' }}>
+        <div className="relative w-full max-w-full overflow-hidden" style={{ perspective: '1000px', contain: 'paint' }}>
+          <div className="relative overflow-hidden w-full max-w-full" style={{ height: '310px' }}>
             {articles.map((article, index) => {
               const offset = (index - currentIndex + articles.length) % articles.length;
               const isActive = offset === 0;

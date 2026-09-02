@@ -32,11 +32,11 @@ export default function HeroSection({ data }) {
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 lg:mt-20 relative z-20 w-full">
         {/* Desktop/Mobile content overlay on the left side */}
         <div className="max-w-2xl lg:max-w-3xl" data-aos="fade-right" data-aos-duration="1000">
-          <p className="font-sans text-gold text-lg mb-4 tracking-wide">
-            {loading ? 'Loading...' : heroData?.tagline || 'Beyond12 the Brand'}
+          <p className="font-sans text-gold text-lg mb-4 tracking-wide font-medium">
+            {loading ? '' : (heroData?.tagline || 'Brand Untold')}
           </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-            {loading ? 'Loading...' : heroData?.heading || 'The Story Behind Every Brand'}
+            {loading ? '' : (heroData?.heading || 'The Story Behind Every Brand')}
           </h1>
 
           {/* Hero Tiptap Description */}
@@ -46,7 +46,7 @@ export default function HeroSection({ data }) {
             ) : heroData?.description ? (
               <div className="tiptap-content text-justify text-white/90" dangerouslySetInnerHTML={{ __html: optimizeHtmlImages(heroData.description) }}></div>
             ) : (
-              <p className="tiptap-content text-white/90">Exploring the narratives that shape brands, founders, and the art of storytelling itself.</p>
+              <p className="tiptap-content text-white/90">Brand Untold explores the real decisions, struggles, and human moments behind Indian brands and founders — written for people who think beyond the highlight reel.</p>
             )}
           </div>
 
@@ -55,7 +55,7 @@ export default function HeroSection({ data }) {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/categories/founder-stories"
-              className="px-8 py-3 bg-gradient-to-r from-gold via-yellow-200 to-[#8f6d1d] text-black font-bold hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 text-center rounded-lg group relative overflow-hidden"
+              className="px-8 py-3 bg-gradient-to-r from-gold via-yellow-200 to-[#8f6d1d] text-black font-bold hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 text-center rounded-xl group relative overflow-hidden flex items-center justify-center gap-2"
               data-aos="fade-up"
               data-aos-delay="300"
             >
@@ -64,12 +64,11 @@ export default function HeroSection({ data }) {
             </Link>
             <Link
               href="/work-with-me"
-              className="px-8 py-3 bg-gradient-to-r from-gold via-yellow-200 to-[#8f6d1d] text-black rounded-lg font-bold hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 text-center group relative overflow-hidden"
+              className="px-8 py-3 border-2 border-gold text-gold hover:bg-gold hover:text-black font-semibold rounded-xl hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.25)] transition-all duration-300 text-center flex items-center justify-center"
               data-aos="fade-up"
               data-aos-delay="500"
             >
-              <span className="relative z-10">Work With Us</span>
-              <div className="absolute inset-0 w-1/2 h-full bg-white/40 skew-x-[-25deg] -translate-x-[150%] group-hover:translate-x-[250%] transition-transform duration-1000 ease-in-out pointer-events-none"></div>
+              <span>Work With Us</span>
             </Link>
           </div>
         </div>
